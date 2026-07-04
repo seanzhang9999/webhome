@@ -1,0 +1,223 @@
+# awiki.ai Web Home 工作记录
+
+本文记录 awiki.ai 首页项目从初始 HTML 到独立 Git 仓库提交之间的主要工作思路变化、设计取舍和当前进度。记录时间截至 2026-07-05。
+
+## 1. 项目起点
+
+最初目标是先把已有的 HTML 页面写入项目，作为 awiki.ai 官网首页的可迭代原型。
+
+随后目标扩展为：
+
+- 下载并参考 `matrix.org`、`bilink.ai`、`moxt.ai` 的页面结构与表现方式。
+- 围绕 awiki.ai 的核心定位重新设计新版首页。
+- 强调 awiki.ai 是面向 AI 原生时代、Agent Network 场景的类 Matrix 通信体系。
+- 通过 DID 导入端侧，降低端侧对消息服务器的完全依赖。
+
+## 2. 核心定位的演变
+
+早期版本尝试用“让 Agent 可达、可信、可回执”来表达产品价值，但这个表达有两个问题：
+
+- 首屏概念过多，像功能拼盘。
+- 用户不容易马上理解 awiki.ai 到底是消息服务、客户端还是 Agent 工作台。
+
+随后定位收敛为：
+
+> AI 原生的 Matrix 方案。
+
+这个方向的优势是能借用 Matrix 已经建立的心智：
+
+- Matrix 代表开放通信网络。
+- awiki.ai 则面向 Agent Network，提供开放、可验证、可中继的 Agent 通信体系。
+
+后续又进一步改成更准确的表述：
+
+> AI 原生的 DID + 类 Matrix IM。
+
+这个版本比“AI 原生 Matrix 方案”更具体，因为它把两个关键差异放到标题里：
+
+- DID 是可信身份与端侧验证的基础。
+- 类 Matrix IM 表达继承开放通信、联邦、中继和多客户端生态的方向，但不是简单复制 Matrix。
+
+## 3. 对 Matrix 的表达方式调整
+
+页面最初有“Matrix 对比”的思路，但需要避免给人一种“证明 Matrix 不好”的感觉。
+
+最终叙事调整为：
+
+- 我们注意到 Matrix 的开放协议、安全通信、去中心化通信、clients、servers、bots 和 application services 生态理念已经被开源社区广泛认可。
+- awiki.ai 希望为 Agent Network 打造 AI 原生的 Matrix style 通信体系。
+- 我们深入分析了 Matrix 的优点，并围绕 Agent 时代的需求进行升级。
+
+因此，页面中的对比只保留 Matrix 与 awiki.ai，不再引入其他产品横向比较。
+
+核心对比从“谁更好”变成“网络对象不同”：
+
+- Matrix 面向人类用户、房间、事件和 homeserver。
+- awiki.ai 面向 Agent、DID、Inbox、Envelope、Relay 和可审计业务会话。
+
+## 4. 关键技术叙事变化
+
+### 4.1 从聊天转为业务会话
+
+原句：
+
+> AI 原生通信不是“更聪明的聊天”，而是可验证的任务往返。
+
+后续调整为：
+
+> AI 原生通信不会止步于“更聪明的聊天室”，通过可信可审计的消息体系可以支撑 AP2、X402 等智能体商业协议的广泛应用。
+
+这个调整让页面从“任务消息”提升到“商业协议基础设施”层面，能更好承接授权、凭证、支付、执行、补救和结果回执等场景。
+
+### 4.2 从服务器中心转为端侧 DID
+
+重要叙事为：
+
+> DID 导入端侧，让消息服务器只需承担可信中继和必要的身份声明辅助。
+
+页面里进一步解释为：
+
+- 服务器仍然可以做发现、缓存、转发和联邦。
+- 服务器不应该默认拥有全部身份、权限和执行真相。
+- Agent 或用户客户端导入 DID 后，可以在端侧持有身份材料、签名 Envelope、验证对方声明，并选择消息服务器、企业网关、个人 Relay 或其他端侧 Agent 作为中继路径。
+
+### 4.3 从 Room-first 到 Envelope-first
+
+“Matrix, remapped for agents” 部分最终采用了这个思路：
+
+> 像 Matrix 一样开放，但为 Agent 原生设计。
+> 这不是“Matrix for AI chat”。核心差异是：Matrix 以房间和服务器历史同步为中心；awiki.ai 以可携带、可验证、可中继的 Agent 信封为中心。
+
+这成为首页最重要的产品定义之一。
+
+## 5. 开源理念的明确
+
+awiki.ai 的开源路线被整理为四层：
+
+- ANP 协议开源。
+- Awiki Me 客户端开源。
+- awiki.ai 会提供 Python 示范开源方案。
+- 同时提供高性能闭源版本，用于生产环境的吞吐、稳定性、治理、可观测性和企业集成。
+
+页面里避免把 awiki.ai 描述成单一闭源平台，而是强调：
+
+> 核心协议和客户端开源，服务端提供示范方案与高性能版本。
+
+## 6. “开始使用”页面的形成
+
+“开始使用”最初只是下载入口，后来扩展为三条路径：
+
+1. 了解协议
+   - 指向 `https://github.com/agent-network-protocol`
+   - 用于理解 ANP、DID、Envelope、Inbox、业务会话和结构化回执。
+
+2. 试用智能体接入
+   - 指向 `https://awiki.ai/skill.md`
+   - 从 elsewhere.news 的加载提示获得启发，但最终改成更符合 awiki.ai 风格的复制提示框。
+   - 文案为：`请阅读并帮我安装这个 skill: https://awiki.ai/skill.md`
+
+3. 下载客户端 / 客户端开源仓库
+   - 暂无正式下载地址。
+   - 页面先展示 macOS Apple Silicon、macOS Intel、Android arm64、Awiki Me 开源仓库等入口状态。
+   - 状态显示为“即将开放”或“待公布”。
+
+## 7. 页面版本与视觉方向
+
+当前 `webhome` 中保留了三个主要 HTML 版本，便于对比：
+
+### 7.1 `index.html`
+
+主版本，黑白主题可切换。
+
+特点：
+
+- 更偏成熟官网和产品说明页。
+- 包含 Matrix 对比、DID 端侧、三层架构、开源理念、开始使用等完整内容。
+- 适合继续作为稳定主线迭代。
+
+### 7.2 `index-colorway.html`
+
+色彩方案实验版。
+
+特点：
+
+- 尝试更明亮的背景和更多彩色标识。
+- 根据反馈去掉了部分过强的按钮和不必要的首屏 CTA。
+- 保留当前内容体系，但视觉仍处于实验状态。
+
+### 7.3 `index-matrix-inspired.html`
+
+Matrix 结构启发候选版。
+
+特点：
+
+- 深入分析 `matrix.org` 的滚动结构后制作。
+- 借鉴黑色顶部导航、公告条、黑白强对比、巨型弧线过渡、白色产品区、黑色网络生态区等结构语言。
+- 没有直接引用 Matrix 的图片资源、资源路径或原始营销文案。
+- 用自定义线场、节点网络和业务会话 mockup 表达 awiki.ai 的 DID + 类 Matrix IM 方向。
+- 已做桌面和移动端布局验证，未发现横向溢出。
+
+## 8. 参考页面与素材
+
+项目中保留了参考页面，方便后续继续分析：
+
+- `reference-pages/matrix.org.html`
+- `reference-pages/matrix.org.latest.html`
+- `reference-pages/matrix-style.css`
+- `reference-pages/bilink.ai.html`
+- `reference-pages/moxt.ai.html`
+
+当前资产：
+
+- `assets/ai-native-matrix-hero.png`
+
+## 9. 已完成进度
+
+已完成：
+
+- 将 awiki.ai 首页相关 HTML 文件整理进 `webhome`。
+- 下载并保存 Matrix、bilink、moxt 的参考页面。
+- 完成中英文切换版本。
+- 完成 Matrix 与 awiki.ai 的两行式对比结构。
+- 去掉 `awiki.ai / OVAIM` 中的 OVAIM 表达。
+- 完成 DID 端侧依赖降低的叙事。
+- 完成“开始使用”三路径页面。
+- 完成黑白主题版本。
+- 完成 colorway 方案。
+- 完成 Matrix-inspired 新候选页。
+- 将 `webhome` 初始化为独立 Git 仓库。
+- 首次提交并推送到 GitHub。
+
+首次提交：
+
+```text
+9a44b1b Initial awiki webhome site
+```
+
+远端仓库：
+
+```text
+https://github.com/seanzhang9999/webhome.git
+```
+
+## 10. 当前建议的下一步
+
+建议后续继续做三件事：
+
+1. 选定主版本
+   - 如果要更稳健和产品化，优先继续打磨 `index.html`。
+   - 如果要更贴近 Matrix 的传播心智，可以继续打磨 `index-matrix-inspired.html`。
+
+2. 统一最终视觉系统
+   - 确定是否采用纯黑白 Matrix-style。
+   - 或采用 awiki.ai 自己的青绿、黄、黑色体系。
+
+3. 补齐真实入口
+   - Awiki Me 客户端下载地址。
+   - Awiki Me 客户端开源仓库地址。
+   - Python 示范方案仓库地址。
+   - 高性能服务端版本的商业接入说明。
+
+## 11. 当前项目状态
+
+`webhome` 已作为独立项目提交到 GitHub。当前页面仍是静态 HTML 原型，适合继续进行视觉评审、文案审校和部署前整理。
