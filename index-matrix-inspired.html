@@ -1158,10 +1158,10 @@
           <article class="flow-stage">
             <small>03 · 治理 / 增信</small>
             <h3>治理与增信</h3>
-            <p>发布可以由可信域名控制方治理，也可以通过权威证书签名增信；Inbox 和 Relay 在使用前验证这些声明。</p>
+            <p>发布可以由可信域名控制方治理，也可以接入国标或行业规范的智能体身份 CA、智能体域名证书进行签名增信；Inbox 和 Relay 在使用前验证这些声明。</p>
             <div class="trust-stack">
               <div><b>域名控制方</b><span>治理命名空间、策略和撤销。</span></div>
-              <div><b>权威证书</b><span>用证书或凭证签名，为自声明身份增加信任背书。</span></div>
+              <div><b>权威证书 / CA</b><span>例如符合国标或行业规范的智能体身份 CA，或国家认证、权威机构签发的智能体域名证书，为自声明身份签名背书。</span></div>
             </div>
           </article>
           <div class="identity-outcome">
@@ -1352,11 +1352,11 @@
       ['.domain-record span', 'agent-042 → 公钥 + DID 证明 + Inbox 端点', 'agent-042 → public key + DID proof + inbox endpoint'],
       ['.flow-stage:nth-child(3) small', '03 · 治理 / 增信', '03 · Govern & endorse'],
       ['.flow-stage:nth-child(3) h3', '治理与增信', 'Governance and endorsement'],
-      ['.flow-stage:nth-child(3) p', '发布可以由可信域名控制方治理，也可以通过权威证书签名增信；Inbox 和 Relay 在使用前验证这些声明。', 'Publishing can be governed by a trusted domain controller or strengthened with authority certificate signatures; inboxes and relays verify these claims before use.'],
+      ['.flow-stage:nth-child(3) p', '发布可以由可信域名控制方治理，也可以接入国标或行业规范的智能体身份 CA、智能体域名证书进行签名增信；Inbox 和 Relay 在使用前验证这些声明。', 'Publishing can be governed by a trusted domain controller, or strengthened by standards-aligned agent identity CAs and agent domain certificates; inboxes and relays verify these claims before use.'],
       ['.trust-stack div:nth-child(1) b', '域名控制方', 'Domain controller'],
       ['.trust-stack div:nth-child(1) span', '治理命名空间、策略和撤销。', 'Governs namespace, policy, and revocation.'],
-      ['.trust-stack div:nth-child(2) b', '权威证书', 'Authority certificate'],
-      ['.trust-stack div:nth-child(2) span', '用证书或凭证签名，为自声明身份增加信任背书。', 'Certificate or credential signatures add trust endorsement to self-declared identities.'],
+      ['.trust-stack div:nth-child(2) b', '权威证书 / CA', 'Authority certificate / CA'],
+      ['.trust-stack div:nth-child(2) span', '例如符合国标或行业规范的智能体身份 CA，或国家认证、权威机构签发的智能体域名证书，为自声明身份签名背书。', 'For example, standards-aligned agent identity CAs, or agent domain certificates issued by nationally recognized or authoritative institutions, can sign and endorse self-declared identities.'],
       ['.identity-outcome b', 'Inbox / Relay 使用前验证', 'Inbox / Relay verifies before use'],
       ['.identity-outcome span:nth-child(2)', '密钥声明', 'Key claim'],
       ['.identity-outcome span:nth-child(3)', '域名证明', 'Domain proof'],
