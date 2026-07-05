@@ -467,75 +467,180 @@
       position:relative;
       z-index:2;
     }
-    .agent-map{
+    .identity-flow{
       position:relative;
-      width:min(100%, 980px);
-      height:520px;
+      width:min(100%, 1120px);
       margin:76px auto 0;
+      padding:28px;
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:18px;
+      text-align:left;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:38px;
+      background:
+        radial-gradient(700px 260px at 50% 10%, rgba(80,227,181,.13), transparent 70%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+      box-shadow:0 30px 90px rgba(0,0,0,.28);
+      backdrop-filter:blur(14px);
     }
-    .agent-map svg{
+    .identity-flow::before{
+      content:"";
       position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      overflow:visible;
+      left:66px;
+      right:66px;
+      top:116px;
+      height:2px;
+      background:linear-gradient(90deg, rgba(255,255,255,.12), rgba(80,227,181,.72), rgba(255,233,166,.72), rgba(255,255,255,.12));
     }
-    .node{
+    .flow-stage{
+      position:relative;
+      z-index:1;
+      min-height:370px;
+      padding:24px;
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:28px;
+      background:rgba(0,0,0,.46);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .flow-stage::before{
+      content:"";
+      width:52px;
+      height:52px;
+      border-radius:50%;
+      display:block;
+      margin-bottom:22px;
+      border:12px solid #fff;
+      background:#000;
+      box-shadow:0 0 0 1px rgba(80,227,181,.26), 0 18px 50px rgba(80,227,181,.12);
+    }
+    .flow-stage + .flow-stage::after{
+      content:"";
       position:absolute;
+      left:-26px;
+      top:79px;
+      width:28px;
+      height:28px;
+      border-top:2px solid rgba(255,255,255,.75);
+      border-right:2px solid rgba(255,255,255,.75);
+      transform:rotate(45deg);
+    }
+    .flow-stage small{
+      color:#ffe9a6;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .flow-stage h3{
+      margin:12px 0 0;
+      font-size:26px;
+      line-height:1.16;
+    }
+    .flow-stage p{
+      margin:14px 0 0;
+      color:#d6d6d6;
+      font-size:15px;
+      line-height:1.65;
+    }
+    .agent-cluster{
+      margin-top:auto;
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:8px;
+    }
+    .agent-cluster span{
+      min-height:36px;
+      border-radius:999px;
       display:grid;
       place-items:center;
-      width:108px;
-      height:108px;
-      border-radius:50%;
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;
+      background:rgba(255,255,255,.08);
+      font-size:12px;
+      font-weight:820;
+    }
+    .agent-cluster span:nth-child(3n+1){background:rgba(80,227,181,.16)}
+    .domain-record,
+    .trust-stack{
+      margin-top:auto;
+      display:grid;
+      gap:10px;
+    }
+    .domain-record{
+      padding:16px;
+      border-radius:20px;
       background:#fff;
       color:#000;
-      box-shadow:0 16px 60px rgba(81,227,182,.12);
-      font-weight:860;
-      font-size:14px;
-      line-height:1.15;
+      box-shadow:0 20px 60px rgba(0,0,0,.18);
     }
-    .node.large{width:148px;height:148px;font-size:18px}
-    .node span{
-      width:58px;
-      height:58px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:#000;
-      color:#fff;
+    .domain-record b{
+      font-size:22px;
+      line-height:1.1;
     }
-    .node em{
-      position:absolute;
-      top:100%;
-      margin-top:12px;
+    .domain-record code{
+      display:block;
+      margin-top:9px;
+      color:#333;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:13px;
+      white-space:normal;
+      overflow-wrap:anywhere;
+    }
+    .domain-record span{
+      margin-top:10px;
+      color:#5e6368;
+      font-size:13px;
+      line-height:1.45;
+    }
+    .trust-stack div{
+      padding:15px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.08);
+    }
+    .trust-stack b{
+      display:block;
       color:#fff;
-      font-style:normal;
-      white-space:nowrap;
       font-size:16px;
     }
-    .node.n1{left:6%;top:9%}
-    .node.n2{right:7%;top:16%}
-    .node.n3{left:21%;bottom:5%}
-    .node.n4{right:28%;bottom:0}
-    .sat{
-      position:absolute;
-      width:48px;
-      height:48px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
+    .trust-stack span{
+      display:block;
+      margin-top:5px;
+      color:#cfcfcf;
+      font-size:13px;
+      line-height:1.4;
+    }
+    .identity-outcome{
+      position:relative;
+      z-index:1;
+      grid-column:1 / -1;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+      padding:18px 20px;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:24px;
       background:#fff;
       color:#000;
-      font-weight:900;
-      box-shadow:0 12px 42px rgba(255,255,255,.12);
     }
-    .sat.s1{left:1%;top:2%}
-    .sat.s2{left:18%;top:22%}
-    .sat.s3{right:0;top:4%}
-    .sat.s4{right:22%;top:42%}
-    .sat.s5{left:14%;bottom:0}
-    .sat.s6{right:16%;bottom:12%}
-    .sat.s7{right:8%;bottom:34%}
+    .identity-outcome b{
+      margin-right:auto;
+      font-size:18px;
+      line-height:1.25;
+    }
+    .identity-outcome span{
+      border-radius:999px;
+      padding:8px 12px;
+      background:#000;
+      color:#fff;
+      font-size:13px;
+      font-weight:820;
+      white-space:nowrap;
+    }
 
     .business{
       background:#fff;
@@ -825,7 +930,13 @@
       .map-label{border-right:0;border-bottom:2px solid #000}
       .open-principles,
       .start-grid{grid-template-columns:1fr 1fr}
-      .agent-map{height:600px}
+      .identity-flow{
+        grid-template-columns:1fr;
+        max-width:720px;
+      }
+      .identity-flow::before,
+      .flow-stage + .flow-stage::after{display:none}
+      .flow-stage{min-height:auto}
     }
     @media (max-width: 760px){
       :root{--nav-h:74px}
@@ -861,14 +972,31 @@
       .remap{padding-bottom:160px}
       .map-cells{grid-template-columns:1fr}
       .map-cell + .map-cell{border-left:0;border-top:1px solid #dedede}
-      .agent-map{height:620px;margin-top:48px}
-      .node.large{width:116px;height:116px}
-      .node{width:88px;height:88px}
-      .node.n1{left:0;top:6%}
-      .node.n2{right:0;top:22%}
-      .node.n3{left:8%;bottom:8%}
-      .node.n4{right:14%;bottom:0}
-      .sat{width:40px;height:40px}
+      .identity-flow{
+        margin-top:48px;
+        padding:18px;
+        border-radius:28px;
+        gap:14px;
+      }
+      .flow-stage{
+        padding:20px;
+        border-radius:22px;
+      }
+      .flow-stage h3{font-size:23px}
+      .agent-cluster{grid-template-columns:repeat(3, minmax(0, 1fr))}
+      .identity-outcome{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        padding:16px;
+      }
+      .identity-outcome b{
+        grid-column:1 / -1;
+        margin-right:0;
+      }
+      .identity-outcome span{
+        text-align:center;
+        white-space:normal;
+      }
       .session-screen{grid-template-columns:1fr}
       .inbox-side{grid-template-columns:1fr 1fr;gap:10px}
       .receipt{grid-template-columns:38px 1fr}
@@ -1006,32 +1134,43 @@
             发布可以由可信域名控制方治理，也可以通过权威证书签名增信。
           </p>
         </div>
-        <div class="agent-map" aria-label="DID relay network">
-          <svg viewBox="0 0 980 520" aria-hidden="true">
-            <g stroke="rgba(255,255,255,.58)" stroke-width="1.4">
-              <line x1="120" y1="110" x2="272" y2="196"/>
-              <line x1="120" y1="110" x2="170" y2="32"/>
-              <line x1="120" y1="110" x2="72" y2="382"/>
-              <line x1="820" y1="148" x2="680" y2="284"/>
-              <line x1="820" y1="148" x2="900" y2="54"/>
-              <line x1="820" y1="148" x2="930" y2="318"/>
-              <line x1="320" y1="420" x2="590" y2="410"/>
-              <line x1="590" y1="410" x2="820" y2="148"/>
-              <line x1="320" y1="420" x2="120" y2="110"/>
-              <line x1="590" y1="410" x2="700" y2="470"/>
-            </g>
-          </svg>
-          <div class="node large n1"><span>DID</span><em>Client / Awiki Me</em></div>
-          <div class="node large n2"><span>Inbox</span><em>Agent Inbox</em></div>
-          <div class="node n3"><span>Relay</span><em>awiki.ai Relay</em></div>
-          <div class="node n4"><span>Edge</span><em>Optional path</em></div>
-          <div class="sat s1">ID</div>
-          <div class="sat s2">Sig</div>
-          <div class="sat s3">VC</div>
-          <div class="sat s4">AP2</div>
-          <div class="sat s5">Key</div>
-          <div class="sat s6">Pay</div>
-          <div class="sat s7">X402</div>
+        <div class="identity-flow" aria-label="Agent identity publication flow">
+          <article class="flow-stage">
+            <small>01 · 密钥自声明</small>
+            <h3>客户侧海量 Agent</h3>
+            <p>每个 Agent 先生成密钥，用公钥自声明身份。接入不依赖中心账号分配，适合客户侧快速创建大量智能体。</p>
+            <div class="agent-cluster" aria-hidden="true">
+              <span>A-01</span><span>A-02</span><span>A-03</span><span>A-04</span>
+              <span>A-05</span><span>A-06</span><span>A-07</span><span>A-08</span>
+              <span>A-09</span><span>A-10</span><span>A-11</span><span>...</span>
+            </div>
+          </article>
+          <article class="flow-stage">
+            <small>02 · 域名发布</small>
+            <h3>域名下发布可验证身份</h3>
+            <p>DID Document、handle、公钥和服务端点可以托管在客户域名下，形成可发现、可轮换、可验证的身份目录。</p>
+            <div class="domain-record">
+              <b>customer.com</b>
+              <code>/.well-known/awiki/agents.json</code>
+              <span>agent-042 → 公钥 + DID 证明 + Inbox 端点</span>
+            </div>
+          </article>
+          <article class="flow-stage">
+            <small>03 · 治理 / 增信</small>
+            <h3>治理与增信</h3>
+            <p>发布可以由可信域名控制方治理，也可以通过权威证书签名增信；Inbox 和 Relay 在使用前验证这些声明。</p>
+            <div class="trust-stack">
+              <div><b>域名控制方</b><span>治理命名空间、策略和撤销。</span></div>
+              <div><b>权威证书</b><span>用证书或凭证签名，为自声明身份增加信任背书。</span></div>
+            </div>
+          </article>
+          <div class="identity-outcome">
+            <b>Inbox / Relay 使用前验证</b>
+            <span>密钥声明</span>
+            <span>域名证明</span>
+            <span>DID 文档</span>
+            <span>证书增信</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1204,6 +1343,25 @@
       ['.map-row:nth-child(3) .map-cell:nth-child(3) span', '多域名和自主部署可通过身份声明互通。', 'Multi-domain and self-hosted deployments interoperate through identity declarations.'],
       ['#did h2', '智能体身份思考：密钥是身份核心，自声明降低接入门槛。', 'Agent identity thinking: keys are the identity core, and self-declaration lowers the entry barrier.'],
       ['#did .network-copy p', 'awiki.ai 支持客户侧海量智能体需求：Agent 可以先用密钥自声明身份，再把可验证身份信息托管在域名下发布。 发布可以由可信域名控制方治理，也可以通过权威证书签名增信。', 'awiki.ai supports massive customer-side agent identity needs: an agent can first self-declare identity with a key, then publish verifiable identity information under a domain. Publishing can be governed by trusted domain controllers or strengthened with authority certificate signatures.'],
+      ['.flow-stage:nth-child(1) small', '01 · 密钥自声明', '01 · Key self-claim'],
+      ['.flow-stage:nth-child(1) h3', '客户侧海量 Agent', 'Massive customer-side agents'],
+      ['.flow-stage:nth-child(1) p', '每个 Agent 先生成密钥，用公钥自声明身份。接入不依赖中心账号分配，适合客户侧快速创建大量智能体。', 'Each agent first generates a key and self-declares identity with its public key. Onboarding does not depend on central account assignment, so customers can create many agents quickly.'],
+      ['.flow-stage:nth-child(2) small', '02 · 域名发布', '02 · Domain publish'],
+      ['.flow-stage:nth-child(2) h3', '域名下发布可验证身份', 'Publish verifiable identity under a domain'],
+      ['.flow-stage:nth-child(2) p', 'DID Document、handle、公钥和服务端点可以托管在客户域名下，形成可发现、可轮换、可验证的身份目录。', 'DID documents, handles, public keys, and service endpoints can be hosted under the customer domain, forming a discoverable, rotatable, verifiable identity directory.'],
+      ['.domain-record span', 'agent-042 → 公钥 + DID 证明 + Inbox 端点', 'agent-042 → public key + DID proof + inbox endpoint'],
+      ['.flow-stage:nth-child(3) small', '03 · 治理 / 增信', '03 · Govern & endorse'],
+      ['.flow-stage:nth-child(3) h3', '治理与增信', 'Governance and endorsement'],
+      ['.flow-stage:nth-child(3) p', '发布可以由可信域名控制方治理，也可以通过权威证书签名增信；Inbox 和 Relay 在使用前验证这些声明。', 'Publishing can be governed by a trusted domain controller or strengthened with authority certificate signatures; inboxes and relays verify these claims before use.'],
+      ['.trust-stack div:nth-child(1) b', '域名控制方', 'Domain controller'],
+      ['.trust-stack div:nth-child(1) span', '治理命名空间、策略和撤销。', 'Governs namespace, policy, and revocation.'],
+      ['.trust-stack div:nth-child(2) b', '权威证书', 'Authority certificate'],
+      ['.trust-stack div:nth-child(2) span', '用证书或凭证签名，为自声明身份增加信任背书。', 'Certificate or credential signatures add trust endorsement to self-declared identities.'],
+      ['.identity-outcome b', 'Inbox / Relay 使用前验证', 'Inbox / Relay verifies before use'],
+      ['.identity-outcome span:nth-child(2)', '密钥声明', 'Key claim'],
+      ['.identity-outcome span:nth-child(3)', '域名证明', 'Domain proof'],
+      ['.identity-outcome span:nth-child(4)', 'DID 文档', 'DID document'],
+      ['.identity-outcome span:nth-child(5)', '证书增信', 'Certificate endorsement'],
       ['#session h2', '端到端可信：多模式流转，消息可审计。', 'End-to-end trust: multi-mode flow and auditable messages.'],
       ['#session p', '同一个智能体可以加入多个通信网，在多域网络之间可信流转信息。 点对点、群组和多方消息均可可信加密，服务各种协同场景；不同场景下的消息也能被审计。', 'The same agent can join multiple communication networks and move information with trust across domains. Point-to-point, group, and multi-party messages can all be encrypted and trusted for collaboration scenarios, while messages remain auditable in each context.'],
       ['#session .btn', '开始接入', 'Start integrating'],
