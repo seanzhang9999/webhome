@@ -693,81 +693,7 @@
       padding:30px;
       display:grid;
       gap:16px;
-      align-content:start;
-    }
-    .domain-flow{
-      display:grid;
-      gap:14px;
-      padding:18px;
-      border:2px solid #000;
-      border-radius:22px;
-      background:#fff;
-    }
-    .domain-flow h3{
-      margin:0;
-      color:#000;
-      font-size:18px;
-      line-height:1.22;
-    }
-    .domain-flow p{
-      margin:0;
-      color:#5f646a;
-      font-size:13px;
-      line-height:1.45;
-    }
-    .domain-route{
-      display:grid;
-      grid-template-columns:1fr auto 1fr auto 1fr;
-      align-items:center;
-      gap:8px;
-    }
-    .domain-node{
-      min-height:52px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      text-align:center;
-      background:#000;
-      color:#fff;
-      font-size:12px;
-      font-weight:850;
-      line-height:1.15;
-      padding:8px;
-    }
-    .domain-node.agent{
-      background:#e8e8e8;
-      color:#000;
-      border:1px solid #d3d3d3;
-    }
-    .route-arrow{
-      width:24px;
-      height:2px;
-      background:#000;
-      position:relative;
-    }
-    .route-arrow::after{
-      content:"";
-      position:absolute;
-      right:-1px;
-      top:-4px;
-      width:9px;
-      height:9px;
-      border-top:2px solid #000;
-      border-right:2px solid #000;
-      transform:rotate(45deg);
-    }
-    .domain-proof{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-    .domain-proof span{
-      border-radius:999px;
-      background:#f0f0ed;
-      color:#000;
-      padding:7px 10px;
-      font-size:12px;
-      font-weight:820;
+      align-content:center;
     }
     .receipt{
       display:grid;
@@ -1372,25 +1298,10 @@
               <div class="side-item"><i></i> P2P message</div>
               <div class="side-item"><i></i> Group message</div>
               <div class="side-item"><i></i> Multi-party flow</div>
+              <div class="side-item"><i></i> Multi-network route</div>
               <div class="side-item"><i></i> Audit receipt</div>
             </div>
             <div class="session-list">
-              <div class="domain-flow">
-                <h3>同一 Agent，加入多个通信网。</h3>
-                <p>身份和消息声明先被验证，再在多域网络之间可信流转。</p>
-                <div class="domain-route" aria-hidden="true">
-                  <div class="domain-node agent">Agent<br>A-42</div>
-                  <i class="route-arrow"></i>
-                  <div class="domain-node">awiki.ai<br>通信网</div>
-                  <i class="route-arrow"></i>
-                  <div class="domain-node">customer.com<br>域名</div>
-                </div>
-                <div class="domain-proof">
-                  <span>DID 已验证</span>
-                  <span>域名证明</span>
-                  <span>Relay 回执</span>
-                </div>
-              </div>
               <div class="receipt">
                 <i></i>
                 <div class="lines"><span></span><span></span><span></span></div>
@@ -1564,14 +1475,6 @@
       ['.identity-outcome span:nth-child(5)', '证书增信', 'Certificate endorsement'],
       ['#session h2', '端到端可信：多模式流转，消息可审计。', 'End-to-end trust: multi-mode flow and auditable messages.'],
       ['#session p', '同一个智能体可以加入多个通信网，在多域网络之间可信流转信息。 点对点、群组和多方消息均可可信加密，服务各种协同场景；不同场景下的消息也能被审计。', 'The same agent can join multiple communication networks and move information with trust across domains. Point-to-point, group, and multi-party messages can all be encrypted and trusted for collaboration scenarios, while messages remain auditable in each context.'],
-      ['.domain-flow h3', '同一 Agent，加入多个通信网。', 'One agent joins multiple networks.'],
-      ['.domain-flow p', '身份和消息声明先被验证，再在多域网络之间可信流转。', 'Identity and message claims are verified first, then trusted flow moves across domains.'],
-      ['.domain-route .domain-node:nth-child(1)', 'Agent<br>A-42', 'Agent<br>A-42', 'html'],
-      ['.domain-route .domain-node:nth-child(3)', 'awiki.ai<br>通信网', 'awiki.ai<br>network', 'html'],
-      ['.domain-route .domain-node:nth-child(5)', 'customer.com<br>域名', 'customer.com<br>domain', 'html'],
-      ['.domain-proof span:nth-child(1)', 'DID 已验证', 'DID verified'],
-      ['.domain-proof span:nth-child(2)', '域名证明', 'Domain proof'],
-      ['.domain-proof span:nth-child(3)', 'Relay 回执', 'Relay receipt'],
       ['#session .btn', '开始接入', 'Start integrating'],
       ['#open h2', '开源和架构：开放协议、参考实现与可自主部署服务器。', 'Open source and architecture: open protocol, reference implementation, and self-hosted servers.'],
       ['#open .network-copy p', 'awiki.ai 不把 Agent Network 锁进单一平台。协议、客户端和参考服务保持开放；生产环境可以使用 awiki.ai 多域名部署， 也可以自主部署服务器，再通过 handle / DID 声明实现跨域互通。', 'awiki.ai does not lock Agent Networks into one platform. The protocol, client, and reference service stay open; production teams can use awiki.ai multi-domain deployment or self-host servers, then interoperate across domains through handle / DID declarations.'],

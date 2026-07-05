@@ -295,10 +295,9 @@ https://github.com/seanzhang9999/webhome.git
 根据新的视觉评审反馈，本轮继续处理两个问题：
 
 1. “端到端可信”右侧 mockup 需要明确承接左侧文案中的“同一个智能体可以加入多个通信网，在多域网络之间可信流转信息”。
-   - 右侧设备 mockup 增加“同一 Agent，加入多个通信网”的内容模块。
-   - 用 `Agent A-42 → awiki.ai 通信网 → customer.com 域名` 表达同一身份在多域网络之间流转。
-   - 增加 `DID 已验证 / 域名证明 / Relay 回执` 状态标签。
-   - 下方继续保留 SIGNED / RELAYED / VERIFIED / RECEIPT 的审计回执流程。
+   - 经复盘，右侧新增“同一 Agent，加入多个通信网”的大模块会和左侧 `Multi-party flow` 语义重复，反而让图形解释变重。
+   - 删除右侧多域模块，让右侧继续专注表达 SIGNED / RELAYED / VERIFIED / RECEIPT 的审计状态。
+   - 左侧会话类型新增 `Multi-network route`，与 `Multi-party flow` 并列，用更轻的方式承接“同一个智能体可以加入多个通信网”的能力。
 
 2. “开始使用 awiki.ai”区块需要更平均。
    - 标题去掉中文句号，改为“开始使用 awiki.ai”。
