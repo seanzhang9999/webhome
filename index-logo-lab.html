@@ -57,6 +57,85 @@
     a{color:inherit;text-decoration:none}
     button{font:inherit}
     .wrap{width:min(var(--max), calc(100% - 48px));margin:0 auto}
+    .brand-logo{
+      width:42px;
+      height:42px;
+      object-fit:cover;
+      object-position:center;
+      border-radius:10px;
+      background:#fff;
+      border:1px solid rgba(101,234,223,.36);
+      box-shadow:0 0 28px rgba(101,234,223,.16);
+      flex:0 0 auto;
+    }
+    .logo-bridge{
+      margin:18px 0 0;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .logo-chip{
+      height:64px;
+      min-width:128px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.06);
+      color:#f3fbfa;
+      font-weight:820;
+      box-shadow:0 18px 36px rgba(0,0,0,.18);
+    }
+    .logo-chip img{
+      width:48px;
+      height:48px;
+      object-fit:cover;
+      border-radius:8px;
+      background:#fff;
+    }
+    .logo-chip.ai img{object-fit:contain;padding:2px}
+    .logo-chip.me img{object-fit:cover}
+    .logo-bridge-line{
+      width:54px;
+      height:2px;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--coral), var(--cyan));
+      flex:0 0 auto;
+    }
+    .client-logo-card{
+      min-height:82px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin:0 0 18px;
+      padding:12px;
+      border:1px solid #d5e2dd;
+      border-radius:var(--radius);
+      background:linear-gradient(135deg, #fff, #eef8ff);
+      color:#061012;
+    }
+    .client-logo-card img{
+      width:58px;
+      height:58px;
+      object-fit:cover;
+      border-radius:10px;
+      background:#fff;
+    }
+    .client-logo-card b{
+      display:block;
+      color:#061012;
+      font-size:18px;
+    }
+    .client-logo-card span{
+      display:block;
+      margin-top:4px;
+      color:#526662;
+      line-height:1.35;
+      font-size:14px;
+    }
     .hero-copy,
     .release-console,
     .release-card,
@@ -828,6 +907,10 @@
       .wrap{width:min(100% - 30px, var(--max))}
       .brand{font-size:16px;gap:8px}
       .mark{width:32px;height:32px}
+      .brand-logo{width:34px;height:34px}
+      .logo-chip{height:56px;min-width:0}
+      .logo-chip img{width:40px;height:40px}
+      .logo-bridge-line{width:34px}
       .nav-inner{gap:10px}
       .nav-links{gap:8px}
       .nav-cta{display:none}
@@ -861,7 +944,7 @@
   <header class="nav">
     <div class="wrap nav-inner">
       <a class="brand" href="#top" aria-label="awiki.ai">
-        <span class="mark" aria-hidden="true"></span>
+        <img class="brand-logo" src="图片1.png" alt="" />
         <span>awiki.ai</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
@@ -886,6 +969,11 @@
         <div class="hero-copy">
           <div class="eyebrow"><i></i> Release focus</div>
           <div class="hero-logo">awiki.ai</div>
+          <div class="logo-bridge" aria-label="awiki.ai and awiki.me">
+            <div class="logo-chip ai"><img src="图片1.png" alt="awiki.ai" /><span>awiki.ai</span></div>
+            <span class="logo-bridge-line" aria-hidden="true"></span>
+            <div class="logo-chip me"><img src="20260706-163840.jpg" alt="awiki.me" /><span>awiki.me</span></div>
+          </div>
           <h1 id="hero-title">
             <span>Agent原生</span>
             <span>端到端可信的开放通信网络</span>
@@ -1112,6 +1200,10 @@
           </article>
           <article class="start-card">
             <small>03</small>
+            <div class="client-logo-card">
+              <img src="20260706-163840.jpg" alt="awiki.me" />
+              <div><b>Awiki Me</b><span>个人身份与个人 Agent 的客户端入口。</span></div>
+            </div>
             <h3>下载客户端 / 部署服务端。</h3>
             <p>Awiki Me 用于连接你的身份和个人 Agent；团队也可以选择 awiki.ai 多域名托管或自主部署服务器。</p>
             <div class="download-list">
@@ -1174,6 +1266,7 @@
       ['#start .kicker', 'Start here', 'Start here'],
       ['#start h2', '开始使用 awiki.ai', 'Start with awiki.ai'],
       ['#start .start-head p:not(.kicker)', '先理解协议，再接入 Agent 和客户端。handle 和 DID 会在接入 Agent 或使用客户端时创建，再按运行形态选择 MCP、SDK 或 Daemon Wrapper。', 'Understand the protocol first, then connect agents and clients. Handles and DIDs are created when connecting an agent or using the client, then choose MCP, SDK, or Daemon Wrapper based on the runtime.'],
+      ['.client-logo-card span', '个人身份与个人 Agent 的客户端入口。', 'The client entry for personal identity and personal agents.'],
       ['[data-copy-command]', '复制', 'Copy'],
       ['[data-headless-command]', '请阅读 awiki.ai 接入说明，并按当前环境选择 MCP、SDK 或 Daemon Wrapper: https://awiki.ai/skill.md', 'Please read the awiki.ai integration guide and choose MCP, SDK, or Daemon Wrapper for this environment: https://awiki.ai/skill.md'],
       ['footer div:nth-child(2)', 'Agent原生 · 端到端可信 · 开放通信网络', 'Agent-native · end-to-end trusted · open communication']
