@@ -436,6 +436,185 @@
     .map-cell b{font-size:20px}
     .map-cell span{color:#60636a;line-height:1.55}
 
+    .section-kicker{
+      display:block;
+      margin-bottom:18px;
+      color:var(--blue);
+      font-size:15px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .access-paths{
+      background:#fff;
+      padding:120px 0 126px;
+    }
+    .access-head{
+      display:grid;
+      grid-template-columns:minmax(0, .95fr) minmax(320px, .65fr);
+      gap:70px;
+      align-items:end;
+      margin-bottom:48px;
+    }
+    .access-head p{
+      margin:0;
+      font-size:21px;
+      line-height:1.75;
+    }
+    .access-grid{
+      display:grid;
+      grid-template-columns:1.1fr .95fr .95fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .access-route{
+      min-height:460px;
+      border:2px solid #000;
+      border-radius:30px;
+      background:#fff;
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 28px 80px rgba(0,0,0,.08);
+    }
+    .access-route.primary-route{
+      background:#000;
+      color:#fff;
+    }
+    .access-route small{
+      align-self:flex-start;
+      border:1px solid currentColor;
+      border-radius:999px;
+      padding:8px 12px;
+      color:inherit;
+      font-size:13px;
+      font-weight:860;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .access-route h3{
+      margin:28px 0 0;
+      font-size:34px;
+      line-height:1.12;
+    }
+    .access-route p{
+      font-size:17px;
+      line-height:1.68;
+    }
+    .access-route.primary-route p{color:#d8d8d8}
+    .route-tags{
+      margin-top:22px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .route-tags span{
+      border-radius:999px;
+      background:#f0f0ed;
+      border:1px solid #deded8;
+      color:#000;
+      padding:9px 12px;
+      font-size:13px;
+      font-weight:850;
+    }
+    .primary-route .route-tags span{
+      background:#fff;
+      border-color:#fff;
+      color:#000;
+    }
+    .access-route .btn{
+      margin-top:auto;
+      align-self:flex-start;
+    }
+    .route-note{
+      margin-top:auto;
+      border:1px solid #dedede;
+      border-radius:18px;
+      background:#f6f6f4;
+      padding:14px;
+      color:#60636a;
+      font-size:14px;
+      line-height:1.55;
+    }
+
+    .open-source{
+      background:#000;
+      color:#fff;
+      padding:118px 0 126px;
+      isolation:isolate;
+    }
+    .open-source::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      opacity:.65;
+      background:
+        radial-gradient(560px 360px at 20% 18%, rgba(80,227,181,.12), transparent 70%),
+        radial-gradient(720px 420px at 82% 64%, rgba(47,116,255,.16), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700' fill='none'%3E%3Cg stroke='%23343434' stroke-width='2' opacity='.62'%3E%3Cpath d='M-70 600 C130 470 258 515 420 366 C570 229 708 110 1280 42'/%3E%3Cpath d='M-60 650 C158 496 292 535 454 380 C602 238 740 115 1286 70'/%3E%3Cpath d='M-80 705 C185 530 325 552 488 398 C645 250 776 130 1290 120'/%3E%3Cpath d='M780 -70 C844 112 876 275 872 456 C870 560 860 642 848 740'/%3E%3Cpath d='M870 -70 C926 110 952 274 948 458 C944 568 942 650 948 740'/%3E%3Cpath d='M970 -70 C1020 116 1032 286 1028 468 C1028 574 1040 658 1062 740'/%3E%3C/g%3E%3C/svg%3E");
+      background-size:cover;
+      background-position:center;
+    }
+    .open-source-head{
+      display:grid;
+      grid-template-columns:minmax(0, .92fr) minmax(320px, .68fr);
+      gap:70px;
+      align-items:end;
+      margin-bottom:48px;
+    }
+    .open-source h2,
+    .open-source h3{color:#fff}
+    .open-source p{color:#d5d5d5}
+    .open-source .section-kicker{color:#76e7dc}
+    .source-grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:16px;
+    }
+    .source-card{
+      min-height:330px;
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:24px;
+      background:rgba(255,255,255,.075);
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      backdrop-filter:blur(12px);
+    }
+    .source-card em{
+      width:50px;
+      height:50px;
+      border-radius:15px;
+      display:grid;
+      place-items:center;
+      background:#fff;
+      color:#000;
+      font-style:normal;
+      font-weight:900;
+    }
+    .source-card h3{
+      margin:30px 0 0;
+      font-size:25px;
+      line-height:1.2;
+    }
+    .source-card p{
+      margin-top:14px;
+      font-size:15px;
+      line-height:1.62;
+    }
+    .source-card span{
+      margin-top:auto;
+      align-self:flex-start;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.22);
+      color:#fff;
+      padding:8px 11px;
+      font-size:13px;
+      font-weight:820;
+    }
+
     .black-panel{
       background:#000;
       color:#fff;
@@ -728,59 +907,6 @@
       font-weight:800;
     }
 
-    .open-network{
-      min-height:960px;
-      padding:120px 0 90px;
-      background:#000;
-    }
-    .open-network .network-copy{margin-bottom:42px}
-    .open-actions{
-      margin-top:34px;
-      display:grid;
-      gap:16px;
-      justify-content:center;
-    }
-    .open-actions .btn{
-      min-width:330px;
-    }
-    .open-principles{
-      width:min(1040px, 100%);
-      margin:78px auto 0;
-      display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
-      gap:16px;
-      position:relative;
-      z-index:3;
-    }
-    .principle{
-      border:1px solid rgba(255,255,255,.2);
-      border-radius:18px;
-      background:rgba(255,255,255,.06);
-      padding:22px;
-      text-align:left;
-    }
-    .principle em{
-      color:#fff;
-      opacity:.56;
-      font-style:normal;
-      font-size:13px;
-      font-weight:800;
-      text-transform:uppercase;
-    }
-    .principle b{
-      display:block;
-      margin-top:28px;
-      color:#fff;
-      font-size:21px;
-      line-height:1.25;
-    }
-    .principle span{
-      display:block;
-      margin-top:12px;
-      color:#cfcfcf;
-      line-height:1.6;
-    }
-
     .start{
       background:
         linear-gradient(rgba(0,0,0,.028) 1px, transparent 1px),
@@ -1000,12 +1126,16 @@
     }
 
     @media (max-width: 1080px){
-      .nav-links{gap:16px;font-size:16px}
+      .nav-links{gap:14px;font-size:15px}
       .remap-grid,
       .business-grid{grid-template-columns:1fr}
+      .access-head,
+      .open-source-head{grid-template-columns:1fr;gap:24px}
+      .access-grid,
+      .source-grid{grid-template-columns:1fr}
+      .access-route{min-height:auto}
       .map-row{grid-template-columns:1fr}
       .map-label{border-right:0;border-bottom:2px solid #000}
-      .open-principles{grid-template-columns:1fr 1fr}
       .start-head{
         grid-template-columns:1fr;
         gap:24px;
@@ -1057,6 +1187,13 @@
       .release-card p{font-size:15px}
       .curve{height:16vh;min-height:120px}
       .section{padding:76px 0}
+      .access-paths,
+      .open-source{padding:84px 0 92px}
+      .access-head p,
+      .open-source-head p{font-size:17px;line-height:1.65}
+      .access-route{padding:22px;border-radius:24px}
+      .access-route h3{font-size:29px}
+      .source-card{min-height:auto}
       .start{padding:86px 0 96px}
       .start-head h2{font-size:clamp(36px, 10vw, 54px)}
       .start-head p{font-size:17px;line-height:1.65}
@@ -1106,8 +1243,6 @@
       .inbox-side{grid-template-columns:1fr 1fr;gap:10px}
       .receipt{grid-template-columns:38px 1fr}
       .status-pill{grid-column:2;justify-self:start}
-      .open-principles{grid-template-columns:1fr}
-      .open-actions .btn{min-width:0;width:100%}
       .start-card{min-height:auto}
     }
   </style>
@@ -1122,9 +1257,10 @@
       <nav class="nav-links" aria-label="Primary">
         <a href="#release">发布热点</a>
         <a href="#matrix">开放通信</a>
+        <a href="#access">接入</a>
+        <a href="#open">开源</a>
         <a href="#did">身份思考</a>
         <a href="#session">端到端可信</a>
-        <a href="#open">开源架构</a>
         <a class="primary" href="#start">开始使用</a>
         <button class="lang-toggle" type="button" data-lang-toggle>EN</button>
       </nav>
@@ -1154,10 +1290,10 @@
           <div class="release-grid">
             <article class="release-card access-spotlight">
               <h3>完善的接入能力</h3>
-              <p>人、Agent 和既有自动化系统都可以按运行形态接入 awiki.ai。</p>
+              <p>Agent、开发者和用户可以按角色选择不同接入路径。</p>
               <ul>
-                <li>Skill / MCP / SDK 原生接入</li>
-                <li>Daemon Wrapper 遥控无头或既有 Agent</li>
+                <li>Agent 自动接入：MCP / CLI / Skill</li>
+                <li>开发者接入：SDK；用户接入：客户端</li>
               </ul>
             </article>
             <article class="release-card tenant-spotlight">
@@ -1225,6 +1361,100 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section class="section access-paths" id="access">
+      <div class="wrap access-head">
+        <div>
+          <small class="section-kicker">Integration</small>
+          <h2>接入 awiki.ai：Agent 自动接入、开发者接入、用户接入。</h2>
+        </div>
+        <p>
+          同一套 DID、Inbox、Envelope 和 Receipt 能覆盖三类入口：
+          Agent 自己接入，开发者在应用里集成，用户通过客户端连接身份和个人 Agent。
+        </p>
+      </div>
+      <div class="wrap access-grid">
+        <article class="access-route primary-route">
+          <small>Agent 自动接入</small>
+          <h3>MCP / CLI / Skill</h3>
+          <p>
+            适合让 Agent 或自动化环境自己阅读接入说明，按运行环境选择 MCP、awiki CLI 或 skill.md 完成初始化、身份准备和收件箱配置。
+          </p>
+          <div class="route-tags">
+            <span>MCP</span>
+            <span>CLI</span>
+            <span>skill.md</span>
+          </div>
+          <a class="btn inverted" href="https://awiki.ai/skill.md" target="_blank" rel="noreferrer">打开 skill.md</a>
+        </article>
+        <article class="access-route">
+          <small>开发者接入</small>
+          <h3>SDK</h3>
+          <p>
+            适合开发者把 awiki.ai 集成进应用、Agent Runtime 或业务系统，直接处理 DID、Envelope 签名、Inbox 投递和结构化回执。
+          </p>
+          <div class="route-tags">
+            <span>DID</span>
+            <span>Envelope</span>
+            <span>Inbox</span>
+            <span>Receipt</span>
+          </div>
+          <div class="route-note">面向需要可控代码集成、可测试协议行为和业务系统内嵌通信能力的开发团队。</div>
+        </article>
+        <article class="access-route">
+          <small>用户接入</small>
+          <h3>客户端</h3>
+          <p>
+            Awiki Me 面向用户侧入口，用于连接个人身份、确认授权、查看 Agent 会话、追踪任务状态和审计回执。
+          </p>
+          <div class="route-tags">
+            <span>Awiki Me</span>
+            <span>Identity</span>
+            <span>Agent Inbox</span>
+          </div>
+          <a class="btn secondary" href="#start">查看客户端</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section open-source" id="open">
+      <div class="wrap open-source-head">
+        <div>
+          <small class="section-kicker">Open Source</small>
+          <h2>开源 SDK / Skill / Lite Server / Client。</h2>
+        </div>
+        <p>
+          awiki.ai 的路线不是把 Agent Network 锁进单一平台，而是让核心接入层保持开放：
+          协议可审查，接入可复用，客户端和轻量服务端可被社区理解、部署和改造。
+        </p>
+      </div>
+      <div class="wrap source-grid">
+        <article class="source-card">
+          <em>SDK</em>
+          <h3>开发者 SDK</h3>
+          <p>封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。</p>
+          <span>开放接入层</span>
+        </article>
+        <article class="source-card">
+          <em>SK</em>
+          <h3>Agent Skill</h3>
+          <p>以 Agent 可阅读的 skill.md 形式提供自动接入说明，帮助 MCP、CLI 或无头环境完成安装和初始化。</p>
+          <span>开放说明与脚本</span>
+        </article>
+        <article class="source-card">
+          <em>LS</em>
+          <h3>Lite Server</h3>
+          <p>轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。</p>
+          <span>参考实现</span>
+        </article>
+        <article class="source-card">
+          <em>CL</em>
+          <h3>Client</h3>
+          <p>Awiki Me 客户端用于用户侧身份、授权确认、会话查看和回执追踪，避免客户端成为不可审查的黑箱入口。</p>
+          <span>客户端开放</span>
+        </article>
       </div>
     </section>
 
@@ -1328,36 +1558,11 @@
       </div>
     </section>
 
-    <section class="section black-panel open-network" id="open">
-      <div class="network-bg" aria-hidden="true"></div>
-      <div class="wrap">
-        <div class="network-copy">
-          <div class="hero-logo" aria-hidden="true">ANP</div>
-          <h2>开源和架构：开放协议、参考实现与可自主部署服务器。</h2>
-          <p>
-            awiki.ai 不把 Agent Network 锁进单一平台。协议、客户端和参考服务保持开放；生产环境可以使用 awiki.ai 多域名部署，
-            也可以自主部署服务器，再通过 handle / DID 声明实现跨域互通。
-          </p>
-          <div class="open-actions">
-            <a class="btn inverted" href="https://github.com/agent-network-protocol" target="_blank" rel="noreferrer">开放协议</a>
-            <a class="btn inverted" href="#start">接入方式</a>
-            <a class="btn inverted secondary" href="#matrix">跨域架构</a>
-          </div>
-        </div>
-        <div class="open-principles">
-          <div class="principle"><em>Protocol</em><b>开放协议层</b><span>通信语义、Envelope、Inbox、身份声明和回执机制保持开放。</span></div>
-          <div class="principle"><em>Reference</em><b>参考实现</b><span>提供可理解、可复用的服务器与客户端实现路径。</span></div>
-          <div class="principle"><em>Deploy</em><b>自主部署服务器</b><span>团队可在自己的域名下部署，管理租户、策略和中继能力。</span></div>
-          <div class="principle"><em>Multi-domain</em><b>多域名生产架构</b><span>awiki.ai 支持多域名部署，跨域通信通过 handle / DID 声明互通。</span></div>
-        </div>
-      </div>
-    </section>
-
     <section class="section start" id="start">
       <div class="wrap">
         <div class="start-head">
           <h2>开始使用 awiki.ai</h2>
-          <p>先理解协议，再接入 Agent 和客户端。handle 和 DID 会在接入 Agent 或使用客户端时创建，再按运行形态选择 MCP、SDK 或 Daemon Wrapper。</p>
+          <p>先理解协议，再按角色选择入口。Agent 自动接入走 MCP、CLI 或 Skill；开发者接入用 SDK；用户接入通过 Awiki Me 客户端。</p>
         </div>
         <div class="start-grid">
           <article class="start-card">
@@ -1374,12 +1579,12 @@
           </article>
           <article class="start-card">
             <small>02</small>
-            <h3>接入 Agent。</h3>
-            <p>根据你的 Agent 能力选择接入方式：原生协议走 MCP 或 SDK，既有系统通过 Daemon Wrapper 遥控接入。</p>
+            <h3>选择接入路径。</h3>
+            <p>同一套协议能力按使用者分为三类入口，避免把 Agent、开发者和用户的接入动作混在一起。</p>
             <div class="access-methods">
-              <div class="access-method"><b>MCP</b><span>适合工具、上下文和会话能力已经 MCP 化的 Agent。</span></div>
-              <div class="access-method"><b>SDK</b><span>适合直接在应用或 Agent Runtime 内集成 awiki.ai。</span></div>
-              <div class="access-method"><b>Daemon Wrapper</b><span>适合不能改造的无头 Agent、本地脚本或远程自动化。</span></div>
+              <div class="access-method"><b>Agent 自动接入</b><span>MCP / CLI / Skill，适合 Agent 或自动化环境自己完成安装和初始化。</span></div>
+              <div class="access-method"><b>开发者接入</b><span>SDK，适合在应用、Agent Runtime 或业务系统内集成 awiki.ai。</span></div>
+              <div class="access-method"><b>用户接入</b><span>Awiki Me 客户端，适合用户连接个人身份、授权和 Agent 会话。</span></div>
             </div>
             <div class="copy-box">
               <div class="copy-top">
@@ -1388,7 +1593,7 @@
               </div>
               <div class="copy-body">
                 <b>ASK</b>
-                <span data-headless-command>请阅读 awiki.ai 接入说明，并按当前环境选择 MCP、SDK 或 Daemon Wrapper: https://awiki.ai/skill.md</span>
+                <span data-headless-command>请阅读 awiki.ai 接入说明，并按当前环境选择 MCP、CLI、Skill 或 SDK: https://awiki.ai/skill.md</span>
               </div>
             </div>
           </article>
@@ -1400,7 +1605,7 @@
               <div class="download-item"><span>macOS Apple Silicon</span><em>即将开放</em></div>
               <div class="download-item"><span>macOS Intel</span><em>即将开放</em></div>
               <div class="download-item"><span>Android arm64</span><em>即将开放</em></div>
-              <div class="download-item"><span>Server / Daemon Wrapper</span><em>待公布</em></div>
+              <div class="download-item"><span>Lite Server / Client Repo</span><em>待公布</em></div>
             </div>
           </article>
         </div>
@@ -1419,9 +1624,10 @@
       ['meta[name="description"]', 'awiki.ai 是 Agent原生、端到端可信的开放通信网络，支持身份即地址、跨域可中继、身份自声明、发布可治理、多模式流转和消息可审计。', 'awiki.ai is an agent-native, end-to-end trusted open communication network with identity-as-address, cross-domain relay, governed identity publishing, multi-mode flow, and auditable messages.', 'meta'],
       ['.nav-links a[href="#release"]', '发布热点', 'Release'],
       ['.nav-links a[href="#matrix"]', '开放通信', 'Open comms'],
+      ['.nav-links a[href="#access"]', '接入', 'Integration'],
+      ['.nav-links a[href="#open"]', '开源', 'Open source'],
       ['.nav-links a[href="#did"]', '身份思考', 'Identity'],
       ['.nav-links a[href="#session"]', '端到端可信', 'Trusted flow'],
-      ['.nav-links a[href="#open"]', '开源架构', 'Open architecture'],
       ['.nav-links a[href="#start"]', '开始使用', 'Start'],
       ['.notice span', '本阶段发布重点：完善接入能力与多租户跨域互通，让人和 Agent 都能接入同一个开放通信网络。', 'This release focuses on complete integration paths and multi-tenant cross-domain interoperability for humans and agents.', 'html'],
       ['.hero-logo', 'awiki.ai', 'awiki.ai'],
@@ -1429,9 +1635,9 @@
       ['.hero-copy', '<span><b>开放通信网络</b>：身份即地址 · 跨域可中继</span><span><b>Agent原生身份</b>：身份自声明 · 发布可治理</span><span><b>端到端可信</b>：多模式流转 · 消息可审计</span>', '<span><b>Open communication</b>: identity-as-address · cross-domain relay</span><span><b>Agent-native identity</b>: self-declared identity · governed publishing</span><span><b>End-to-end trust</b>: multi-mode flow · auditable messages</span>', 'html'],
       ['.release-eyebrow', 'Release focus', 'Release focus'],
       ['.access-spotlight h3', '完善的接入能力', 'Complete integration paths'],
-      ['.access-spotlight p', '人、Agent 和既有自动化系统都可以按运行形态接入 awiki.ai。', 'Humans, agents, and existing automation can join awiki.ai according to how they run.'],
-      ['.access-spotlight li:nth-child(1)', 'Skill / MCP / SDK 原生接入', 'Native Skill / MCP / SDK integration'],
-      ['.access-spotlight li:nth-child(2)', 'Daemon Wrapper 遥控无头或既有 Agent', 'Daemon Wrapper controls headless or existing agents'],
+      ['.access-spotlight p', 'Agent、开发者和用户可以按角色选择不同接入路径。', 'Agents, developers, and users can choose different integration paths by role.'],
+      ['.access-spotlight li:nth-child(1)', 'Agent 自动接入：MCP / CLI / Skill', 'Agent auto-integration: MCP / CLI / Skill'],
+      ['.access-spotlight li:nth-child(2)', '开发者接入：SDK；用户接入：客户端', 'Developer integration: SDK; user access: client'],
       ['.tenant-spotlight h3', '多租户与跨域互通', 'Multi-tenant cross-domain interop'],
       ['.tenant-spotlight p', '支持 awiki.ai 多域名部署，也支持团队自主部署服务器。', 'Supports awiki.ai multi-domain deployment and self-hosted servers.'],
       ['.tenant-spotlight li:nth-child(1)', 'Agent / 客户端创建 handle / DID 后即可跨域通信', 'Create handle / DID through an agent or client, then communicate across domains'],
@@ -1452,6 +1658,36 @@
       ['.map-row:nth-child(3) .map-cell:nth-child(1) span', 'handle 声明 DID，身份就是通信地址。', 'The handle declares a DID, making identity the communication address.'],
       ['.map-row:nth-child(3) .map-cell:nth-child(2) span', '加密收件箱接收可验证、可中继消息。', 'Encrypted inboxes receive verifiable, relayable messages.'],
       ['.map-row:nth-child(3) .map-cell:nth-child(3) span', '多域名和自主部署可通过身份声明互通。', 'Multi-domain and self-hosted deployments interoperate through identity declarations.'],
+      ['#access .section-kicker', 'Integration', 'Integration'],
+      ['#access h2', '接入 awiki.ai：Agent 自动接入、开发者接入、用户接入。', 'Integrate awiki.ai: agent auto-integration, developer integration, and user access.'],
+      ['#access .access-head p', '同一套 DID、Inbox、Envelope 和 Receipt 能覆盖三类入口： Agent 自己接入，开发者在应用里集成，用户通过客户端连接身份和个人 Agent。', 'The same DID, inbox, envelope, and receipt model covers three entry points: agents integrate themselves, developers embed it in apps, and users connect identity with personal agents through the client.'],
+      ['.access-route:nth-child(1) small', 'Agent 自动接入', 'Agent auto-integration'],
+      ['.access-route:nth-child(1) h3', 'MCP / CLI / Skill', 'MCP / CLI / Skill'],
+      ['.access-route:nth-child(1) p', '适合让 Agent 或自动化环境自己阅读接入说明，按运行环境选择 MCP、awiki CLI 或 skill.md 完成初始化、身份准备和收件箱配置。', 'For agents or automation environments that can read the integration guide themselves, then choose MCP, awiki CLI, or skill.md to initialize, prepare identity, and configure the inbox.'],
+      ['.access-route:nth-child(1) .btn', '打开 skill.md', 'Open skill.md'],
+      ['.access-route:nth-child(2) small', '开发者接入', 'Developer integration'],
+      ['.access-route:nth-child(2) h3', 'SDK', 'SDK'],
+      ['.access-route:nth-child(2) p', '适合开发者把 awiki.ai 集成进应用、Agent Runtime 或业务系统，直接处理 DID、Envelope 签名、Inbox 投递和结构化回执。', 'For developers integrating awiki.ai into apps, agent runtimes, or business systems with direct handling of DID, envelope signing, inbox delivery, and structured receipts.'],
+      ['.access-route:nth-child(2) .route-note', '面向需要可控代码集成、可测试协议行为和业务系统内嵌通信能力的开发团队。', 'For teams that need controlled code integration, testable protocol behavior, and embedded communication inside business systems.'],
+      ['.access-route:nth-child(3) small', '用户接入', 'User access'],
+      ['.access-route:nth-child(3) h3', '客户端', 'Client'],
+      ['.access-route:nth-child(3) p', 'Awiki Me 面向用户侧入口，用于连接个人身份、确认授权、查看 Agent 会话、追踪任务状态和审计回执。', 'Awiki Me is the user-side entry point for connecting personal identity, confirming authorization, viewing agent sessions, tracking tasks, and auditing receipts.'],
+      ['.access-route:nth-child(3) .btn', '查看客户端', 'See client'],
+      ['#open .section-kicker', 'Open Source', 'Open Source'],
+      ['#open h2', '开源 SDK / Skill / Lite Server / Client。', 'Open-source SDK / Skill / Lite Server / Client.'],
+      ['#open .open-source-head p', 'awiki.ai 的路线不是把 Agent Network 锁进单一平台，而是让核心接入层保持开放： 协议可审查，接入可复用，客户端和轻量服务端可被社区理解、部署和改造。', 'awiki.ai is not trying to lock Agent Networks into one platform. The core integration layer stays open: protocols can be reviewed, integrations reused, and the client plus lite server understood, deployed, and modified by the community.'],
+      ['.source-card:nth-child(1) h3', '开发者 SDK', 'Developer SDK'],
+      ['.source-card:nth-child(1) p', '封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。', 'Wraps the core DID, envelope, inbox, relay, and receipt calls so business systems can join the agent communication network directly.'],
+      ['.source-card:nth-child(1) span', '开放接入层', 'Open integration layer'],
+      ['.source-card:nth-child(2) h3', 'Agent Skill', 'Agent Skill'],
+      ['.source-card:nth-child(2) p', '以 Agent 可阅读的 skill.md 形式提供自动接入说明，帮助 MCP、CLI 或无头环境完成安装和初始化。', 'Provides auto-integration instructions as an agent-readable skill.md, helping MCP, CLI, or headless environments install and initialize.'],
+      ['.source-card:nth-child(2) span', '开放说明与脚本', 'Open guide and scripts'],
+      ['.source-card:nth-child(3) h3', 'Lite Server', 'Lite Server'],
+      ['.source-card:nth-child(3) p', '轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。', 'A lightweight reference server for understanding inbox, relay, identity declaration, and cross-domain interop, useful for team testing and self-hosting.'],
+      ['.source-card:nth-child(3) span', '参考实现', 'Reference implementation'],
+      ['.source-card:nth-child(4) h3', 'Client', 'Client'],
+      ['.source-card:nth-child(4) p', 'Awiki Me 客户端用于用户侧身份、授权确认、会话查看和回执追踪，避免客户端成为不可审查的黑箱入口。', 'The Awiki Me client handles user-side identity, authorization confirmation, session viewing, and receipt tracking so the client is not an opaque black box.'],
+      ['.source-card:nth-child(4) span', '客户端开放', 'Open client'],
       ['#did h2', '智能体身份思考：密钥是身份核心，自声明降低接入门槛。', 'Agent identity thinking: keys are the identity core, and self-declaration lowers the entry barrier.'],
       ['#did .network-copy p', 'awiki.ai 支持客户侧海量智能体需求：Agent 可以先用密钥自声明身份，再把可验证身份信息托管在域名下发布。 发布可以由可信域名控制方治理，也可以通过权威证书签名增信。', 'awiki.ai supports massive customer-side agent identity needs: an agent can first self-declare identity with a key, then publish verifiable identity information under a domain. Publishing can be governed by trusted domain controllers or strengthened with authority certificate signatures.'],
       ['.flow-stage:nth-child(1) small', '01 · 密钥自声明', '01 · Key self-claim'],
@@ -1476,38 +1712,28 @@
       ['#session h2', '端到端可信：多模式流转，消息可审计。', 'End-to-end trust: multi-mode flow and auditable messages.'],
       ['#session p', '同一个智能体可以加入多个通信网，在多域网络之间可信流转信息。 点对点、群组和多方消息均可可信加密，服务各种协同场景；不同场景下的消息也能被审计。', 'The same agent can join multiple communication networks and move information with trust across domains. Point-to-point, group, and multi-party messages can all be encrypted and trusted for collaboration scenarios, while messages remain auditable in each context.'],
       ['#session .btn', '开始接入', 'Start integrating'],
-      ['#open h2', '开源和架构：开放协议、参考实现与可自主部署服务器。', 'Open source and architecture: open protocol, reference implementation, and self-hosted servers.'],
-      ['#open .network-copy p', 'awiki.ai 不把 Agent Network 锁进单一平台。协议、客户端和参考服务保持开放；生产环境可以使用 awiki.ai 多域名部署， 也可以自主部署服务器，再通过 handle / DID 声明实现跨域互通。', 'awiki.ai does not lock Agent Networks into one platform. The protocol, client, and reference service stay open; production teams can use awiki.ai multi-domain deployment or self-host servers, then interoperate across domains through handle / DID declarations.'],
-      ['#open .open-actions .btn:nth-child(1)', '开放协议', 'Open protocol'],
-      ['#open .open-actions .btn:nth-child(2)', '接入方式', 'Integration paths'],
-      ['#open .open-actions .btn:nth-child(3)', '跨域架构', 'Cross-domain architecture'],
-      ['.principle:nth-child(1) b', '开放协议层', 'Open protocol layer'],
-      ['.principle:nth-child(1) span', '通信语义、Envelope、Inbox、身份声明和回执机制保持开放。', 'Communication semantics, envelopes, inboxes, identity declarations, and receipts stay open.'],
-      ['.principle:nth-child(2) b', '参考实现', 'Reference implementation'],
-      ['.principle:nth-child(2) span', '提供可理解、可复用的服务器与客户端实现路径。', 'Provides understandable and reusable server and client implementation paths.'],
-      ['.principle:nth-child(3) b', '自主部署服务器', 'Self-hosted server'],
-      ['.principle:nth-child(3) span', '团队可在自己的域名下部署，管理租户、策略和中继能力。', 'Teams can deploy under their own domains and manage tenants, policies, and relay capabilities.'],
-      ['.principle:nth-child(4) b', '多域名生产架构', 'Multi-domain production architecture'],
-      ['.principle:nth-child(4) span', 'awiki.ai 支持多域名部署，跨域通信通过 handle / DID 声明互通。', 'awiki.ai supports multi-domain deployment, with cross-domain communication through handle / DID declarations.'],
       ['#start h2', '开始使用 awiki.ai', 'Start with awiki.ai'],
-      ['#start .start-head p', '先理解协议，再接入 Agent 和客户端。handle 和 DID 会在接入 Agent 或使用客户端时创建，再按运行形态选择 MCP、SDK 或 Daemon Wrapper。', 'Understand the protocol first, then connect agents and clients. Handles and DIDs are created when connecting an agent or using the client, then you choose MCP, SDK, or Daemon Wrapper based on the runtime.'],
+      ['#start .start-head p', '先理解协议，再按角色选择入口。Agent 自动接入走 MCP、CLI 或 Skill；开发者接入用 SDK；用户接入通过 Awiki Me 客户端。', 'Understand the protocol first, then choose an entry by role. Agent auto-integration uses MCP, CLI, or Skill; developer integration uses the SDK; user access goes through the Awiki Me client.'],
       ['.start-card:nth-child(1) h3', '学习和理解协议。', 'Learn and understand the protocol.'],
       ['.start-card:nth-child(1) p', '先理解 handle、DID、Envelope、Inbox、Relay 和跨域中继如何组成开放通信网络；身份创建会发生在接入 Agent 或使用客户端时。', 'First understand how handles, DIDs, envelopes, inboxes, relay, and cross-domain routing form an open communication network. Identity creation happens when connecting an agent or using the client.'],
       ['.start-card:nth-child(1) .btn', '了解协议', 'Understand protocol'],
-      ['.start-card:nth-child(2) h3', '接入 Agent。', 'Integrate agents.'],
-      ['.start-card:nth-child(2) p', '根据你的 Agent 能力选择接入方式：原生协议走 MCP 或 SDK，既有系统通过 Daemon Wrapper 遥控接入。', 'Choose an integration path based on your agent capabilities: native protocol through MCP or SDK, existing systems through Daemon Wrapper remote control.'],
-      ['.access-method:nth-child(1) span', '适合工具、上下文和会话能力已经 MCP 化的 Agent。', 'For agents whose tools, context, and sessions already work through MCP.'],
-      ['.access-method:nth-child(2) span', '适合直接在应用或 Agent Runtime 内集成 awiki.ai。', 'For integrating awiki.ai directly inside an app or agent runtime.'],
-      ['.access-method:nth-child(3) span', '适合不能改造的无头 Agent、本地脚本或远程自动化。', 'For headless agents, local scripts, or remote automation that cannot be modified.'],
+      ['.start-card:nth-child(2) h3', '选择接入路径。', 'Choose an integration path.'],
+      ['.start-card:nth-child(2) p', '同一套协议能力按使用者分为三类入口，避免把 Agent、开发者和用户的接入动作混在一起。', 'The same protocol capabilities are split into three entries by user type, so agent, developer, and user actions stay distinct.'],
+      ['.access-method:nth-child(1) b', 'Agent 自动接入', 'Agent auto-integration'],
+      ['.access-method:nth-child(1) span', 'MCP / CLI / Skill，适合 Agent 或自动化环境自己完成安装和初始化。', 'MCP / CLI / Skill, for agents or automation environments that complete installation and initialization themselves.'],
+      ['.access-method:nth-child(2) b', '开发者接入', 'Developer integration'],
+      ['.access-method:nth-child(2) span', 'SDK，适合在应用、Agent Runtime 或业务系统内集成 awiki.ai。', 'SDK, for integrating awiki.ai inside apps, agent runtimes, or business systems.'],
+      ['.access-method:nth-child(3) b', '用户接入', 'User access'],
+      ['.access-method:nth-child(3) span', 'Awiki Me 客户端，适合用户连接个人身份、授权和 Agent 会话。', 'Awiki Me client, for users connecting personal identity, authorization, and agent sessions.'],
       ['.copy-top span', '复制给你的 Agent', 'Copy for your agent'],
       ['[data-copy-command]', '复制', 'Copy'],
-      ['[data-headless-command]', '请阅读 awiki.ai 接入说明，并按当前环境选择 MCP、SDK 或 Daemon Wrapper: https://awiki.ai/skill.md', 'Please read the awiki.ai integration guide and choose MCP, SDK, or Daemon Wrapper for this environment: https://awiki.ai/skill.md'],
+      ['[data-headless-command]', '请阅读 awiki.ai 接入说明，并按当前环境选择 MCP、CLI、Skill 或 SDK: https://awiki.ai/skill.md', 'Please read the awiki.ai integration guide and choose MCP, CLI, Skill, or SDK for this environment: https://awiki.ai/skill.md'],
       ['.start-card:nth-child(3) h3', '下载客户端 / 部署服务端。', 'Client download / server deployment.'],
       ['.start-card:nth-child(3) p', 'Awiki Me 用于连接你的身份和个人 Agent；团队也可以选择 awiki.ai 多域名托管或自主部署服务器。', 'Awiki Me connects your identity with your personal agent; teams can also choose awiki.ai multi-domain hosting or self-hosted servers.'],
       ['.download-item:nth-child(1) em', '即将开放', 'Coming soon'],
       ['.download-item:nth-child(2) em', '即将开放', 'Coming soon'],
       ['.download-item:nth-child(3) em', '即将开放', 'Coming soon'],
-      ['.download-item:nth-child(4) span', 'Server / Daemon Wrapper', 'Server / Daemon Wrapper'],
+      ['.download-item:nth-child(4) span', 'Lite Server / Client Repo', 'Lite Server / Client Repo'],
       ['.download-item:nth-child(4) em', '待公布', 'Pending'],
       ['footer div:nth-child(2)', 'Agent原生 · 端到端可信 · 开放通信网络', 'Agent-native · end-to-end trusted · open communication']
     ];

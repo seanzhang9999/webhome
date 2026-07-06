@@ -307,3 +307,19 @@ https://github.com/seanzhang9999/webhome.git
    - 移动端仍保持单列自然高度，避免为了等高而制造大面积空白。
 
 本轮已用 Chromium 渲染检查 `#session` 和 `#start` 的桌面与移动端布局，未发现横向溢出。
+
+## 16. 新增“接入”和“开源”两个页面 tab
+
+根据新的内容结构要求，本轮把“接入”和“开源”作为第三、第四个导航 tab 插入 `index-matrix-inspired.html`，放在“开放通信”之后、“身份思考”之前。
+
+主要调整：
+
+- 新增 `#access` 分区，把接入方式按角色拆成三类：
+  - Agent 自动接入：MCP / CLI / Skill。
+  - 开发者接入：SDK。
+  - 用户接入：Awiki Me 客户端。
+- 新增并前移 `#open` 分区，把开源范围明确为 SDK / Skill / Lite Server / Client。
+- 删除旧的后置“开源架构”区块，避免和新的开源 tab 重复。
+- 首屏发布热点同步改为新的接入分类，不再以 Daemon Wrapper 作为主叙事。
+- “开始使用 awiki.ai”里的第二张卡片同步改为“选择接入路径”，并更新复制给 Agent 的 skill.md 提示语。
+- 中英文切换表同步加入新增分区、导航和文案。
