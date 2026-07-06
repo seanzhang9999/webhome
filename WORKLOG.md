@@ -323,3 +323,14 @@ https://github.com/seanzhang9999/webhome.git
 - 首屏发布热点同步改为新的接入分类，不再以 Daemon Wrapper 作为主叙事。
 - “开始使用 awiki.ai”里的第二张卡片同步改为“选择接入路径”，并更新复制给 Agent 的 skill.md 提示语。
 - 中英文切换表同步加入新增分区、导航和文案。
+
+## 17. 接入与开源区块细节收敛
+
+根据新一轮视觉反馈，本轮继续调整 `index-matrix-inspired.html` 的 `#access` 和 `#open` 两个区块：
+
+- `#access` 主标题从“接入 awiki.ai：Agent 自动接入、开发者接入、用户接入。”缩短为“接入 awiki.ai”。
+- 三张接入卡片全部改为白底，去掉第一张黑底强调卡。
+- `Integration` 和 `Open Source` 的 eyebrow 颜色统一为身份链路里 `01 · 密钥自声明` 使用的金色。
+- `#open` 去掉“开源 SDK / Skill / Lite Server / Client。”大标题，只保留 `Open Source` eyebrow 和说明文案。
+- 开源四张卡片的顺序和标题改为 `Skill / SDK / Client / Lite Server`。
+- 同步更新中英文切换表，并用 Chromium 检查桌面与移动端无横向溢出。

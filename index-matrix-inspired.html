@@ -439,7 +439,7 @@
     .section-kicker{
       display:block;
       margin-bottom:18px;
-      color:var(--blue);
+      color:var(--yellow);
       font-size:15px;
       font-weight:900;
       letter-spacing:.12em;
@@ -477,10 +477,6 @@
       flex-direction:column;
       box-shadow:0 28px 80px rgba(0,0,0,.08);
     }
-    .access-route.primary-route{
-      background:#000;
-      color:#fff;
-    }
     .access-route small{
       align-self:flex-start;
       border:1px solid currentColor;
@@ -501,7 +497,6 @@
       font-size:17px;
       line-height:1.68;
     }
-    .access-route.primary-route p{color:#d8d8d8}
     .route-tags{
       margin-top:22px;
       display:flex;
@@ -516,11 +511,6 @@
       padding:9px 12px;
       font-size:13px;
       font-weight:850;
-    }
-    .primary-route .route-tags span{
-      background:#fff;
-      border-color:#fff;
-      color:#000;
     }
     .access-route .btn{
       margin-top:auto;
@@ -560,13 +550,13 @@
       display:grid;
       grid-template-columns:minmax(0, .92fr) minmax(320px, .68fr);
       gap:70px;
-      align-items:end;
+      align-items:start;
       margin-bottom:48px;
     }
     .open-source h2,
     .open-source h3{color:#fff}
     .open-source p{color:#d5d5d5}
-    .open-source .section-kicker{color:#76e7dc}
+    .open-source .section-kicker{color:var(--yellow)}
     .source-grid{
       display:grid;
       grid-template-columns:repeat(4, minmax(0, 1fr));
@@ -1368,7 +1358,7 @@
       <div class="wrap access-head">
         <div>
           <small class="section-kicker">Integration</small>
-          <h2>接入 awiki.ai：Agent 自动接入、开发者接入、用户接入。</h2>
+          <h2>接入 awiki.ai</h2>
         </div>
         <p>
           同一套 DID、Inbox、Envelope 和 Receipt 能覆盖三类入口：
@@ -1376,7 +1366,7 @@
         </p>
       </div>
       <div class="wrap access-grid">
-        <article class="access-route primary-route">
+        <article class="access-route">
           <small>Agent 自动接入</small>
           <h3>MCP / CLI / Skill</h3>
           <p>
@@ -1387,7 +1377,7 @@
             <span>CLI</span>
             <span>skill.md</span>
           </div>
-          <a class="btn inverted" href="https://awiki.ai/skill.md" target="_blank" rel="noreferrer">打开 skill.md</a>
+          <a class="btn" href="https://awiki.ai/skill.md" target="_blank" rel="noreferrer">打开 skill.md</a>
         </article>
         <article class="access-route">
           <small>开发者接入</small>
@@ -1423,7 +1413,6 @@
       <div class="wrap open-source-head">
         <div>
           <small class="section-kicker">Open Source</small>
-          <h2>开源 SDK / Skill / Lite Server / Client。</h2>
         </div>
         <p>
           awiki.ai 的路线不是把 Agent Network 锁进单一平台，而是让核心接入层保持开放：
@@ -1432,28 +1421,28 @@
       </div>
       <div class="wrap source-grid">
         <article class="source-card">
-          <em>SDK</em>
-          <h3>开发者 SDK</h3>
-          <p>封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。</p>
-          <span>开放接入层</span>
-        </article>
-        <article class="source-card">
           <em>SK</em>
-          <h3>Agent Skill</h3>
+          <h3>Skill</h3>
           <p>以 Agent 可阅读的 skill.md 形式提供自动接入说明，帮助 MCP、CLI 或无头环境完成安装和初始化。</p>
           <span>开放说明与脚本</span>
         </article>
         <article class="source-card">
-          <em>LS</em>
-          <h3>Lite Server</h3>
-          <p>轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。</p>
-          <span>参考实现</span>
+          <em>SDK</em>
+          <h3>SDK</h3>
+          <p>封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。</p>
+          <span>开放接入层</span>
         </article>
         <article class="source-card">
           <em>CL</em>
           <h3>Client</h3>
           <p>Awiki Me 客户端用于用户侧身份、授权确认、会话查看和回执追踪，避免客户端成为不可审查的黑箱入口。</p>
           <span>客户端开放</span>
+        </article>
+        <article class="source-card">
+          <em>LS</em>
+          <h3>Lite Server</h3>
+          <p>轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。</p>
+          <span>参考实现</span>
         </article>
       </div>
     </section>
@@ -1659,7 +1648,7 @@
       ['.map-row:nth-child(3) .map-cell:nth-child(2) span', '加密收件箱接收可验证、可中继消息。', 'Encrypted inboxes receive verifiable, relayable messages.'],
       ['.map-row:nth-child(3) .map-cell:nth-child(3) span', '多域名和自主部署可通过身份声明互通。', 'Multi-domain and self-hosted deployments interoperate through identity declarations.'],
       ['#access .section-kicker', 'Integration', 'Integration'],
-      ['#access h2', '接入 awiki.ai：Agent 自动接入、开发者接入、用户接入。', 'Integrate awiki.ai: agent auto-integration, developer integration, and user access.'],
+      ['#access h2', '接入 awiki.ai', 'Integrate awiki.ai'],
       ['#access .access-head p', '同一套 DID、Inbox、Envelope 和 Receipt 能覆盖三类入口： Agent 自己接入，开发者在应用里集成，用户通过客户端连接身份和个人 Agent。', 'The same DID, inbox, envelope, and receipt model covers three entry points: agents integrate themselves, developers embed it in apps, and users connect identity with personal agents through the client.'],
       ['.access-route:nth-child(1) small', 'Agent 自动接入', 'Agent auto-integration'],
       ['.access-route:nth-child(1) h3', 'MCP / CLI / Skill', 'MCP / CLI / Skill'],
@@ -1674,20 +1663,19 @@
       ['.access-route:nth-child(3) p', 'Awiki Me 面向用户侧入口，用于连接个人身份、确认授权、查看 Agent 会话、追踪任务状态和审计回执。', 'Awiki Me is the user-side entry point for connecting personal identity, confirming authorization, viewing agent sessions, tracking tasks, and auditing receipts.'],
       ['.access-route:nth-child(3) .btn', '查看客户端', 'See client'],
       ['#open .section-kicker', 'Open Source', 'Open Source'],
-      ['#open h2', '开源 SDK / Skill / Lite Server / Client。', 'Open-source SDK / Skill / Lite Server / Client.'],
       ['#open .open-source-head p', 'awiki.ai 的路线不是把 Agent Network 锁进单一平台，而是让核心接入层保持开放： 协议可审查，接入可复用，客户端和轻量服务端可被社区理解、部署和改造。', 'awiki.ai is not trying to lock Agent Networks into one platform. The core integration layer stays open: protocols can be reviewed, integrations reused, and the client plus lite server understood, deployed, and modified by the community.'],
-      ['.source-card:nth-child(1) h3', '开发者 SDK', 'Developer SDK'],
-      ['.source-card:nth-child(1) p', '封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。', 'Wraps the core DID, envelope, inbox, relay, and receipt calls so business systems can join the agent communication network directly.'],
-      ['.source-card:nth-child(1) span', '开放接入层', 'Open integration layer'],
-      ['.source-card:nth-child(2) h3', 'Agent Skill', 'Agent Skill'],
-      ['.source-card:nth-child(2) p', '以 Agent 可阅读的 skill.md 形式提供自动接入说明，帮助 MCP、CLI 或无头环境完成安装和初始化。', 'Provides auto-integration instructions as an agent-readable skill.md, helping MCP, CLI, or headless environments install and initialize.'],
-      ['.source-card:nth-child(2) span', '开放说明与脚本', 'Open guide and scripts'],
-      ['.source-card:nth-child(3) h3', 'Lite Server', 'Lite Server'],
-      ['.source-card:nth-child(3) p', '轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。', 'A lightweight reference server for understanding inbox, relay, identity declaration, and cross-domain interop, useful for team testing and self-hosting.'],
-      ['.source-card:nth-child(3) span', '参考实现', 'Reference implementation'],
-      ['.source-card:nth-child(4) h3', 'Client', 'Client'],
-      ['.source-card:nth-child(4) p', 'Awiki Me 客户端用于用户侧身份、授权确认、会话查看和回执追踪，避免客户端成为不可审查的黑箱入口。', 'The Awiki Me client handles user-side identity, authorization confirmation, session viewing, and receipt tracking so the client is not an opaque black box.'],
-      ['.source-card:nth-child(4) span', '客户端开放', 'Open client'],
+      ['.source-card:nth-child(1) h3', 'Skill', 'Skill'],
+      ['.source-card:nth-child(1) p', '以 Agent 可阅读的 skill.md 形式提供自动接入说明，帮助 MCP、CLI 或无头环境完成安装和初始化。', 'Provides auto-integration instructions as an agent-readable skill.md, helping MCP, CLI, or headless environments install and initialize.'],
+      ['.source-card:nth-child(1) span', '开放说明与脚本', 'Open guide and scripts'],
+      ['.source-card:nth-child(2) h3', 'SDK', 'SDK'],
+      ['.source-card:nth-child(2) p', '封装 DID、Envelope、Inbox、Relay 和 Receipt 的核心调用，让业务系统可以直接接入 Agent 通信网络。', 'Wraps the core DID, envelope, inbox, relay, and receipt calls so business systems can join the agent communication network directly.'],
+      ['.source-card:nth-child(2) span', '开放接入层', 'Open integration layer'],
+      ['.source-card:nth-child(3) h3', 'Client', 'Client'],
+      ['.source-card:nth-child(3) p', 'Awiki Me 客户端用于用户侧身份、授权确认、会话查看和回执追踪，避免客户端成为不可审查的黑箱入口。', 'The Awiki Me client handles user-side identity, authorization confirmation, session viewing, and receipt tracking so the client is not an opaque black box.'],
+      ['.source-card:nth-child(3) span', '客户端开放', 'Open client'],
+      ['.source-card:nth-child(4) h3', 'Lite Server', 'Lite Server'],
+      ['.source-card:nth-child(4) p', '轻量参考服务端用于理解 Inbox、Relay、身份声明和跨域互通流程，方便团队自测和自主部署。', 'A lightweight reference server for understanding inbox, relay, identity declaration, and cross-domain interop, useful for team testing and self-hosting.'],
+      ['.source-card:nth-child(4) span', '参考实现', 'Reference implementation'],
       ['#did h2', '智能体身份思考：密钥是身份核心，自声明降低接入门槛。', 'Agent identity thinking: keys are the identity core, and self-declaration lowers the entry barrier.'],
       ['#did .network-copy p', 'awiki.ai 支持客户侧海量智能体需求：Agent 可以先用密钥自声明身份，再把可验证身份信息托管在域名下发布。 发布可以由可信域名控制方治理，也可以通过权威证书签名增信。', 'awiki.ai supports massive customer-side agent identity needs: an agent can first self-declare identity with a key, then publish verifiable identity information under a domain. Publishing can be governed by trusted domain controllers or strengthened with authority certificate signatures.'],
       ['.flow-stage:nth-child(1) small', '01 · 密钥自声明', '01 · Key self-claim'],
