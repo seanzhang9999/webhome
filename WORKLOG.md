@@ -334,3 +334,11 @@ https://github.com/seanzhang9999/webhome.git
 - `#open` 去掉“开源 SDK / Skill / Lite Server / Client。”大标题，只保留 `Open Source` eyebrow 和说明文案。
 - 开源四张卡片的顺序和标题改为 `Skill / SDK / Client / Lite Server`。
 - 同步更新中英文切换表，并用 Chromium 检查桌面与移动端无横向溢出。
+
+## 18. 接入与开源标题微调
+
+根据新一轮文案反馈，本轮继续微调两个标题：
+
+- `#access` 在 `Integration` 下的大标题改为“全面的接入方案”。
+- `#open` 在 `Open Source` 下恢复大标题，并改为“完整的开源参考”。
+- 同步更新中英文切换表，英文分别为 `Comprehensive integration plan` 和 `Complete open-source reference`。
