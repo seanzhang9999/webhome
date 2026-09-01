@@ -1843,11 +1843,89 @@
   .awiki-composer { padding: 10px 12px 12px; }
   .awiki-composer .cbox { border-radius: 9px; }
 
+  /* ─── v2.1: Second Web / AIC / industrial data space ───────── */
+  .second-web-proof {
+    margin: 12px 16px 0; padding: 12px 14px; border: 1px solid var(--border-strong);
+    border-radius: 12px; background: var(--surface-work);
+  }
+  .second-web-proof > b { display: block; font-size: 12.5px; }
+  .second-web-proof > p { margin: 4px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+  .second-web-proof-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+  .second-web-proof-grid span { min-width: 0; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  .second-web-proof-grid strong { display: block; font-size: 11px; }
+  .second-web-proof-grid small { display: block; margin-top: 3px; color: var(--muted); font-size: 9.5px; line-height: 1.35; }
+
+  .aic-inspector { border-color: color-mix(in oklch, var(--accent) 35%, var(--border)); }
+  .aic-inspector-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+  .aic-inspector-head h3 { margin: 0; font-size: 14px; }
+  .aic-inspector-head p { margin: 4px 0 0; color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+  .aic-object-note { margin-bottom: 10px; padding: 9px 10px; border-left: 2px solid var(--accent); background: var(--accent-soft); color: var(--fg); font-size: 10.5px; line-height: 1.55; }
+  .aic-object-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .aic-object-tabs button { padding: 6px 9px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); background: var(--surface); font: 10px var(--font-mono); }
+  .aic-object-tabs button.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .aic-stage-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+  .aic-stage-card { min-width: 0; padding: 9px 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg); }
+  .aic-stage-card span { display: block; color: var(--muted); font: 9px var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+  .aic-stage-card b { display: block; margin-top: 4px; font-size: 10.5px; line-height: 1.45; overflow-wrap: anywhere; }
+
+  .data-space-hero { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(240px,.75fr); gap: 12px; margin-bottom: 12px; }
+  .data-space-lead { padding: 18px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+  .data-space-lead .overview-eyebrow { display: block; margin-bottom: 7px; }
+  .data-space-lead h3 { margin: 0; font: 600 19px/1.35 var(--font-display); }
+  .data-space-lead p { margin: 7px 0 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+  .data-space-disclaimer { display: grid; align-content: center; padding: 15px; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); background: var(--bg); }
+  .data-space-disclaimer b { font-size: 12px; }
+  .data-space-disclaimer p { margin: 5px 0 0; color: var(--muted); font-size: 10.5px; line-height: 1.55; }
+  .service-pipeline { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 8px; margin: 12px 0; }
+  .service-pipeline article { position: relative; min-width: 0; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .service-pipeline article:not(:last-child)::after { content: '›'; position: absolute; top: 50%; right: -7px; z-index: 2; transform: translateY(-50%); color: var(--muted); background: var(--bg); }
+  .service-pipeline span { color: var(--muted); font: 9px var(--font-mono); }
+  .service-pipeline b { display: block; margin-top: 5px; font-size: 11.5px; line-height: 1.35; }
+  .service-pipeline p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+  .data-role-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; margin-bottom: 12px; }
+  .data-role-card { padding: 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .data-role-card b { font-size: 12px; }
+  .data-role-card p { margin: 5px 0 8px; color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+  .data-product-list { display: flex; flex-wrap: wrap; gap: 5px; }
+  .data-product-list span { padding: 4px 7px; border-radius: 999px; color: var(--muted); background: var(--surface-work); font-size: 9.5px; }
+  .service-matter-card { padding: 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface); }
+  .service-matter-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .service-matter-head h3 { margin: 4px 0 5px; font-size: 15px; }
+  .service-matter-head p { margin: 0; color: var(--muted); font-size: 11px; }
+  .service-matter-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; margin-top: 12px; }
+  .service-matter-grid div { padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+  .service-matter-grid span { display: block; color: var(--muted); font-size: 9.5px; }
+  .service-matter-grid b { display: block; margin-top: 4px; font-size: 10.5px; line-height: 1.4; }
+
+  .modal.panorama { width: min(1180px, calc(100% - 48px)); }
+  .panorama .m-body { gap: 10px; }
+  .panorama-thesis { padding: 13px 15px; border: 1px solid var(--border-strong); border-radius: 11px; background: var(--surface-work); font-size: 12px; line-height: 1.65; }
+  .panorama-trends, .panorama-awiki, .panorama-wedge { display: grid; gap: 8px; }
+  .panorama-trends { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .panorama-awiki { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .panorama-wedge { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .panorama-card { padding: 11px 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); }
+  .panorama-card span { display: block; color: var(--muted); font: 9px var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+  .panorama-card b { display: block; margin-top: 5px; font-size: 11.5px; line-height: 1.4; }
+  .panorama-card p { margin: 4px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+  .panorama-card.focus { border-color: var(--accent); background: var(--accent-soft); }
+  .panorama-continuity { display: grid; grid-template-columns: minmax(180px,.8fr) minmax(220px,1.2fr) minmax(180px,.8fr); align-items: stretch; gap: 8px; }
+  .panorama-lane { padding: 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+  .panorama-lane.core { border-color: var(--accent); background: var(--accent-soft); }
+  .panorama-lane h4 { margin: 0 0 7px; font-size: 12px; }
+  .panorama-lane p { margin: 0; color: var(--muted); font-size: 10.5px; line-height: 1.55; }
+  .panorama-loop { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 5px; margin-top: 9px; }
+  .panorama-loop span { padding: 7px; border: 1px solid var(--border); border-radius: 7px; text-align: center; background: var(--surface); font-size: 9.5px; }
+  .panorama-section-title { margin: 3px 0 -2px; color: var(--muted); font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+
   @media (max-width: 1180px) {
     #pane-messages .listpane { width: 264px; }
     .context-inspector.awiki-companion { width: 272px; }
     .matter-chat-body { padding-inline: 24px; }
     .candidate-grid { grid-template-columns: 1fr; }
+    .service-pipeline { grid-template-columns: 1fr; }
+    .service-pipeline article:not(:last-child)::after { display: none; }
+    .panorama-awiki, .panorama-wedge { grid-template-columns: repeat(2,minmax(0,1fr)); }
   }
 
 </style>
@@ -2249,6 +2327,7 @@
             <header class="overview-feed-head">
               <div><span class="overview-eyebrow">一览</span><h2 id="overview-feed-title">Inbox</h2><p id="overview-feed-subtitle">收下暂未归类的文字、图片、音视频与文件</p></div>
               <div class="overview-head-actions">
+                <button class="btn btn-secondary" data-h-click="openModal('m-panorama')" data-od-id="open-awiki-panorama"><svg class="ic sm"><use href="#i-globe"/></svg>为什么是 AWiki</button>
                 <span class="overview-global-scope" id="overview-global-scope"><svg class="ic sm"><use href="#i-globe"/></svg>全局</span>
                 <div class="overview-view-toggle" aria-label="内容显示方式">
                   <button id="overview-grid-btn" data-h-click="setOverviewView('grid')" title="卡片流" aria-label="卡片流"><svg class="ic sm"><use href="#i-work"/></svg></button>
@@ -2314,6 +2393,7 @@
                 <div id="connection-standard-head"><h3 id="connections-list-title">联系人</h3><p id="connections-list-subtitle">与你保持协作关系的人</p></div>
                 <div class="network-discovery-head" id="network-discovery-head" hidden>
                   <label class="network-searchbar"><svg class="ic sm"><use href="#i-search"/></svg><input id="network-search-input" placeholder="搜索方案技能、智能体、资讯和社区…" data-h-input="setNetworkQuery(this.value)" /></label>
+                  <section class="second-web-proof" data-od-id="second-web-proof"><b>Second Web = 可验证连接 + 可加入社区 + 可安装方案</b><p>网页承载内容；Second Web 让人、Agent、社区和工作方法以身份、权限与关系继续协作。</p><div class="second-web-proof-grid"><span><strong>连接</strong><small>身份、能力、授权与回单</small></span><span><strong>AWiki 社区</strong><small>公共知识、事件与成员关系</small></span><span><strong>方案技能</strong><small>可安装、可复用的协作方法</small></span></div></section>
                   <div class="network-feed-heading"><div><span class="overview-eyebrow">AWiki</span><h3 id="network-feed-title">方案技能</h3><p id="network-feed-subtitle">发现并安装可复用的领域协作方法</p></div><div class="network-view-toggle" aria-label="内容视图"><button id="network-grid-btn" data-h-click="setNetworkView('grid')" title="卡片流" aria-label="卡片流"><svg class="ic sm"><use href="#i-work"/></svg></button><button id="network-list-btn" data-h-click="setNetworkView('list')" title="列表" aria-label="列表"><svg class="ic sm"><use href="#i-more"/></svg></button></div></div>
                 </div>
               </header>
@@ -2351,6 +2431,7 @@
                 <button class="solution-choice on" role="tab" aria-selected="true" data-solution-choice="trade" data-h-click="selectSolution('trade',this)" data-od-id="solution-choice-trade"><span class="solution-choice-mark">贸</span><span class="solution-choice-copy"><b>贸易协作</b><span>匹配、洽谈与交付</span></span></button>
                 <button class="solution-choice" role="tab" aria-selected="false" data-solution-choice="control" data-h-click="selectSolution('control',this)" data-od-id="solution-choice-control"><span class="solution-choice-mark">管</span><span class="solution-choice-copy"><b>事项管控</b><span>进度、阻塞与决策</span></span></button>
                 <button class="solution-choice" role="tab" aria-selected="false" data-solution-choice="response" data-h-click="selectSolution('response',this)" data-od-id="solution-choice-response"><span class="solution-choice-mark">交</span><span class="solution-choice-copy"><b>响应交付</b><span>编制、复核与验收</span></span></button>
+                <button class="solution-choice" role="tab" aria-selected="false" data-solution-choice="data-space" data-h-click="selectSolution('data-space',this)" data-od-id="solution-choice-data-space"><span class="solution-choice-mark">数</span><span class="solution-choice-copy"><b>产业数据空间</b><span>数据产品服务化</span></span></button>
               </div>
             </aside>
             <section class="solution-stage" aria-live="polite">
@@ -2472,6 +2553,32 @@
                   </section>
                 </main>
               </div>
+
+              <div class="solution-dashboard" data-solution-dashboard="data-space" data-od-id="solution-dashboard-data-space">
+                <main class="solution-dashboard-scroll">
+                  <header class="solution-board-head" data-od-id="data-space-board-head"><div><h2>产业数据空间 · 人员服务看板</h2><p>HAHO 把目录、接口和数据对象翻译成工厂、采购商等角色可理解、可授权、可验收的数据服务。</p></div><span class="pill pending">会议讨论原型</span></header>
+                  <section class="data-space-hero" data-od-id="data-space-service-thesis">
+                    <div class="data-space-lead"><span class="overview-eyebrow">HAHO 服务化</span><h3>不是让人员面对数据目录，而是让数据产品进入具体 Matter</h3><p>HAHO 说明“能解决什么、需要什么、谁能用、花多久、返回什么、谁负责”；Matter 承载人的目标与决定，AIC 持久化机器可读状态、授权和回单。</p></div>
+                    <aside class="data-space-disclaimer"><b>边界说明</b><p>以下名称和数据均为用于中化数据空间会议讨论的虚构演示，不代表真实部署、数据接入或业务效果。</p></aside>
+                  </section>
+                  <section class="service-pipeline" aria-label="数据产品服务化链路" data-od-id="data-space-haho-flow">
+                    <article><span>01 · DATA SPACE</span><b>数据产品</b><p>目录、API、指标、证明与使用策略</p></article>
+                    <article><span>02 · HAHO</span><b>理解并包装</b><p>用途、输入、成本、时效、责任与边界</p></article>
+                    <article><span>03 · MATTER</span><b>进入人员工作</b><p>把数据调用变成目标、步骤与待决定事项</p></article>
+                    <article><span>04 · AIC</span><b>最小授权执行</b><p>上下文投影、能力绑定、状态与证据</p></article>
+                    <article><span>05 · RECEIPT</span><b>可验收回单</b><p>来源、版本、授权链、结果与下一步</p></article>
+                  </section>
+                  <section class="data-role-grid" aria-label="角色与数据服务" data-od-id="data-space-role-services">
+                    <article class="data-role-card"><b>工厂运营负责人</b><p>不搜索接口；直接询问“哪条产线能耗异常，是否值得安排检修？”</p><div class="data-product-list"><span>单位能耗对标</span><span>设备健康指数</span></div></article>
+                    <article class="data-role-card"><b>采购经理</b><p>不拼接多套台账；直接判断供应商资格、交付能力与近期风险。</p><div class="data-product-list"><span>履约风险评分</span><span>资质证明核验</span></div></article>
+                    <article class="data-role-card"><b>供应商服务人员</b><p>只提交被授权的证明和纠正材料，并获得是否通过的可验证回单。</p><div class="data-product-list"><span>证明提交</span><span>整改回单</span></div></article>
+                  </section>
+                  <section class="service-matter-card" data-od-id="data-space-active-matter">
+                    <div class="service-matter-head"><div><span class="overview-eyebrow">当前服务 Matter</span><h3>华东工厂三条产线单位能耗异常复核</h3><p>由 HAHO 将“单位能耗对标”与“设备健康指数”组合为一次受控服务。</p></div><span class="pill running">等待工厂确认</span></div>
+                    <div class="service-matter-grid"><div><span>人员目标</span><b>判断 L2 偏高是否来自设备状态并决定是否检修</b></div><div><span>AIC 投影</span><b>仅发送近 30 日能耗、工况和设备健康所需字段</b></div><div><span>能力绑定</span><b>工业数据服务 Agent · 只读 · 24h</b></div><div><span>服务输出</span><b>L2 高于同工况基线 11.8%，轴承健康下降</b></div><div><span>人类关口</span><b>是否安排停机检查由工厂负责人确认</b></div><div><span>最新回单</span><b>dp.energy.v3 · 策略 DS-17 · 来源与版本已封存</b></div></div>
+                  </section>
+                </main>
+              </div>
             </section>
           </div>
         </div>
@@ -2509,7 +2616,7 @@
                 <svg class="ic sm" style="color:var(--muted)"><use href="#i-chevron"/></svg>
               </button>
               <button class="srow" id="config-matter-settings-entry" data-h-click="showConfigMatterSettings('设置')" data-od-id="config-matter-settings-entry">
-                <span class="s-main"><span class="s-name">协作规则</span><span class="s-sub">按方案与 TREE 管理配置型 Matter</span></span>
+                <span class="s-main"><span class="s-name">协作规则</span><span class="s-sub">按方案与 SIDE 管理配置型 Matter</span></span>
                 <svg class="ic sm" style="color:var(--muted)"><use href="#i-chevron"/></svg>
               </button>
               <button class="srow" data-h-click="openModal('m-logout')">
@@ -2537,14 +2644,14 @@
             </div>
             <div class="settings-detail config-matter-settings" id="config-matter-settings-detail" hidden data-od-id="config-matter-settings-detail">
               <aside class="config-rule-nav" aria-label="协作规则目录" data-od-id="config-rule-navigation">
-                <header><span class="config-eyebrow">方案配置</span><h2>协作规则</h2><p>按方案与 TREE 能力范围组织配置型 Matter。</p></header>
+                <header><span class="config-eyebrow">方案配置</span><h2>协作规则</h2><p>按方案与 SIDE 能力范围组织配置型 Matter；四项能力可随时往返，不是线性阶段。</p></header>
                 <section class="config-solution-root">
                   <div class="config-solution-head"><span class="solution-choice-mark">贸</span><span><b>贸易匹配协作</b><small>SolutionSkill · v1.2</small></span></div>
                   <div class="config-tree-list">
-                    <button type="button" data-h-click="toast('Think：当前没有独立协作规则')"><span class="config-tree-code">T</span><span><b>Think</b><small>意图识别与方案判断</small></span></button>
-                    <button type="button" data-h-click="toast('Resource：当前没有独立协作规则')"><span class="config-tree-code">R</span><span><b>Resource</b><small>资料、证据与上下文</small></span></button>
-                    <button type="button" data-h-click="toast('Execute：当前没有独立协作规则')"><span class="config-tree-code">Ex</span><span><b>Execute</b><small>自动化与外部行动</small></span></button>
-                    <button class="on" type="button" aria-current="page"><span class="config-tree-code">Ev</span><span><b>Evaluate</b><small>候选评估与完成判断</small></span></button>
+                    <button type="button" data-h-click="toast('Improve Thinking：当前没有独立协作规则')"><span class="config-tree-code">I</span><span><b>Improve Thinking</b><small>理解问题、比较方法与改进判断</small></span></button>
+                    <button type="button" data-h-click="toast('Steward Resources：当前没有独立协作规则')"><span class="config-tree-code">S</span><span><b>Steward Resources</b><small>守护资料、证据、关系与上下文</small></span></button>
+                    <button type="button" data-h-click="toast('Drive Action：当前没有独立协作规则')"><span class="config-tree-code">D</span><span><b>Drive Action</b><small>推进任务、授权与外部行动</small></span></button>
+                    <button class="on" type="button" aria-current="page"><span class="config-tree-code">E</span><span><b>Evaluate Anytime</b><small>随时评价候选、进展与完成质量</small></span></button>
                   </div>
                   <button class="config-rule-item on" type="button" aria-current="page" data-od-id="supplier-rule-nav-item"><span><b>供应商评价规则</b><small>配置型 Matter · 等待发布</small></span><svg class="ic sm"><use href="#i-chevron"/></svg></button>
                 </section>
@@ -2552,7 +2659,7 @@
 
               <main class="config-matter-main" data-od-id="config-matter-main">
                 <header class="settings-detail-head" data-od-id="config-matter-heading">
-                  <div><div class="config-breadcrumb"><span>贸易匹配协作</span><i>›</i><span>Evaluate</span><i>›</i><b>供应商评价规则</b></div><h2>供应商评价规则</h2><p>当前值是配置型 Matter 的投影；讨论、差异、影响与发布按时间进入同一权威历史。</p></div>
+                  <div><div class="config-breadcrumb"><span>贸易匹配协作</span><i>›</i><span>Evaluate Anytime</span><i>›</i><b>供应商评价规则</b></div><h2>供应商评价规则</h2><p>当前值是配置型 Matter 的投影；讨论、差异、影响与发布按时间进入同一权威历史。</p></div>
                   <span class="pill pending" id="config-version-pill">当前 v1.2</span>
                 </header>
                 <div class="config-projection-grid">
@@ -2561,7 +2668,7 @@
                     <h3>评价建议如何排序候选供应商</h3>
                     <p>规则只影响后续建议和候选排序，不替用户完成最终选择。</p>
                     <div class="config-projection-value"><span>评价重点</span><b id="config-current-value">质量材料、履约条件与价格完整度</b></div>
-                    <div class="config-projection-value"><span>TREE 归属</span><b>Evaluate · 候选评估</b></div>
+                    <div class="config-projection-value"><span>SIDE 能力</span><b>Evaluate Anytime · 候选评估</b></div>
                     <div class="config-projection-value"><span>生效范围</span><b>后续新建贸易工作 Matter · 候选比较阶段</b></div>
                     <div class="config-projection-value"><span>版本边界</span><b>进行中 Matter 保持原绑定，除非用户显式重新评估</b></div>
                   </section>
@@ -2578,7 +2685,7 @@
                     </article>
                     <article class="config-event" data-od-id="config-event-proposal">
                       <span class="config-event-mark">A</span>
-                      <div class="config-event-copy"><div class="config-event-meta"><b>AWiki 伙伴</b><span>Config Proposal</span><time>10:18</time></div><h4>识别为 Evaluate 范围内的跨 Matter 规则更新。</h4><p>建议把“持续交付记录”加入供应商评价重点，并从新版本开始应用。</p>
+                      <div class="config-event-copy"><div class="config-event-meta"><b>AWiki 伙伴</b><span>Config Proposal</span><time>10:18</time></div><h4>识别为 Evaluate Anytime 范围内的跨 Matter 规则更新。</h4><p>建议把“持续交付记录”加入供应商评价重点，并从新版本开始应用。</p>
                         <div class="config-diff" aria-label="配置版本差异">
                           <div class="config-diff-row"><span>v1.2 当前值</span><b>质量材料、履约条件与价格完整度</b></div>
                           <div class="config-diff-row"><span>v1.3 提议值</span><b>持续交付记录、质量材料、履约条件与价格完整度</b></div>
@@ -2586,8 +2693,8 @@
                       </div>
                     </article>
                     <article class="config-event" data-od-id="config-event-impact">
-                      <span class="config-event-mark">树</span>
-                      <div class="config-event-copy"><div class="config-event-meta"><b>影响分析</b><span>Evaluate</span><time>10:19</time></div><h4>仅改变后续候选评价建议，不追溯改写进行中的 Matter。</h4><p>影响贸易匹配方案的候选排序；外部发送、自动成交和最终选择权限均保持不变。</p><div class="config-impact" aria-label="影响范围"><span class="tag">贸易匹配方案</span><span class="tag">Evaluate</span><span class="tag">候选排序</span><span class="tag">后续新建 Matter</span></div></div>
+                      <span class="config-event-mark">E</span>
+                      <div class="config-event-copy"><div class="config-event-meta"><b>影响分析</b><span>Evaluate Anytime</span><time>10:19</time></div><h4>仅改变后续候选评价建议，不追溯改写进行中的 Matter。</h4><p>影响贸易匹配方案的候选排序；外部发送、自动成交和最终选择权限均保持不变。</p><div class="config-impact" aria-label="影响范围"><span class="tag">贸易匹配方案</span><span class="tag">Evaluate Anytime</span><span class="tag">候选排序</span><span class="tag">后续新建 Matter</span></div></div>
                     </article>
                     <article class="config-event" data-od-id="config-event-checkpoint">
                       <span class="config-event-mark">人</span>
@@ -2604,7 +2711,7 @@
                 <header class="ci-head"><span class="awiki-head"><span class="av">A</span><span class="awiki-head-copy"><b>AWiki 伙伴</b><small>私有在线 · 正在解释这条规则</small></span></span></header>
                 <div class="ci-body">
                   <section class="companion-advice"><div class="companion-section-title"><span>本次进入来源</span><b id="config-origin-title">设置</b></div><div class="awiki-suggestion"><p id="config-origin-copy">也可以在 AWiki 伙伴私有对话中提出长期偏好，或先收进 Inbox 后再路由到这里。</p></div></section>
-                  <section class="companion-advice"><div class="companion-section-title"><span>伙伴提示</span><b>实时</b></div><div class="awiki-thread"><div class="awiki-bubble"><b>这是一条 Evaluate 配置</b>它改变的是候选评价建议，不会改变 Execute 阶段的外部发送权限，也不会替你完成最终选择。</div><div class="awiki-suggestion"><h4>当前需要你决定</h4><p>是否让 v1.3 只作用于后续新建的贸易 Matter。进行中的采购仍保持 v1.2。</p></div></div></section>
+                  <section class="companion-advice"><div class="companion-section-title"><span>伙伴提示</span><b>实时</b></div><div class="awiki-thread"><div class="awiki-bubble"><b>这是一条 Evaluate Anytime 配置</b>它改变的是候选评价建议，不会扩大 Drive Action 的外部发送权限，也不会替你完成最终选择。</div><div class="awiki-suggestion"><h4>当前需要你决定</h4><p>是否让 v1.3 只作用于后续新建的贸易 Matter。进行中的采购仍保持 v1.2。</p></div></div></section>
                 </div>
                 <div class="awiki-composer"><div class="cbox"><input class="cinput" id="config-companion-input" placeholder="问伙伴这条规则会影响什么…" aria-label="与 AWiki 伙伴讨论协作规则" /><div class="ctools"><button class="sendbtn" data-h-click="sendConfigCompanion()" title="发送" aria-label="发送给 AWiki 伙伴"><svg class="ic sm"><use href="#i-send"/></svg></button></div></div></div>
               </aside>
@@ -2616,6 +2723,43 @@
     </section>
 
     <!-- ══════════ 弹窗层 ══════════ -->
+
+    <div class="overlay" id="m-panorama" data-od-id="awiki-panorama-modal" data-h-click="if(event.target===this)closeModal(this)">
+      <div class="modal panorama" role="dialog" aria-modal="true" aria-label="AWiki 结构判断全景图">
+        <div class="m-head"><h3>为什么是 AWiki：从有限会话到长期可治理协作</h3><p>这张图解释 AWiki 的结构位置，而不是预测某一种模型或 Runtime 会获胜。</p></div>
+        <div class="m-body">
+          <div class="panorama-thesis"><b>核心判断：</b>模型会持续增强，Runtime 会不断替换，但单次执行会话始终有边界。执行 Agent 只消费按需投影，不承担压缩并永久保存整个事项历史；用户侧的连续性、授权、关系、证据与责任必须由 Matter/AIC 持续承载。</div>
+          <div class="panorama-section-title">技术发展与结构缺口</div>
+          <div class="panorama-trends">
+            <article class="panorama-card"><span>MODEL</span><b>能力更强、成本更低</b><p>推理、生成和工具调用继续商品化。</p></article>
+            <article class="panorama-card"><span>RUNTIME</span><b>云端、本地、专用可替换</b><p>执行层更丰富，但不天然拥有用户的长期关系。</p></article>
+            <article class="panorama-card focus"><span>SESSION LIMIT</span><b>会话有限且临时</b><p>跨年历史、授权变更和责任链不能靠一个上下文窗口维持。</p></article>
+          </div>
+          <div class="panorama-section-title">持续对象与短期执行的闭环</div>
+          <div class="panorama-continuity">
+            <section class="panorama-lane"><h4>用户与组织世界</h4><p>目标、关系、专业边界、授权、预算、承诺与责任不断变化。</p></section>
+            <section class="panorama-lane core"><h4>Matter / AIC · 持续延展</h4><p>Matter 是人的治理与工作视图；AIC 是同一事项动态、可延展、机器可读的持久数字对象。</p><div class="panorama-loop"><span>按需投影上下文</span><span>Agent / Runtime 执行</span><span>回单写回状态与证据</span></div></section>
+            <section class="panorama-lane"><h4>可替换执行层</h4><p>通用 Agent Runtime、模型、应用和外部服务按授权参与，结束后不带走事项主权。</p></section>
+          </div>
+          <div class="panorama-section-title">AWiki 不与 Runtime 正面竞争</div>
+          <div class="panorama-awiki">
+            <article class="panorama-card"><span>HAHO</span><b>把能力翻译成人的服务</b><p>解释用途、边界、成本、等待、责任与结果。</p></article>
+            <article class="panorama-card"><span>SIDE</span><b>非线性协作能力面</b><p>Improve Thinking · Steward Resources · Drive Action · Evaluate Anytime。</p></article>
+            <article class="panorama-card"><span>MATTER</span><b>用户侧长期权威事项</b><p>目标、决定、关系、进展、证据和责任持续延展。</p></article>
+            <article class="panorama-card"><span>AIC</span><b>Matter 的持久机器对象</b><p>Genesis、上下文贡献、ActionPoint、能力绑定、授权、状态与 Receipt。</p></article>
+          </div>
+          <div class="panorama-section-title">切入场景：事情熟悉度 × 合作关系与方法熟悉度</div>
+          <div class="panorama-wedge">
+            <article class="panorama-card"><span>事熟 · 人熟</span><b>已有稳定流程</b><p>价值偏向增效与沉淀，替换动力较弱。</p></article>
+            <article class="panorama-card focus"><span>事熟 · 人生</span><b>优先切入</b><p>目标明确，但跨专业域、组织、部门或职能墙，最需要可验证协作。</p></article>
+            <article class="panorama-card"><span>事生 · 人熟</span><b>共同探索</b><p>依赖关系信任，适合专题和渐进式 Matter。</p></article>
+            <article class="panorama-card"><span>事生 · 人生</span><b>先降不确定性</b><p>DID 放大身份、能力、授权和回单价值，但不应过早承诺自动交付。</p></article>
+          </div>
+          <div class="panorama-thesis"><b>DID 的放大作用：</b>当协作者陌生、跨组织且责任不共识时，DID 将“是谁、能做什么、被谁授权、做了什么、谁收到回单”变成可验证链条；熟人日常协作中，它更多是底层保障而非用户卖点。</div>
+        </div>
+        <div class="m-foot"><button class="btn btn-primary" data-h-click="closeModal(document.getElementById('m-panorama'))">返回一览</button></div>
+      </div>
+    </div>
 
     <!-- 方案技能包 -->
     <div class="overlay drawer" id="m-trade-partner" data-od-id="trade-partner-drawer" data-h-click="if(event.target===this)closeModal(this)">
@@ -3181,6 +3325,7 @@ var __OD_HMAP = {
     "openModal('m-del-cred')": function (el, event) { openModal('m-del-cred') },
     "openModal('m-export')": function (el, event) { openModal('m-export') },
     "openModal('m-logout')": function (el, event) { openModal('m-logout') },
+    "openModal('m-panorama')": function (el, event) { openModal('m-panorama') },
     "openModal('m-trade-partner')": function (el, event) { openModal('m-trade-partner') },
     "openModal('m-user-me')": function (el, event) { openModal('m-user-me') },
     "openSolutionPack()": function (el, event) { openSolutionPack() },
@@ -3196,6 +3341,7 @@ var __OD_HMAP = {
     "saveOverviewQuickNote()": function (el, event) { saveOverviewQuickNote() },
     "selectTradeCandidate('B-04')": function (el, event) { selectTradeCandidate('B-04') },
     "selectSolution('control',this)": function (el, event) { selectSolution('control',this) },
+    "selectSolution('data-space',this)": function (el, event) { selectSolution('data-space',this) },
     "selectSolution('response',this)": function (el, event) { selectSolution('response',this) },
     "selectSolution('trade',this)": function (el, event) { selectSolution('trade',this) },
     "selectTradeTreeNode('a17',this)": function (el, event) { selectTradeTreeNode('a17',this) },
@@ -3417,9 +3563,10 @@ var __OD_HMAP = {
   var CONNECTIONS = [
     { id:'c-lake', category:'contacts', type:'contact', name:'lake.awiki.ai', sub:'已连接 · 可发起会话', status:'ok', path:'联系人' },
     { id:'g-test0', category:'groups', type:'group', name:'test0', sub:'普通群组 · 3 位成员', status:'ok', path:'连接 / 群组' },
-    { id:'c-hermes', category:'contact-agents', type:'agent', name:'Hermes1', sub:'外部联系智能体 · 在线', status:'ok', path:'联系人 / 智能体' },
+    { id:'c-hermes', category:'contact-agents', type:'agent', name:'Hermes1', sub:'外部联系智能体 · 在线', status:'ok', path:'联系人 / 智能体', agentMetaId:'hermes' },
+    { id:'c-data-space-agent', category:'contact-agents', type:'agent', name:'工业数据服务 Agent', sub:'产业数据空间 · 受控服务节点', status:'ok', path:'组织 / 数据空间', agentMetaId:'data-space' },
     { id:'c-daemon', category:'devices', type:'device', name:'Daemon 1', sub:'edgehost-otniffbffoixgtdj · 正常', status:'ok', path:'本地 · macOS' },
-    { id:'c-cgx', category:'my-agents', type:'agent', name:'cgw-cx-linux', sub:'我的 Codex 智能体 · 运行中', status:'ok', path:'Daemon 1 / Runtime' },
+    { id:'c-cgx', category:'my-agents', type:'agent', name:'cgw-cx-linux', sub:'我的 Codex 智能体 · 运行中', status:'ok', path:'Daemon 1 / Runtime', agentMetaId:'cgx' },
     { id:'c-github', category:'service-accounts', type:'service', name:'GitHub', sub:'@cgw · 已连接', status:'ok', path:'服务 / 代码' },
     { id:'c-notion', category:'service-accounts', type:'service', name:'Notion', sub:'@cgw · 待复核', status:'warn', path:'服务 / 文档' },
     { id:'c-auth-invest', category:'authorizations', type:'auth', name:'投资库只读授权', sub:'授予 Hermes1 · 有效至 2026-09-01', status:'ok', path:'授权 / 应用' }
@@ -3430,10 +3577,12 @@ var __OD_HMAP = {
     { id:'n-matter', type:'solutions', name:'事项管控方案包', cover:'让复杂事项持续向前', publisher:'AWiki方案', desc:'帮助用户制订执行计划、检查状态，并对新成果组织复核。', action:'安装方案技能', version:'v0.9.4' },
     { id:'n-response', type:'solutions', name:'响应文件协同交付方案包', cover:'把多人产出合成可信响应', publisher:'AWiki方案', desc:'围绕需求文件组织内部智能体分工、成果汇编和关键上下文检查。', action:'安装方案技能', version:'v0.7.1' },
     { id:'n-research', type:'solutions', name:'专题研究积累方案包', cover:'让零散线索长成长期主线', publisher:'AWiki方案', desc:'将 Inbox、资讯、讨论与成果持续沉淀为可复用专题。', action:'安装方案技能', version:'v0.6.2' },
+    { id:'n-data-space', type:'solutions', name:'产业数据空间服务化方案包', cover:'把数据产品送到人员工作中', publisher:'AWiki方案', desc:'通过 HAHO 将数据产品包装为面向工厂、采购商和供应商人员的可授权服务 Matter。', action:'安装方案技能', version:'讨论原型' },
     { id:'n-match-agent', type:'agents', name:'贸易匹配智能体', cover:'匿名匹配与双向代发', publisher:'可信贸易节点', desc:'根据采购意图寻找候选，代发匿名回复并维护双方确认边界。', action:'查看连接', version:'可连接' },
     { id:'n-check-agent', type:'agents', name:'检查智能体', cover:'带着关键上下文再检查', publisher:'AWiki可信交付', desc:'携带关键事项上下文，对响应文件执行一致性与遗漏项检查。', action:'查看连接', version:'可连接' },
     { id:'n-plan-agent', type:'agents', name:'计划智能体', cover:'把目标拆成可协作计划', publisher:'AWiki事项协作', desc:'协助 AWiki 伙伴生成事项阶段、任务依赖、完成标准和检查节点。', action:'查看连接', version:'可连接' },
     { id:'n-doc-agent', type:'agents', name:'文档响应智能体', cover:'基于需求文件组织响应', publisher:'AWiki文档能力', desc:'解析需求文件并生成响应目录、证据清单与交付检查项。', action:'查看连接', version:'可连接' },
+    { id:'n-data-service-agent', type:'agents', name:'工业数据服务 Agent', cover:'让数据产品成为可验收服务', publisher:'产业数据空间', desc:'按最小授权组合能耗、设备健康与供应商证明，并返回带来源和版本的服务回单。', action:'查看连接', version:'可连接' },
     { id:'n-trade-news', type:'news', name:'跨境贸易智能体协作观察', cover:'匿名匹配之后怎样安全进入洽谈', publisher:'AWiki资讯', desc:'关注如何从匿名匹配安全地进入实名采购洽谈。', action:'订阅', version:'资讯条目' },
     { id:'n-protocol-news', type:'news', name:'方案技能协议更新', cover:'事项链路开始支持上下文复用', publisher:'AWiki资讯', desc:'方案技能支持关联事项链路、复用上下文组合与检查节点。', action:'收藏', version:'协议动态' },
     { id:'n-context-news', type:'news', name:'可复用上下文组合实践', cover:'上下文不是附件，而是可复用的工作资产', publisher:'AWiki资讯', desc:'如何围绕事项目标组织证据、决定、约束和成果版本。', action:'收藏', version:'方法观察' },
@@ -3441,7 +3590,8 @@ var __OD_HMAP = {
     { id:'n-trade-community', type:'community', name:'跨境贸易协作社区', cover:'把真实贸易协作方法沉淀下来', publisher:'AWiki社区', desc:'交流贸易匹配、供应商评估、采购响应和可信交付实践。', action:'加入社区', version:'开放加入', agent:'贸易情报 Agent', brief:'梳理本周值得关注的采购信号、交付风险与贸易协作实践。', stories:['越南咖啡产区与装运节奏追踪','匿名匹配如何进入实名洽谈'], knowledge:['供应商评估方法库','跨境响应文件参考'], skills:['搜索社区内容','追踪一个事件','生成今日简报','返回原始来源'], groups:['跨境采购交流','可信交付实践'] },
     { id:'n-builder-community', type:'community', name:'方案技能共建组', cover:'一起定义人与智能体的工作方法', publisher:'AWiki社区', desc:'共同定义面向人与智能体协作的领域事项方法。', action:'加入社区', version:'共建中', agent:'方案共建 Agent', brief:'汇总新提交的方法草案、争议点与等待共建者回应的问题。', stories:['方案技能协议的演进记录','领域方法如何进入 Matter 配置'], knowledge:['方案技能设计手册','共建提案与评审记录'], skills:['搜索社区内容','比较多个观点','订阅特定信号','返回原始来源'], groups:['方案作者交流','协议实现讨论'] },
     { id:'n-context-community', type:'community', name:'个人上下文实践组', cover:'让个人上下文真正进入工作流', publisher:'AWiki社区', desc:'交流 Inbox、资源库、专题和事项上下文之间的组织方法。', action:'加入社区', version:'开放加入', agent:'上下文策展 Agent', brief:'从新增实践中提炼 Inbox、资源与专题之间可复用的组织模式。', stories:['从零散输入到长期主题','上下文组合如何复用而不泄露'], knowledge:['个人上下文组织指南','授权与引用边界案例'], skills:['搜索社区内容','生成今日简报','比较多个观点','返回原始来源'], groups:['个人知识实践','上下文工程讨论'] },
-    { id:'n-agent-community', type:'community', name:'智能体协作设计组', cover:'共同设计 Agent 原生协作体验', publisher:'AWiki社区', desc:'讨论智能体身份、授权、群聊、事项与方案技能的产品实践。', action:'加入社区', version:'共建中', agent:'协作观察 Agent', brief:'今天的讨论集中在：普通群组、Matter 内部群组与社区关系需要成为三个清晰对象。', stories:['群组与 Matter 边界的产品演进','社区 Agent 如何帮助成员浏览内容'], knowledge:['Agent 原生协作模式库','身份与最小授权设计笔记'], skills:['搜索社区内容','追踪一个事件','生成今日简报','比较多个观点','订阅特定信号','返回原始来源'], groups:['Agent 产品讨论','协作协议共建'] }
+    { id:'n-agent-community', type:'community', name:'智能体协作设计组', cover:'共同设计 Agent 原生协作体验', publisher:'AWiki社区', desc:'讨论智能体身份、授权、群聊、事项与方案技能的产品实践。', action:'加入社区', version:'共建中', agent:'协作观察 Agent', brief:'今天的讨论集中在：普通群组、Matter 内部群组与社区关系需要成为三个清晰对象。', stories:['群组与 Matter 边界的产品演进','社区 Agent 如何帮助成员浏览内容'], knowledge:['Agent 原生协作模式库','身份与最小授权设计笔记'], skills:['搜索社区内容','追踪一个事件','生成今日简报','比较多个观点','订阅特定信号','返回原始来源'], groups:['Agent 产品讨论','协作协议共建'] },
+    { id:'n-industrial-data-community', type:'community', name:'产业数据空间服务化共建组', cover:'让数据产品真正被工厂和采购人员使用', publisher:'AWiki社区', desc:'共建数据产品的服务语言、角色授权、责任边界与回单标准。', action:'加入社区', version:'会议讨论', agent:'数据空间策展 Agent', brief:'本周聚焦：能耗对标、设备健康和供应商证明怎样通过 HAHO 进入人员 Matter。', stories:['数据目录为什么没有自动变成业务服务','工厂能耗异常复核的最小上下文'], knowledge:['数据产品服务说明模板','跨组织授权与回单字段'], skills:['搜索数据产品','生成服务说明','检查最小授权','返回来源与版本'], groups:['工厂场景讨论','采购与供应商协作'] }
   ];
 
   var CONNECTION_CATEGORIES = [
@@ -4239,7 +4389,7 @@ var __OD_HMAP = {
       var requestIntro = '<span class="stage-marker">Plan Snapshot · 提出采购意图</span>' +
         '<div class="mrow out"><span class="mav">C</span><span class="mstack"><div class="msg out">我需要采购 20 吨越南咖啡豆，水分不高于 12.5%，需提供近三批次检测报告；确认规格后希望 21 天内出货。请先匿名匹配合适供应方。</div></span></div>' +
         '<div class="mrow in"><span class="mav">贸</span><span class="mstack"><span class="mname">贸易匹配智能体</span><div class="msg in">已记录采购意图。我会按供货能力、质量材料、交付周期和交易条件检索并排序候选。候选沟通由我匿名代发，只有双方确认合作意向后才公开身份并进入具体业务协作。</div></span></div>';
-      var candidateHeader = requestIntro + '<span class="stage-marker">TREE Run 回执 · 候选检索完成</span><span class="msg system">Run trade-match-018 已完成：找到 3 个匿名候选，并保留检索条件与排序依据</span><div class="candidate-grid">' + cards + '</div>';
+      var candidateHeader = requestIntro + '<span class="stage-marker">Drive Action 回单 · 候选检索完成</span><span class="msg system">Run trade-match-018 已完成：找到 3 个匿名候选，并保留检索条件与排序依据</span><div class="candidate-grid">' + cards + '</div>';
       var conversation = tradeMessageLogHTML();
       if (!selectedTradeRecipients.length) {
         return candidateHeader + conversation + '<div class="confirmation-gate"><h3>选择一个或多个候选继续匿名回复</h3><p>已有问题和候选回答会持续保留。可直接使用卡片，也可在输入框点击“@ 候选”弹层进行单选或多选。</p></div>';
@@ -4282,7 +4432,7 @@ var __OD_HMAP = {
     }
     return '<span class="stage-marker">Plan Snapshot · 响应交付计划</span><span class="msg system">AWiki 伙伴已将响应文件工作计划发布到本事项群</span>' +
       '<div class="mrow in"><span class="mav">空</span><span class="mstack"><span class="mname">AWiki 伙伴</span><div class="msg in">计划如下：①拆解需求并建立应答矩阵；②技术智能体逐项响应；③商务智能体补全报价与供货承诺；④我汇编成稿后调用检查智能体复核。</div></span></div>' +
-      '<span class="stage-marker">TREE Run 回执 · 协作执行</span><span class="msg system">Run response-compose-041：技术响应智能体完成规格应答 · 商务报价智能体完成报价条款</span>' +
+      '<span class="stage-marker">Drive Action 回单 · 协作执行</span><span class="msg system">Run response-compose-041：技术响应智能体完成规格应答 · 商务报价智能体完成报价条款</span>' +
       '<div class="mrow in"><span class="mav">空</span><span class="mstack"><span class="mname">AWiki 伙伴</span><div class="msg in">响应文件 v0.9 已汇编完成。我会把原始需求、双方确认条件和当前文档版本作为关键上下文交给检查智能体。</div></span></div>' +
       '<div class="filecard" style="margin-left:44px"><svg class="ic"><use href="#i-file"/></svg><span style="flex:1"><span class="fname">越南咖啡豆采购响应文件_v0.9.docx</span><span class="fmeta" style="display:block">18 页 · AWiki 伙伴刚刚汇编</span></span><button class="iconbtn" data-h-click="toast(\'已打开响应文件预览\')"><svg class="ic sm"><use href="#i-eye"/></svg></button></div>' +
       '<div id="final-review-result"><span class="stage-marker" style="margin-left:44px">Human Checkpoint · 最终复核</span><button class="btn btn-primary" id="run-final-review-btn" style="margin-left:44px" data-h-click="runFinalReview()">调用检查智能体</button></div>';
@@ -4414,7 +4564,7 @@ var __OD_HMAP = {
   function runFinalReview() {
     var box = document.getElementById('final-review-result');
     if (!box) return;
-    box.innerHTML = '<div class="card" style="padding:14px 16px;margin-left:44px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><h3 style="font-size:14px">TREE Run 回执 · 一致性复核</h3><p class="sub">Run review-042 · 证据与检查结论已写入事项事件流</p></div><span class="pill pending">发现 1 项</span></div><div class="kv" style="margin-top:10px"><span class="k">覆盖情况</span><span class="v plain">24 项需求均已响应</span></div><div class="kv"><span class="k">Evaluate</span><span class="v plain">报价有效期应由 30 天调整为 60 天</span></div><button class="btn btn-primary" style="margin-top:10px" data-h-click="applyFinalReview(this)">采纳并更新文件</button></div>';
+    box.innerHTML = '<div class="card" style="padding:14px 16px;margin-left:44px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><h3 style="font-size:14px">Evaluate Anytime 回单 · 一致性复核</h3><p class="sub">Run review-042 · 证据与检查结论已写入事项事件流</p></div><span class="pill pending">发现 1 项</span></div><div class="kv" style="margin-top:10px"><span class="k">覆盖情况</span><span class="v plain">24 项需求均已响应</span></div><div class="kv"><span class="k">Evaluate Anytime</span><span class="v plain">报价有效期应由 30 天调整为 60 天</span></div><button class="btn btn-primary" style="margin-top:10px" data-h-click="applyFinalReview(this)">采纳并更新文件</button></div>';
     toast('检查完成，发现 1 项一致性问题');
     renderContextInspector();
   }
@@ -5088,7 +5238,7 @@ var __OD_HMAP = {
       }
       if (/长期|规则|偏好|以后|每次/.test(text)) {
         item.routeTarget = 'config';
-        return '这属于跨 Matter 的长期偏好。建议进入协作规则，核对 TREE 归属、适用范围和版本边界后再发布。';
+        return '这属于跨 Matter 的长期偏好。建议进入协作规则，核对 SIDE 能力、适用范围和版本边界后再发布。';
       }
       if (/资源|收藏|资料|归档|复用/.test(text)) {
         item.routeTarget = 'resource';
@@ -5525,8 +5675,8 @@ var __OD_HMAP = {
     var selectedCategory = isMine ? appState.connectionCategory : appState.networkCategory;
     if (!categories.some(function (item) { return item.id === selectedCategory; })) selectedCategory = categories[0].id;
     if (isMine) appState.connectionCategory = selectedCategory; else appState.networkCategory = selectedCategory;
-    document.getElementById('connection-workspace-title').textContent = isMine ? '连接' : 'AWiki';
-    document.getElementById('connections-category-label').textContent = isMine ? '我的连接' : 'AWiki';
+    document.getElementById('connection-workspace-title').textContent = isMine ? '连接' : 'AWiki · Second Web';
+    document.getElementById('connections-category-label').textContent = isMine ? '我的关系与授权' : '发现与加入';
     var nav = document.getElementById('connection-category-list');
     nav.innerHTML = '';
     categories.forEach(function (category) {
@@ -5809,6 +5959,39 @@ var __OD_HMAP = {
       '<div class="community-boundary"><b>权限边界</b><p>加入社区只建立成员关系，不会自动加入全部群组，也不会向社区 Agent 共享你的私有上下文。</p></div>' +
       '<div class="network-actions"><button class="btn btn-primary" data-h-click="browseCommunity(\'' + esc(item.id) + '\')">浏览社区内容</button><button class="btn btn-secondary" data-h-click="toast(\'已打开社区角色与订阅设置\')">成员与订阅设置</button></div>';
   }
+  function renderAicInspector(meta, activeIndex) {
+    var objects = meta.aicObjects || [];
+    if (!objects.length) return '';
+    var index = Math.max(0, Math.min(Number(activeIndex) || 0, objects.length - 1));
+    var item = objects[index];
+    var fields = [
+      ['Genesis', item.genesis],
+      ['Current Matter', item.matter],
+      ['Context Slice', item.context],
+      ['ActionPoint', item.action],
+      ['Capability Binding', item.capability],
+      ['Authorization', item.authorization],
+      ['Latest Receipt', item.receipt],
+      ['Projection', item.projection]
+    ];
+    return '<section class="card aic-inspector" data-aic-inspector><div class="aic-inspector-head"><div><h3>AIC Inspector</h3><p>选中 Agent 后，查看它当前参与的 Matter 持久数字对象。</p></div><span class="pill ai">持久对象</span></div>' +
+      '<div class="aic-object-note"><b>AIC 不是 Agent 的附属会话。</b>它是 Matter 动态、可延展、机器可读的持久视图；Agent 仅按授权读取投影并写回回单。</div>' +
+      '<div class="aic-object-tabs">' + objects.map(function (entry, idx) { return '<button type="button" class="' + (idx === index ? 'on' : '') + '" data-aic-index="' + idx + '">' + esc(entry.id) + '</button>'; }).join('') + '</div>' +
+      '<div class="aic-stage-grid">' + fields.map(function (field) { return '<div class="aic-stage-card"><span>' + esc(field[0]) + '</span><b>' + esc(field[1]) + '</b></div>'; }).join('') + '</div></section>';
+  }
+  function wireAicInspector(host, meta) {
+    if (!host || !meta || !meta.aicObjects) return;
+    host.querySelectorAll('[data-aic-index]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var card = host.querySelector('[data-aic-inspector]');
+        if (!card) return;
+        var wrap = document.createElement('div');
+        wrap.innerHTML = renderAicInspector(meta, Number(button.dataset.aicIndex));
+        card.replaceWith(wrap.firstElementChild);
+        wireAicInspector(host, meta);
+      });
+    });
+  }
   function renderConnectionDetail(conn) {
     document.getElementById('connections-empty').hidden = true;
     var c = document.getElementById('connections-detail-content');
@@ -5816,7 +5999,7 @@ var __OD_HMAP = {
     if (conn.type === 'group') { renderGroupConnectionDetail(conn, c); return; }
     if (conn.type === 'community') { renderJoinedCommunityDetail(conn, c); return; }
     var isAgent = conn.type === 'agent';
-    var meta = isAgent ? AGENT_META[conn.name === 'cgw-cx-linux' ? 'cgx' : 'hermes'] || {} : {};
+    var meta = isAgent ? AGENT_META[conn.agentMetaId || (conn.name === 'cgw-cx-linux' ? 'cgx' : 'hermes')] || {} : {};
     var html = '<div class="mesh-viewport" aria-label="Live Mesh"><span class="mesh-label">Live Mesh</span>' +
       '<svg class="mesh-svg" viewBox="0 0 360 170" preserveAspectRatio="xMidYMid slice">' +
       '<circle cx="180" cy="85" r="10" fill="#7a7f88"/>' +
@@ -5842,6 +6025,7 @@ var __OD_HMAP = {
     html += '<div class="card"><h3>能力摘要</h3><p class="sub">该连接声明的能力与类型</p><div class="mesh-list">' +
       connectionCapabilities(conn, meta) +
       '</div></div>';
+    if (isAgent) html += renderAicInspector(meta, 0);
     html += '<div class="card"><h3>可访问资源</h3><p class="sub">该连接可访问的资源与事项</p><div class="mesh-list">' +
       '<div class="mesh-item"><svg class="ic"><use href="#i-shield"/></svg><span class="meta"><span class="name">身份已验证</span><span class="sub">通过本地 DID 签名验证</span></span></div>' +
       connectionResources(conn) +
@@ -5863,6 +6047,7 @@ var __OD_HMAP = {
     html += '<div class="card"><h3>权限风险</h3><p class="sub">' + esc(connectionRisk(conn)) + '</p></div>';
     html += '<details class="folds"><summary><svg class="ic sm"><use href="#i-chevron"/></svg>DID、公钥与审计日志(占位)</summary><div class="codeblock"><code>audit:2026-08-07T10:00:00Z:verified</code></div></details>';
     c.innerHTML = html;
+    if (isAgent) wireAicInspector(c, meta);
   }
   function renderCommunityNetworkDetail(item, host) {
     var tab = appState.communityDetailTab || 'overview';
@@ -6144,12 +6329,12 @@ var __OD_HMAP = {
     var reply = document.createElement('div');
     reply.className = 'awiki-bubble';
     var answer = /执行|发送|自动|权限/.test(text)
-      ? '这条规则属于 Evaluate，只改变候选评价建议。Execute 阶段的外部发送和自动化权限不会被扩大。'
+      ? '这条规则属于 Evaluate Anytime，只改变候选评价建议。Drive Action 的外部发送和自动化权限不会被扩大。'
       : /当前|进行中|旧事项|追溯/.test(text)
         ? '进行中的 Matter 保持原来的 SolutionSkill 与配置版本，除非你显式发起重新评估，因此不会发生静默漂移。'
         : /版本|发布|范围|影响/.test(text)
           ? 'v1.3 只会绑定到发布后新建的贸易 Matter，并在每次 Run 中保留版本快照和影响范围。'
-          : '这项配置的顺序是：长期意图 → 差异提议 → TREE 影响分析 → 人工确认 → 发布回执。你可以沿时间线核对每一步。';
+          : '这项配置的顺序是：长期意图 → 差异提议 → SIDE 影响分析 → 人工确认 → 发布回单。你可以沿时间线核对每一步。';
     reply.innerHTML = '<b>AWiki 伙伴</b>' + esc(answer);
     thread.appendChild(reply);
     input.value = '';
@@ -6183,12 +6368,28 @@ var __OD_HMAP = {
     cgx: {
       name: 'cgw-cx-linux', type: 'Codex', handle: 'cgw-cx-linux',
       did: 'did:wba:awiki.ai:agent:runtime:cgw_cx_linux:e1_rP__SgusGGG0FJuh_31XDEr9HlGrP2ZH-oke9g11vJ0',
-      msgs: '128 条', created: '2026-06-28 21:14', conv: 'cgx'
+      msgs: '128 条', created: '2026-06-28 21:14', conv: 'cgx',
+      aicObjects: [
+        { id:'aic:m3:response-check', genesis:'Matter m3 创建 · 需求文件与双方已确认条件', matter:'采购响应文件编制 · 验收中', context:'需求 24 项 + 商务决定 + v0.9 文件摘要', action:'检查遗漏、矛盾与承诺一致性', capability:'response.check@0.7.1 · Codex Runtime', authorization:'ContextView 只读 · 30 分钟 · 禁止外发', receipt:'review-042 · 发现报价有效期 1 项偏差', projection:'等待用户采纳后写回 v1.0 与验收状态' },
+        { id:'aic:cfg:supplier-evaluation', genesis:'长期偏好被识别为跨 Matter 配置', matter:'供应商评价规则 · 等待发布', context:'v1.2 当前值 + v1.3 差异 + 影响范围', action:'解释 SIDE 影响并等待人工确认', capability:'config.impact-analysis@1.3', authorization:'只读历史 · 可写提议 · 不可发布', receipt:'影响仅限后续候选排序', projection:'Human Checkpoint · 是否发布 v1.3' }
+      ]
     },
     hermes: {
       name: 'Hermes1', type: 'Hermes', handle: 'hermes1',
       did: 'did:wba:awiki.ai:agent:runtime:hermes1:e1_Xk92maTQ7vLwzbNq_48YDJs5MhPuR3WA-fne7t22kK1',
-      msgs: '46 条', created: '2026-07-02 09:40', conv: null
+      msgs: '46 条', created: '2026-07-02 09:40', conv: null,
+      aicObjects: [
+        { id:'aic:m1:research-context', genesis:'Moonshot 尽调 Matter 请求补充外部研究', matter:'Moonshot 尽调 · 证据补齐', context:'公开资料索引 + 投资库只读片段', action:'整理月活数据证据，不修改原始资料', capability:'research.synthesis@2.1 · Hermes', authorization:'投资库只读 · 有效至 2026-09-01', receipt:'来源清单 8 条 · 2 条需要人工复核', projection:'回到 Matter 的证据面板，不进入 Agent 私有记忆' }
+      ]
+    },
+    'data-space': {
+      name: '工业数据服务 Agent', type: 'Data Service', handle: 'industrial-data-service',
+      did: 'did:wba:awiki.ai:agent:dataspace:industrial_service_demo',
+      msgs: '12 条服务回单', created: '会议讨论原型', conv: null,
+      aicObjects: [
+        { id:'aic:data-space:energy-benchmark', genesis:'工厂负责人提出三条产线能耗异常复核目标', matter:'华东工厂三条产线单位能耗异常复核', context:'近 30 日能耗、同工况基线、L2 设备健康最小字段', action:'组合对标与健康指数，解释异常并返回来源', capability:'dp.energy.v3 + dp.asset-health.v2', authorization:'只读 · 24h · 工厂域内 · 禁止二次分发', receipt:'L2 高于基线 11.8% · 轴承健康下降', projection:'等待工厂负责人决定是否安排停机检查' },
+        { id:'aic:data-space:supplier-proof', genesis:'采购经理请求核验候选供应商资质与履约证明', matter:'华北工厂备件供应商准入复核', context:'候选 DID、资质摘要、近 12 月履约统计', action:'核验有效性并标注缺失证明', capability:'dp.supplier-proof.v1', authorization:'跨组织最小披露 · 单次使用', receipt:'3 项有效 · 1 项将在 30 日内到期', projection:'请求供应商补交更新证明，等待采购确认' }
+      ]
     }
   };
   var activeAgent = 'daemon';
