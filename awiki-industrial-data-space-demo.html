@@ -94,7 +94,7 @@
       try { restored=JSON.parse(sessionStorage.getItem("awiki-industry-flow-v3")||"{}"); } catch (_) {}
       const state = {
         route:initialRoute(),segment:"session",matterId:"report",scene:Number(restored.scene)||1,sessionId:"buyer",
-        overview:"dynamic",overviewView:restored.overviewView||"grid",overviewScope:restored.overviewScope||"mine",feedIndex:0,connCat:"members",connId:"buyer",awikiCat:"solutions",awikiIndex:0,awikiId:"community",settings:"general",manual:restored.manual||{},workSection:restored.workSection||"matters",workItem:0,workMatterId:restored.workMatterId||"match",
+        overview:"dynamic",overviewView:restored.overviewView||"grid",overviewScope:restored.overviewScope||"mine",feedIndex:0,connCat:"members",connId:"buyer",awikiCat:"solutions",awikiIndex:0,awikiId:"community",settings:"general",manual:restored.manual||{},workSection:restored.workSection||"matters",workItem:0,workMatterId:restored.workMatterId||"report",
         collab:restored.collab||{},privateTurn:restored.privateTurn||{},sessionManual:restored.sessionManual||{},editingScene:null
       };
 
@@ -196,6 +196,7 @@
         const current=id===cur.matter,cs=current?collabState(cur.id):null;
         let status="已接续",statusClass="ok";
         if(id==="report"&&!current){status="持续运行";statusClass="ok"}
+        if(!reached.length){status="待派生";statusClass="gray"}
         if(current){
           if(cur.final){status="本轮已回流";statusClass="ok"}
           else if(!cur.collab){status="伙伴分析中";statusClass="purple"}
@@ -207,7 +208,7 @@
         }
         const completed=reached.filter(s=>s.id<state.scene||(s.id===state.scene&&(!s.collab?s.final:isExecuted(s.id)))).length;
         const lastExecuted=[...reached].reverse().find(s=>s.collab&&isExecuted(s.id));
-        const next=current?cur.title:`结果已接续至「${matterDefs[cur.matter].title}」`;
+        const next=!reached.length?"等待上游决定与执行回单":current?cur.title:`结果已接续至「${matterDefs[cur.matter].title}」`;
         const deltas={1:"企业原始数据 → 4 字段可信数据产品",3:"可确认 720/1200 → 条件覆盖 1200/1200",4:"质检 / 授权阻塞 1 → 0",5:"候选组合 → 已冻结合作依据",6:"共同框架 → 3 个组织内子事项",7:"维护冲突 → MES 已签收计划",8:"分散证明 → Receipt Bundle"};
         let blocker="无当前阻塞";
         if(current&&collabState(cur.id)?.phase==="declined")blocker="责任人已暂停，等待重新决定";
@@ -241,7 +242,7 @@
       function transitionCard(scene){return scene.transition?`<div class="matter-transition"><i>↳</i><div><b>关联事项已接续</b><span>从「${scene.transition.from}」而来：${scene.transition.text}</span></div></div>`:""}
       function timelineFor(id){
         const reached=sceneDefs.filter(s=>s.matter===id&&s.id<=state.scene);let out="";
-        if(!reached.length){const future=sceneDefs.find(s=>s.matter===id);out=`<div class="matter-transition"><i>＋</i><div><b>事项已生成，等待接续</b><span>上游回单已满足创建条件；当前办理仍停留在「${matterDefs[currentScene().matter].title}」，点击“继续下一环节”后进入本事项。</span></div></div>${future?.transition?transitionCard(future):""}`}
+        if(!reached.length){const future=sceneDefs.find(s=>s.matter===id);out=`<div class="matter-transition"><i>＋</i><div><b>事项尚未派生</b><span>当前办理仍停留在「${matterDefs[currentScene().matter].title}」。只有上游人员决定与执行回单满足条件，才会创建并接续本事项。</span></div></div>${future?.transition?transitionCard(future):""}`}
         reached.forEach(scene=>{out+=transitionCard(scene)+`<div class="stage-marker">${scene.number} · ${scene.title}</div>`+scene.base()+collaborationEvents(scene)});
         (state.manual[id]||[]).forEach(x=>{const actor=actorFor();out+=message(actor.mark,"user",esc(x),"","刚刚",actor.name)});
         if(id!==currentScene().matter)out+=`<div class="history-notice"><i>↗</i><div><b>当前工作已接续到「${matterDefs[currentScene().matter].title}」</b><span>这里保留当时的共同事实和回单；右侧伙伴已切换为回看模式，不会把当前建议写入历史事项。</span></div></div>`;
@@ -271,7 +272,7 @@
       }
       function currentCompanion(){
         const scene=currentScene(),m=matterView(scene.matter),selected=state.matterId,review=selected!==scene.matter;
-        if(review){const old=matterView(selected);return `<aside class="companion-pane"><header class="companion-head"><span class="companion-id"><i>A</i><span><b>AWiki 伙伴</b><small>私人在线 · 回看模式</small></span></span><span class="pill gray">REVIEW</span></header><div class="companion-body"><section class="context-card"><span class="eyebrow">正在回看</span><h3>${old.title}</h3><p>${old.goal}</p><div class="context-meta"><span>状态<b>${old.status}</b></span><span>最新回单<b>${old.latest}</b></span></div></section><section class="partner-card"><b>上下文没有混用</b><p>当前办理已在「${m.title}」。我可以解释这里的历史决定和证据，但不会把当前建议写入旧事项。</p></section><div class="collab-actions"><button class="btn primary" data-ind-current="true">回到当前事项</button></div></div><footer class="companion-foot"><button class="btn secondary" style="width:100%" data-ind-settings="collab">查看协作规则</button></footer></aside>`}
+        if(review){const old=matterView(selected),pending=old.completed===0;return `<aside class="companion-pane"><header class="companion-head"><span class="companion-id"><i>A</i><span><b>AWiki 伙伴</b><small>私人在线 · ${pending?'派生说明':'回看模式'}</small></span></span><span class="pill gray">${pending?'PENDING':'REVIEW'}</span></header><div class="companion-body"><section class="context-card"><span class="eyebrow">${pending?'待派生事项':'正在回看'}</span><h3>${old.title}</h3><p>${old.goal}</p><div class="context-meta"><span>状态<b>${old.status}</b></span><span>最新回单<b>${old.latest}</b></span></div></section><section class="partner-card"><b>上下文没有混用</b><p>${pending?`当前还在「${m.title}」办理上游条件。本事项可以查看预计目标和关系，但尚不能发送消息或指派 Agent。`:`当前办理已在「${m.title}」。我可以解释这里的历史决定和证据，但不会把当前建议写入旧事项。`}</p></section><div class="collab-actions"><button class="btn primary" data-ind-current="true">回到当前事项</button></div></div><footer class="companion-foot"><button class="btn secondary" style="width:100%" data-ind-settings="collab">查看协作规则</button></footer></aside>`}
         const control=scene.collab?collaborationControl(scene):scene.final?`<div class="decision-box"><span>本轮连续事项已完成</span><p>可回看各事项的决定与回单，或进入工厂运营看板。</p><div class="collab-actions row"><button class="btn primary" data-ind-route="solutions">查看工厂看板</button><button class="btn secondary" data-ind-reset="true">重置演示</button></div></div>`:`<div class="decision-box"><span>先理解，再进入工厂决定</span><p>这一环节只展示需求如何被 Agent 逐级承接；没有你的确认，不会替海岳在喊单群作承诺。</p><div class="collab-actions"><button class="btn primary" data-ind-next="true">${scene.action}</button></div></div>`;
         return `<aside class="companion-pane"><header class="companion-head"><span class="companion-id"><i>A</i><span><b>AWiki 伙伴</b><small>私人线程 · 讨论后再发进中间</small></span></span><span class="pill purple">PRIVATE</span></header><div class="companion-body"><section class="context-card"><span class="eyebrow">我正在陪你处理</span><h3>${m.title}</h3><p>${scene.number} · ${scene.title}</p><div class="context-meta"><span>决定权<b>${scene.authority}</b></span><span>群内状态<b>${m.status}</b></span></div></section>${scene.transition?`<section class="partner-card"><b>上下文接续</b><p>${scene.transition.text}</p></section>`:""}<section class="private-note"><header><h3>伙伴分析 · 仅你可见</h3><span class="pill purple">PRIVATE</span></header><p>${scene.finding}</p><ul>${scene.reasons.map(x=>`<li>${x}</li>`).join("")}</ul><p class="suggestion"><b>建议草稿</b><br>${scene.suggestion}</p><div class="ai-evidence">${scene.evidence.map(x=>`<span>${x}</span>`).join("")}</div></section><div class="prompt-grid"><button data-ind-private="evidence">核对证据</button><button data-ind-private="blocker">解释阻塞</button><button data-ind-private="report">起草汇报</button><button data-ind-route="connections">查看 Agent / 人员</button></div>${privateTurn(scene)}${control}<div class="notice" style="margin-top:10px"><span>▣</span><span><b>中间只留共同事实：</b>外部事件、你确认发送的决定、群内指派与 Agent Receipt。伙伴分析始终留在右侧。</span></div></div><footer class="companion-foot"><div class="composer-box" style="width:100%;padding-left:9px"><input id="partner-input" placeholder="继续和 AWiki 伙伴讨论…" /><button class="btn primary" data-ind-partner-send="true">发送</button></div><small style="display:block;margin-top:5px;color:var(--muted);font-size:8.5px">私人消息不会进入事项群；使用上方“确认并发送”才会写入中间。</small></footer></aside>`;
       }
@@ -492,10 +493,10 @@
           ["待派生","分批交付、质检与结算","合作确认后承接物流、质检、签收和结算回单。","王璐","待派生","delivery"]
         ];
         const generated=id=>availableMatters().includes(id);
-        const selectedId=matterDefs[state.workMatterId]?state.workMatterId:current.matter,selected=matterDefs[selectedId],selectedView=matterView(selectedId);
+        const selectedId=matterDefs[state.workMatterId]?state.workMatterId:current.matter,selected=matterDefs[selectedId],selectedView=matterView(selectedId);state.matterId=selectedId;
         const selectedScenes=sceneDefs.filter(s=>s.matter===selectedId),selectedScene=selectedScenes.filter(s=>s.id<=state.scene).at(-1)||selectedScenes[0];
-        const canOpen=availableMatters().includes(selectedId),companionItem={title:selected.title,summary:selected.goal};
-        return `<div class="pane work-page"><section class="work-main-shell">${workNav()}<div class="work-content-row"><section class="work-matter-list"><div class="object-list-head"><h2>事项</h2><p>单击选择并预览；确认后再进入事项</p></div><label class="search" style="margin-top:10px">⌕<input placeholder="搜索事项…" /></label><div class="object-list-scroll">${rows.map(x=>`<button class="object-row ${x[5]===selectedId?'on':''}" data-ind-work-matter="${x[5]}"><i>${matterDefs[x[5]].mark}</i><span><b>${x[1]}</b><small>${x[0]} · ${x[3]}</small></span><time>${x[4]}</time></button>`).join("")}</div></section><main class="work-matter-preview"><header class="object-detail-head"><div><span class="eyebrow">AWIKI WORK · 事项预览</span><h1>${selected.title}</h1><p>${selected.goal}</p></div><div class="head-actions"><button class="btn secondary" data-ind-reset="true">重置</button>${canOpen?`<button class="btn primary" data-ind-matter-open="${selectedId}">进入事项</button>`:`<button class="btn secondary" data-ind-toast="该事项尚未由上游决定派生">尚未派生</button>`}</div></header><div class="object-detail-body"><section class="detail-section"><h3>当前状态</h3><div class="fact-grid"><div><span>状态</span><b>${selectedView.status}</b></div><div><span>当前/预计环节</span><b>${selectedScene?.title||"等待派生"}</b></div><div><span>负责人</span><b>${selected.owner}</b></div><div><span>参与范围</span><b>${selected.members}</b></div></div></section><section class="detail-section"><h3>事项关系与边界</h3><div class="clean-list"><div><span><b>${selected.lineage}</b><small>列表选择只更新当前预览，不改变事项状态。</small></span><em>${selectedView.latest}</em></div><div><span><b>进入事项后办理</b><small>完整讨论、状态、资源、伙伴建议与执行回单在事项内部呈现。</small></span><em>›</em></div></div></section></div></main></div></section>${workObjectCompanion("事项",companionItem)}</div>`;
+        const canWork=availableMatters().includes(selectedId),actor=actorFor(selectedScene);
+        return `<div class="pane work-page"><section class="work-main-shell">${workNav()}<div class="work-content-row"><section class="work-matter-list"><div class="object-list-head"><h2>事项</h2><p>选择事项，在同一工作面持续办理</p></div><label class="search" style="margin-top:10px">⌕<input placeholder="搜索事项…" /></label><div class="object-list-scroll">${rows.map(x=>`<button class="object-row ${x[5]===selectedId?'on':''}" data-ind-work-matter="${x[5]}"><i>${matterDefs[x[5]].mark}</i><span><b>${x[1]}</b><small>${x[0]} · ${x[3]}</small></span><time>${x[4]}</time></button>`).join("")}</div></section><main class="chat-pane"><header class="chat-head"><div class="chat-head-row"><div><h2>${selected.title}</h2><p>目标：${selected.goal}</p></div><div class="head-actions"><button class="btn secondary" data-ind-route="connections">参与者</button><button class="icon-btn" data-ind-toast="更多事项操作：授权、导出、封存">•••</button></div></div><div class="head-meta"><span class="pill ${selectedView.statusClass}">${selectedView.status}</span><span>负责人：<b>${selected.owner}</b></span><span>${selected.members}</span><span>关联：${selected.lineage}</span></div></header><section class="chat-body" id="chat-body">${matterStatusPanel(selectedId)}<div class="timeline">${timelineFor(selectedId)}</div></section>${canWork?`<footer class="composer"><div class="composer-box"><input id="matter-input" placeholder="以${actor.name}身份发送到当前事项群…" /><button class="btn primary" data-ind-send="true">发送</button></div><small>伙伴的私人分析不会自动入群；用户决定、用户指派、Agent 执行和 Receipt 分步写回。</small></footer>`:`<footer class="composer"><small>该事项尚未派生。请先在当前事项完成上游决定与执行回单。</small></footer>`}</main></div></section>${companionPane()}</div>`;
       }
 
       const factorySettingInfo={general:["基本与身份","海岳工作域、版本与可携带身份。"],solutions:["已安装方案","方案把数据空间能力组织成具体岗位的 SOP、看板和事项。"],collab:["协作规则 / SIDE","SIDE 组织持续协作能力；每次规则修改仍由配置事项保存、审批和发布。"],partner:["AWiki 伙伴","伙伴行为不是一组即时开关，而是可按方案和事项覆盖的版本化规则。"],agents:["Agent、AI 应用与专业服务","AWiki 伙伴统一组织 Agent、数据空间、MES 和外部 AI 应用，不要求合作方先改造成 Agent。"],identity:["身份与授权","主体、能力、字段、用途与有效期共同决定一次协作。"],advanced:["高级运行记录","AIC 只作为 Agent 运行上下文的技术检查器，不作为普通用户主导航。"]};
@@ -518,7 +519,7 @@
 
       let toastTimer=0;function toast(text){const el=document.querySelector("#toast");if(!el)return;clearTimeout(toastTimer);el.textContent=text;el.classList.add("on");toastTimer=setTimeout(()=>el.classList.remove("on"),2200)}
       function go(route){if(!routeSet.has(route))return;state.route=route;history.replaceState(null,"",`#/${route}`);render()}
-      function openMatter(id){if(!matterDefs[id])return;if(!availableMatters().includes(id)){toast("该事项尚未由上游人员决定派生");return}state.matterId=id;state.workSection="detail";go("solutions")}
+      function openMatter(id){if(!matterDefs[id])return;if(!availableMatters().includes(id)){toast("该事项尚未由上游人员决定派生");return}state.matterId=id;state.workMatterId=id;state.workSection="matters";go("solutions")}
       function scrollChatSurfacesToBottom(){
         document.querySelectorAll(".chat-body, .companion-body").forEach(el=>{el.scrollTop=el.scrollHeight});
       }
@@ -535,9 +536,9 @@
       function advanceScene(){
         const scene=currentScene();if(scene.collab&&!isExecuted(scene.id)){toast("需要完成决定、写回、指派和执行回单后才能进入下一环节");return}
         if(scene.final){toast("本轮已完成，可从工作中重置演示");return}
-        state.scene=Math.min(sceneDefs.length,state.scene+1);state.matterId=currentScene().matter;state.segment="matter";state.editingScene=null;render();toast(currentScene().matter===scene.matter?"同一事项进入下一办理环节":"已按上游 Receipt 接续到新的事项")
+        state.scene=Math.min(sceneDefs.length,state.scene+1);state.matterId=currentScene().matter;state.workMatterId=currentScene().matter;state.segment="matter";state.editingScene=null;render();toast(currentScene().matter===scene.matter?"同一事项进入下一办理环节":"已按上游 Receipt 接续到新的事项")
       }
-      function resetDemo(){state.scene=1;state.matterId="report";state.workMatterId="match";state.segment="session";state.workSection="matters";state.collab={};state.manual={};state.privateTurn={};state.sessionManual={};try{sessionStorage.removeItem("awiki-industry-flow-v3")}catch(_){}render();toast("已重置：从长期数据报送事项开始")}
+      function resetDemo(){state.scene=1;state.matterId="report";state.workMatterId="report";state.segment="session";state.workSection="matters";state.collab={};state.manual={};state.privateTurn={};state.sessionManual={};try{sessionStorage.removeItem("awiki-industry-flow-v3")}catch(_){}render();toast("已重置：从长期数据报送事项开始")}
 
       document.addEventListener("click",e=>{
         const t=e.target.closest("button");if(!t)return;
@@ -554,7 +555,7 @@
         if(t.dataset.indAssign){assignAgent();return}
         if(t.dataset.indExecute){executeAgent();return}
         if(t.dataset.indNext){advanceScene();return}
-        if(t.dataset.indCurrent){state.matterId=currentScene().matter;render();return}
+        if(t.dataset.indCurrent){state.matterId=currentScene().matter;state.workMatterId=currentScene().matter;render();return}
         if(t.dataset.indPrivate){state.privateTurn[String(currentScene().id)]=t.dataset.indPrivate;render();return}
         if(t.dataset.indPartnerSend){const input=document.querySelector("#partner-input"),v=input?.value.trim();if(!v){input?.focus();return}state.privateTurn[String(currentScene().id)]={question:v,answer:`我会把“${v}”放在当前事项的授权和证据边界内分析。先在右侧形成草稿；只有你点击确认发送，内容才会进入中间事项群。`};render();return}
         if(t.dataset.indOverview){state.overview=t.dataset.indOverview;state.feedIndex=0;render();return}
@@ -569,7 +570,7 @@
         if(t.dataset.indConnMembers){state.connCat="members";state.connId="supplier1";go("connections");return}
         if(t.dataset.indSetting){state.settings=t.dataset.indSetting;render();return}
         if(t.dataset.indWorkSection){state.workSection=t.dataset.indWorkSection;state.workItem=0;render();return}
-        if(t.dataset.indWorkMatter){state.workMatterId=t.dataset.indWorkMatter;render();return}
+        if(t.dataset.indWorkMatter){state.workMatterId=t.dataset.indWorkMatter;state.matterId=t.dataset.indWorkMatter;render();return}
         if(t.dataset.indWorkItem!==undefined){state.workItem=Number(t.dataset.indWorkItem)||0;render();return}
         if(t.dataset.indPackageOverview){state.workSection="packageOverview";render();return}
         if(t.dataset.indSettings){state.settings=t.dataset.indSettings;go("settings");return}
