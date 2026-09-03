@@ -94,7 +94,7 @@
       try { restored=JSON.parse(sessionStorage.getItem("awiki-industry-flow-v3")||"{}"); } catch (_) {}
       const state = {
         route:initialRoute(),segment:"session",matterId:"report",scene:Number(restored.scene)||1,sessionId:"buyer",
-        overview:"dynamic",overviewView:restored.overviewView||"grid",overviewScope:restored.overviewScope||"mine",feedIndex:0,connCat:"members",connId:"buyer",awikiCat:"solutions",awikiIndex:0,awikiId:"community",settings:"general",manual:restored.manual||{},workSection:restored.workSection||"matters",workItem:0,
+        overview:"dynamic",overviewView:restored.overviewView||"grid",overviewScope:restored.overviewScope||"mine",feedIndex:0,connCat:"members",connId:"buyer",awikiCat:"solutions",awikiIndex:0,awikiId:"community",settings:"general",manual:restored.manual||{},workSection:restored.workSection||"matters",workItem:0,workMatterId:restored.workMatterId||"match",
         collab:restored.collab||{},privateTurn:restored.privateTurn||{},sessionManual:restored.sessionManual||{},editingScene:null
       };
 
@@ -186,7 +186,7 @@
           document.querySelector(".awiki-layout")?.insertAdjacentHTML("beforeend",awikiCompanion());
           document.querySelectorAll("[data-ind-awiki-item]").forEach((b,i)=>b.classList.toggle("on",i===state.awikiIndex));
         }
-        try { sessionStorage.setItem("awiki-industry-flow-v3",JSON.stringify({scene:state.scene,matterId:state.matterId,collab:state.collab,manual:state.manual,privateTurn:state.privateTurn,sessionManual:state.sessionManual,overviewView:state.overviewView,overviewScope:state.overviewScope,workSection:state.workSection})); } catch (_) {}
+        try { sessionStorage.setItem("awiki-industry-flow-v3",JSON.stringify({scene:state.scene,matterId:state.matterId,collab:state.collab,manual:state.manual,privateTurn:state.privateTurn,sessionManual:state.sessionManual,overviewView:state.overviewView,overviewScope:state.overviewScope,workSection:state.workSection,workMatterId:state.workMatterId})); } catch (_) {}
         document.title="AWiki · 产业数据空间协同贸易 · 工厂 Agent v2.1";
         requestAnimationFrame(scrollChatSurfacesToBottom);
       }
@@ -492,9 +492,10 @@
           ["待派生","分批交付、质检与结算","合作确认后承接物流、质检、签收和结算回单。","王璐","待派生","delivery"]
         ];
         const generated=id=>availableMatters().includes(id);
-        const selected=matterDefs[current.matter];
-        const companionItem={title:selected.title,summary:selected.goal};
-        return `<div class="pane work-page"><section class="work-main-shell">${workNav()}<div class="work-content-row"><section class="work-matter-list"><div class="object-list-head"><h2>事项</h2><p>按下一步动作查看持续工作</p></div><label class="search" style="margin-top:10px">⌕<input placeholder="搜索事项…" /></label><div class="object-list-scroll">${rows.map(x=>`<button class="object-row ${x[5]===current.matter?'on':''}" data-ind-matter-open="${x[5]}"><i>${matterDefs[x[5]].mark}</i><span><b>${x[1]}</b><small>${x[0]} · ${x[3]}</small></span><time>${x[4]}</time></button>`).join("")}</div></section><main class="work-matter-preview"><header class="object-detail-head"><div><span class="eyebrow">AWIKI WORK · 事项</span><h1>${selected.title}</h1><p>${selected.goal}</p></div><div class="head-actions"><button class="btn secondary" data-ind-reset="true">重置</button><button class="btn primary" data-ind-matter-open="${current.matter}">进入事项</button></div></header><div class="object-detail-body"><section class="detail-section"><h3>当前状态</h3><div class="fact-grid"><div><span>下一步</span><b>${current.title}</b></div><div><span>负责人</span><b>${selected.owner}</b></div><div><span>参与范围</span><b>${selected.members}</b></div><div><span>事项关系</span><b>${selected.lineage}</b></div></div></section><section class="detail-section"><h3>最近更新</h3><div class="clean-list"><div><span><b>需求方资质核验已返回摘要</b><small>建议海岳有条件响应 720 吨；正式报价前补充审计材料。</small></span><em>刚刚</em></div><div><span><b>CAP-720-V2 已发布</b><small>原始 MES 与成本未出域。</small></span><em>08:49</em></div></div></section></div></main></div></section>${workObjectCompanion("事项",companionItem)}</div>`;
+        const selectedId=matterDefs[state.workMatterId]?state.workMatterId:current.matter,selected=matterDefs[selectedId],selectedView=matterView(selectedId);
+        const selectedScenes=sceneDefs.filter(s=>s.matter===selectedId),selectedScene=selectedScenes.filter(s=>s.id<=state.scene).at(-1)||selectedScenes[0];
+        const canOpen=availableMatters().includes(selectedId),companionItem={title:selected.title,summary:selected.goal};
+        return `<div class="pane work-page"><section class="work-main-shell">${workNav()}<div class="work-content-row"><section class="work-matter-list"><div class="object-list-head"><h2>事项</h2><p>单击选择并预览；确认后再进入事项</p></div><label class="search" style="margin-top:10px">⌕<input placeholder="搜索事项…" /></label><div class="object-list-scroll">${rows.map(x=>`<button class="object-row ${x[5]===selectedId?'on':''}" data-ind-work-matter="${x[5]}"><i>${matterDefs[x[5]].mark}</i><span><b>${x[1]}</b><small>${x[0]} · ${x[3]}</small></span><time>${x[4]}</time></button>`).join("")}</div></section><main class="work-matter-preview"><header class="object-detail-head"><div><span class="eyebrow">AWIKI WORK · 事项预览</span><h1>${selected.title}</h1><p>${selected.goal}</p></div><div class="head-actions"><button class="btn secondary" data-ind-reset="true">重置</button>${canOpen?`<button class="btn primary" data-ind-matter-open="${selectedId}">进入事项</button>`:`<button class="btn secondary" data-ind-toast="该事项尚未由上游决定派生">尚未派生</button>`}</div></header><div class="object-detail-body"><section class="detail-section"><h3>当前状态</h3><div class="fact-grid"><div><span>状态</span><b>${selectedView.status}</b></div><div><span>当前/预计环节</span><b>${selectedScene?.title||"等待派生"}</b></div><div><span>负责人</span><b>${selected.owner}</b></div><div><span>参与范围</span><b>${selected.members}</b></div></div></section><section class="detail-section"><h3>事项关系与边界</h3><div class="clean-list"><div><span><b>${selected.lineage}</b><small>列表选择只更新当前预览，不改变事项状态。</small></span><em>${selectedView.latest}</em></div><div><span><b>进入事项后办理</b><small>完整讨论、状态、资源、伙伴建议与执行回单在事项内部呈现。</small></span><em>›</em></div></div></section></div></main></div></section>${workObjectCompanion("事项",companionItem)}</div>`;
       }
 
       const factorySettingInfo={general:["基本与身份","海岳工作域、版本与可携带身份。"],solutions:["已安装方案","方案把数据空间能力组织成具体岗位的 SOP、看板和事项。"],collab:["协作规则 / SIDE","SIDE 组织持续协作能力；每次规则修改仍由配置事项保存、审批和发布。"],partner:["AWiki 伙伴","伙伴行为不是一组即时开关，而是可按方案和事项覆盖的版本化规则。"],agents:["Agent、AI 应用与专业服务","AWiki 伙伴统一组织 Agent、数据空间、MES 和外部 AI 应用，不要求合作方先改造成 Agent。"],identity:["身份与授权","主体、能力、字段、用途与有效期共同决定一次协作。"],advanced:["高级运行记录","AIC 只作为 Agent 运行上下文的技术检查器，不作为普通用户主导航。"]};
@@ -536,7 +537,7 @@
         if(scene.final){toast("本轮已完成，可从工作中重置演示");return}
         state.scene=Math.min(sceneDefs.length,state.scene+1);state.matterId=currentScene().matter;state.segment="matter";state.editingScene=null;render();toast(currentScene().matter===scene.matter?"同一事项进入下一办理环节":"已按上游 Receipt 接续到新的事项")
       }
-      function resetDemo(){state.scene=1;state.matterId="report";state.segment="session";state.workSection="matters";state.collab={};state.manual={};state.privateTurn={};state.sessionManual={};try{sessionStorage.removeItem("awiki-industry-flow-v3")}catch(_){}render();toast("已重置：从长期数据报送事项开始")}
+      function resetDemo(){state.scene=1;state.matterId="report";state.workMatterId="match";state.segment="session";state.workSection="matters";state.collab={};state.manual={};state.privateTurn={};state.sessionManual={};try{sessionStorage.removeItem("awiki-industry-flow-v3")}catch(_){}render();toast("已重置：从长期数据报送事项开始")}
 
       document.addEventListener("click",e=>{
         const t=e.target.closest("button");if(!t)return;
@@ -568,6 +569,7 @@
         if(t.dataset.indConnMembers){state.connCat="members";state.connId="supplier1";go("connections");return}
         if(t.dataset.indSetting){state.settings=t.dataset.indSetting;render();return}
         if(t.dataset.indWorkSection){state.workSection=t.dataset.indWorkSection;state.workItem=0;render();return}
+        if(t.dataset.indWorkMatter){state.workMatterId=t.dataset.indWorkMatter;render();return}
         if(t.dataset.indWorkItem!==undefined){state.workItem=Number(t.dataset.indWorkItem)||0;render();return}
         if(t.dataset.indPackageOverview){state.workSection="packageOverview";render();return}
         if(t.dataset.indSettings){state.settings=t.dataset.indSettings;go("settings");return}
