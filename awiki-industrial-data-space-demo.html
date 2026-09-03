@@ -186,6 +186,7 @@
         }
         try { sessionStorage.setItem("awiki-industry-flow-v3",JSON.stringify({scene:state.scene,matterId:state.matterId,collab:state.collab,manual:state.manual,privateTurn:state.privateTurn,sessionManual:state.sessionManual,overviewView:state.overviewView,overviewScope:state.overviewScope,workSection:state.workSection})); } catch (_) {}
         document.title="AWiki · 产业数据空间协同贸易 · 工厂 Agent v2.1";
+        requestAnimationFrame(scrollChatSurfacesToBottom);
       }
 
       function matterView(id){
@@ -507,7 +508,10 @@
       let toastTimer=0;function toast(text){const el=document.querySelector("#toast");if(!el)return;clearTimeout(toastTimer);el.textContent=text;el.classList.add("on");toastTimer=setTimeout(()=>el.classList.remove("on"),2200)}
       function go(route){if(!routeSet.has(route))return;state.route=route;history.replaceState(null,"",`#/${route}`);render()}
       function openMatter(id){if(!matterDefs[id])return;if(!availableMatters().includes(id)){toast("该事项尚未由上游人员决定派生");return}state.matterId=id;state.workSection="detail";go("solutions")}
-      function rerenderToBottom(){render();requestAnimationFrame(()=>{const b=document.querySelector("#chat-body");if(b)b.scrollTop=b.scrollHeight})}
+      function scrollChatSurfacesToBottom(){
+        document.querySelectorAll(".chat-body, .companion-body").forEach(el=>{el.scrollTop=el.scrollHeight});
+      }
+      function rerenderToBottom(){render()}
       function decide(choice){
         const scene=currentScene();if(!scene.collab||state.matterId!==scene.matter)return;
         if(choice==="decline"){state.collab[String(scene.id)]={phase:"declined",choice,draft:scene.collab.decline};rerenderToBottom();toast("暂停决定已由责任人写回事项；没有指派 Agent");return}
@@ -520,7 +524,7 @@
       function advanceScene(){
         const scene=currentScene();if(scene.collab&&!isExecuted(scene.id)){toast("需要完成决定、写回、指派和执行回单后才能进入下一环节");return}
         if(scene.final){toast("本轮已完成，可从工作中重置演示");return}
-        state.scene=Math.min(sceneDefs.length,state.scene+1);state.matterId=currentScene().matter;state.segment="matter";state.editingScene=null;render();requestAnimationFrame(()=>{const b=document.querySelector("#chat-body");if(b)b.scrollTop=0});toast(currentScene().matter===scene.matter?"同一事项进入下一办理环节":"已按上游 Receipt 接续到新的事项")
+        state.scene=Math.min(sceneDefs.length,state.scene+1);state.matterId=currentScene().matter;state.segment="matter";state.editingScene=null;render();toast(currentScene().matter===scene.matter?"同一事项进入下一办理环节":"已按上游 Receipt 接续到新的事项")
       }
       function resetDemo(){state.scene=1;state.matterId="report";state.segment="session";state.workSection="matters";state.collab={};state.manual={};state.privateTurn={};state.sessionManual={};try{sessionStorage.removeItem("awiki-industry-flow-v3")}catch(_){}render();toast("已重置：从长期数据报送事项开始")}
 
