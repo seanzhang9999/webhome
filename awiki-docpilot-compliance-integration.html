@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AWiki 伙伴× DocPilot｜化工数字空间合规风控接入方案</title>
+  <style>
+    :root{--ink:#172033;--muted:#667085;--line:#dfe5ee;--blue:#315fbe;--soft:#eef4ff;--amber:#a76400;--amber-soft:#fff6df;--green:#08785a;--green-soft:#e7f7f0;--bg:#f5f7fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,"PingFang SC","Microsoft YaHei",sans-serif}.page{max-width:1180px;margin:auto;padding:44px 28px 80px}.eyebrow{font:700 12px ui-monospace,monospace;letter-spacing:.08em;color:var(--blue)}h1{max-width:850px;margin:10px 0;font-size:42px;line-height:1.18;letter-spacing:-.035em}h2{margin:0 0 8px;font-size:23px;line-height:1.3}h3{margin:0;font-size:16px}p{margin:0}.lead{max-width:780px;color:var(--muted);font-size:18px}.hero,.block{background:#fff;border:1px solid var(--line);border-radius:20px}.hero{padding:42px;margin-bottom:18px;background:linear-gradient(125deg,#fff 45%,#edf3ff)}.tag{display:inline-flex;align-items:center;gap:6px;margin-top:22px;padding:6px 10px;border-radius:999px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:700}.block{padding:28px;margin-top:18px}.block>p{color:var(--muted)}.claim{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;padding:16px;margin-top:18px;border-radius:13px;background:var(--soft)}.claim strong{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:var(--blue);color:#fff}.claim b{display:block;font-size:17px}.claim span{display:block;margin-top:2px;color:var(--muted);font-size:13px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:20px}.flow article{position:relative;min-height:112px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#fff}.flow article:not(:last-child):after{content:"→";position:absolute;right:-14px;top:42px;z-index:2;width:20px;text-align:center;color:var(--blue);font-size:18px;font-weight:800}.flow span,.flow b,.flow small{display:block}.flow span{color:var(--blue);font:700 11px ui-monospace,monospace}.flow b{margin-top:6px;font-size:14px}.flow small{margin-top:4px;color:var(--muted);font-size:11px;line-height:1.45}.demo{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;margin-top:20px}.matter{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}.matter-head{display:flex;justify-content:space-between;gap:12px}.matter-head small{color:var(--muted)}.chat{margin-top:14px;padding:12px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:13px}.card{margin-top:12px;padding:15px;border:1px solid #e6c77a;border-radius:12px;background:linear-gradient(135deg,#fffdf6,#fff)}.card-head{display:flex;gap:9px;align-items:center}.logo{display:grid;place-items:center;width:33px;height:33px;border-radius:9px;background:#ffecc0;color:#925900;font-weight:800}.card-head span{flex:1}.card-head b,.card-head small{display:block}.card-head small{color:var(--muted);font-size:11px}.pill{padding:3px 7px;border-radius:999px;background:var(--amber-soft);color:var(--amber);font-size:11px;font-weight:700}.grid4{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:11px 0}.grid4 div{padding:8px;border-radius:8px;background:#fff9ed;color:var(--muted);font-size:11px}.grid4 b{display:block;color:var(--ink)}.actions{display:flex;gap:8px;margin-top:12px}.button{padding:7px 10px;border:1px solid var(--blue);border-radius:8px;background:var(--blue);color:#fff;font-size:12px;font-weight:700}.button.alt{background:#fff;color:var(--blue)}.note{padding:17px;border-radius:14px;background:var(--green-soft);color:#07543f}.note b{display:block;margin-bottom:3px}.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.layers article{padding:17px;border:1px solid var(--line);border-radius:13px}.layers i{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--soft);color:var(--blue);font-style:normal;font-weight:800}.layers b{display:block;margin-top:10px}.layers p{margin-top:4px;color:var(--muted);font-size:13px}.table{display:grid;grid-template-columns:1.1fr 1fr 1.2fr;margin-top:17px;border:1px solid var(--line);border-radius:12px;overflow:hidden}.table>div{padding:12px;border-bottom:1px solid var(--line);font-size:13px}.table>div:nth-child(3n+1){font-weight:700}.table>div:nth-child(-n+3){background:var(--soft);color:var(--blue);font-weight:700}.table>div:nth-last-child(-n+3){border-bottom:0}.footer{margin-top:18px;color:var(--muted);font-size:12px}.footer b{color:var(--ink)}@media(max-width:800px){.page{padding:20px 14px 45px}h1{font-size:32px}.hero{padding:27px}.flow,.layers{grid-template-columns:1fr}.flow article:not(:last-child):after{content:"↓";top:auto;bottom:-17px;left:calc(50% - 10px)}.demo{grid-template-columns:1fr}.table{grid-template-columns:1fr}.table>div:nth-child(-n+3){display:none}.table>div{border-bottom:0;padding:7px 12px}.table>div:nth-child(3n+1){padding-top:14px}.table>div:nth-child(3n){padding-bottom:14px;border-bottom:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <span class="eyebrow">SOLUTION BRIEF · V1.0</span>
+      <h1>让已有的专业 AI 应用，成为 AWiki 伙伴接单决策的一部分</h1>
+      <p class="lead">在化工数字空间的需求喊单场景中，AWiki 伙伴调用 DocPilot 企业合规风控服务，先把结果以可解释的卡片预览给业务人员；需要复核证据或修改规则时，再打开 DocPilot 原应用。</p>
+      <span class="tag">不要求合作伙伴先改造成 Agent</span>
+    </section>
+
+    <section class="block">
+      <h2>这不是“再造一个合规 Agent”</h2>
+      <p>DocPilot 保持其专业应用身份和规则、证据、人工复核能力；AWiki 伙伴只负责在正确的事项、正确的决策关口，发起受控调用并把结果组织给人。</p>
+      <div class="claim"><strong>✓</strong><div><b>专业能力留在原应用，业务决策回到事项</b><span>风险服务给出事实、规则命中、材料差异与修改建议；AWiki 伙伴结合产能、付款政策和当前协作上下文，形成“是否接单、以什么条件接单”的建议。最终承诺仍由具名人员作出。</span></div></div>
+    </section>
+
+    <section class="block">
+      <h2>接单前的最小闭环</h2>
+      <p>调用发生在工厂机会响应 Agent 收到喊单之后、工厂人员发送业务响应之前。</p>
+      <div class="flow">
+        <article><span>01</span><b>可信喊单送达</b><small>需求 Agent 提交签名需求；匹配服务把范围化邀请送到工厂。</small></article>
+        <article><span>02</span><b>AWiki 伙伴发起核验</b><small>仅提交需求主体、必要附件、公开查询条件与当前事项用途。</small></article>
+        <article><span>03</span><b>DocPilot 形成结果</b><small>主体、信用、材料一致性、风险项与证据定位保留在原服务。</small></article>
+        <article><span>04</span><b>AWiki 伙伴卡片预览</b><small>以“可否接单、需要哪些条件”呈现给供应商经理。</small></article>
+        <article><span>05</span><b>人员确认与回单</b><small>有条件响应、补证或暂缓；经确认后才由机会响应 Agent 发信。</small></article>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Demo 中的呈现方式</h2>
+      <div class="demo">
+        <article class="matter">
+          <div class="matter-head"><div><b>PA66-GF30 1200 吨需求喊单</b><small>跨组织事项 · 海岳工厂侧</small></div><span class="pill">待我决定</span></div>
+          <div class="chat">供需匹配 Agent：海岳已命中 720 吨候选能力。机会响应 Agent 已收件，尚未作任何供货承诺。</div>
+          <div class="card">
+            <div class="card-head"><i class="logo">D</i><span><b>需求方资质与交易风险核验</b><small>DocPilot 企业合规风控服务 · 结果预览</small></span><em class="pill">有条件响应</em></div>
+            <div class="grid4"><div><b>主体</b>名称与信用代码一致</div><div><b>信用</b>未命中失信 / 被执行</div><div><b>关注</b>2 项历史合同纠纷</div><div><b>缺口</b>未附最新审计材料</div></div>
+            <p><b>AWiki 伙伴建议：</b>可响应 720 吨；正式报价前补审计材料，首单采用分批交付和付款条件。</p>
+            <div class="actions"><button class="button alt">查看完整核验报告</button><button class="button">采纳建议并起草响应</button></div>
+          </div>
+        </article>
+        <aside class="note"><b>点击“查看完整核验报告”时发生什么？</b>AWiki 伙伴打开合作伙伴的受控预览或原应用。用户能继续查看证据、规则命中、材料原文和人工复核流程；AWiki 伙伴不复制或替代这些专业界面。</aside>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>各方责任不混淆</h2>
+      <div class="layers">
+        <article><i>1</i><b>DocPilot 专业服务</b><p>执行企业尽调、材料一致性、规则审查、合同审核；返回结果摘要、证据索引与需要人工复核的项目。</p></article>
+        <article><i>2</i><b>AWiki 伙伴</b><p>在事项授权范围内调用服务，结合当前任务生成易理解的接单建议；不把专业结论伪装为自身判断。</p></article>
+        <article><i>3</i><b>业务责任人</b><p>确认接单条件、补证请求、暂停或拒绝；只有其确认的内容进入跨组织事项并触发后续 Agent 行动。</p></article>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>接入对象不只限于 Agent</h2>
+      <div class="table"><div>能力类型</div><div>化工场景示例</div><div>AWiki 伙伴的接入方式</div><div>协作 Agent</div><div>需求 Agent、匹配 Agent、机会响应 Agent</div><div>进入事项协作，接收最小任务投影，产生结构化消息与 Receipt。</div><div>专业 AI 应用</div><div>DocPilot 尽调、规则审核、合同审核</div><div>API、服务账号或受控网页预览；摘要进入 AWiki 伙伴卡片，专业界面仍由原应用提供。</div><div>企业系统</div><div>ERP、MES、DCS、物流</div><div>经连接器调用；需要审批的写回动作留在人员关口之后。</div><div>人工专业服务</div><div>法务、审计、检测机构</div><div>由事项派单、交材料、接收意见与回单；不要求自动化替代专家。</div></div>
+    </section>
+
+    <section class="block">
+      <h2>第二个调用点：正式合作前的合同审核</h2>
+      <p>双源供货方案冻结后，AWiki 伙伴可将合同草案中必要的主体、资质、签字与条款字段提交给 DocPilot。风险服务检查合同主体资格、公司信息一致性、授权签字、权责和违约条款；结果在合作事项中形成“合同审核关口”，但不自动签约或触发付款。</p>
+    </section>
+
+    <p class="footer"><b>演示数据说明：</b>主体、订单、风险结论和指标均为虚构研讨数据。页面仅展示接入模式，不包含合作伙伴后台截图、真实客户数据或真实风控结论。</p>
+  </main>
+</body>
+</html>
