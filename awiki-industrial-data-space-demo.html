@@ -550,7 +550,7 @@
       }
 
       function renderFactorySolutionsOld(){
-        if(state.workSection==="detail")return renderWorkMatter();
+        if(state.workSection==="detail")state.workSection="matters";
         if(state.workSection!=="matters")return renderWorkCollection();
         const p=state.scene,work=[
           ["现在","决定是否响应 720 吨喊单","海岳机会响应 Agent 已收件，等待刘涛确认边界","刘涛",p<4?"待决定":"已响应","match"],
@@ -568,7 +568,7 @@
         return `<div class="pane work-page"><section class="work-main-shell">${workNav()}<main class="solution-main"><header class="object-detail-head"><div><span class="eyebrow">工作 · 方案 · 产业链协同贸易</span><h1>方案运行概览</h1><p>跨事项查看本方案的待处理工作、能力连接和运行结果；具体决定仍回到各自事项中完成。</p></div><div class="head-actions"><button class="btn secondary" data-ind-work-section="packages">返回方案详情</button><button class="btn primary" data-ind-start="true">继续当前事项</button></div></header><div class="object-detail-body"><section class="detail-section"><div class="section-head"><div><h2>当前运行</h2><p>本页只呈现跨事项状态，不在这里直接形成业务承诺。</p></div><span class="pill">演示 ${p} / ${sceneDefs.length}</span></div><div class="fact-grid"><div><span>待我决定</span><b>1 · 海岳 720 吨条件响应</b></div><div><span>进行中事项</span><b>2 · 报送 / 需求喊单</b></div><div><span>当前阻塞</span><b>1 · 江岚质量字段补证</b></div><div><span>最近回单</span><b>CAP-720-V2 · verified</b></div></div></section><section class="detail-section"><h3>方案生成的事项</h3><div class="clean-list">${Object.entries(matterDefs).map(([id,m],i)=>`<div><span><b>${m.title}</b><small>${m.sub} · ${m.owner}</small></span><button class="pill ${availableMatters().includes(id)?'ok':'gray'}" data-ind-matter-open="${id}">${availableMatters().includes(id)?'打开':'待派生'}</button></div>`).join("")}</div></section><section class="detail-section"><h3>绑定能力</h3><div class="clean-list"><div><span><b>海岳机会响应 Agent</b><small>接收匹配邀请；无权替工厂承诺</small></span><em>在线</em></div><div><span><b>数据报送 Agent</b><small>ERP / MES / DCS → 可信证明</small></span><em>在线</em></div><div><span><b>DocPilot 企业合规风控</b><small>接单前核验与合作前合同审核</small></span><em>已连接</em></div><div><span><b>智能排产与履约 Agent</b><small>合作确认后按事项授权启用</small></span><em>待派生</em></div></div></section></div></main></section>${workObjectCompanion("方案",item)}</div>`;
       }
       function renderFactorySolutions(){
-        if(state.workSection==="detail")return renderWorkMatter();
+        if(state.workSection==="detail")state.workSection="matters";
         if(state.workSection==="packageOverview")return renderPackageOverview();
         if(state.workSection!=="matters")return renderWorkCollection();
         const current=currentScene();
@@ -666,7 +666,7 @@
         if(t.dataset.indPackageOverview){state.workSection="packageOverview";render();return}
         if(t.dataset.indSettings){state.settings=t.dataset.indSettings;go("settings");return}
         if(t.dataset.indAgent){state.connCat=connections.myAgents.some(x=>x.id===t.dataset.indAgent)?"myAgents":"contactAgents";state.connId=t.dataset.indAgent;go("connections");return}
-        if(t.dataset.indStart){state.matterId=currentScene().matter;state.workSection="detail";go("solutions");return}
+        if(t.dataset.indStart){state.matterId=currentScene().matter;state.workMatterId=currentScene().matter;state.workSection="matters";go("solutions");return}
         if(t.dataset.indReset){resetDemo();return}
         if(t.dataset.indSend){const input=document.querySelector("#matter-input"),v=input?.value.trim();if(!v){input?.focus();return}(state.manual[state.matterId]??=[]).push(v);rerenderToBottom();toast(`已以${actorFor().name}身份写入当前事项群`);return}
         if(t.dataset.indSessionSend){const input=document.querySelector("#session-input"),v=input?.value.trim();if(!v){input?.focus();return}(state.sessionManual[state.sessionId]??=[]).push(v);rerenderToBottom();toast("已发送到当前会话；未改变任何事项");return}
