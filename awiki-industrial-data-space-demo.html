@@ -100,7 +100,7 @@
       const state = {
         route:initialRoute(),segment:"session",matterId:"report",scene:Number(restored.scene)||1,sessionId:"buyer",
         overview:"dynamic",overviewView:restored.overviewView||"grid",overviewScope:restored.overviewScope||"mine",feedIndex:0,connCat:"members",connId:"buyer",awikiCat:"solutions",awikiIndex:0,awikiId:"community",settings:"general",manual:restored.manual||{},workSection:restored.workSection||"matters",workItem:0,workMatterId:restored.workMatterId||"report",
-        collab:restored.collab||{},privateTurn:restored.privateTurn||{},sessionManual:restored.sessionManual||{},editingScene:null,panel:null
+        collab:restored.collab||{},privateTurn:restored.privateTurn||{},sessionManual:restored.sessionManual||{},joinedCommunities:restored.joinedCommunities||{},editingScene:null,panel:null
       };
 
       const matterDefs = {
@@ -246,7 +246,7 @@
           document.querySelector(".awiki-layout")?.insertAdjacentHTML("beforeend",awikiCompanion());
           document.querySelectorAll("[data-ind-awiki-item]").forEach((b,i)=>b.classList.toggle("on",i===state.awikiIndex));
         }
-        try { sessionStorage.setItem("awiki-industry-flow-v3",JSON.stringify({scene:state.scene,matterId:state.matterId,collab:state.collab,manual:state.manual,privateTurn:state.privateTurn,sessionManual:state.sessionManual,overviewView:state.overviewView,overviewScope:state.overviewScope,workSection:state.workSection,workMatterId:state.workMatterId})); } catch (_) {}
+        try { sessionStorage.setItem("awiki-industry-flow-v3",JSON.stringify({scene:state.scene,matterId:state.matterId,collab:state.collab,manual:state.manual,privateTurn:state.privateTurn,sessionManual:state.sessionManual,joinedCommunities:state.joinedCommunities,overviewView:state.overviewView,overviewScope:state.overviewScope,workSection:state.workSection,workMatterId:state.workMatterId})); } catch (_) {}
         document.title="AWiki · 产业数据空间协同贸易 · 工厂 Agent v2.1";
         requestAnimationFrame(scrollChatSurfacesToBottom);
       }
@@ -469,6 +469,25 @@
         return `<aside class="companion-pane awiki-companion"><header class="companion-head"><span class="companion-id"><i>A</i><span><b>AWiki 伙伴</b><small>能力评估 · 私人在线</small></span></span><span class="pill purple">PRIVATE</span></header><div class="companion-body"><section class="context-card"><span class="eyebrow">正在评估</span><h3>${item.title}</h3><p>${item.summary}</p></section><section class="private-note"><header><h3>伙伴判断</h3><span class="pill purple">仅你可见</span></header><p>这个条目可以帮助海岳处理“${item.fit}”，但采用前仍要核对发布方、版本和使用边界：${item.boundary}。</p><p class="suggestion"><b>建议动作</b><br>先生成配置事项，确认适用人员、连接、数据范围和人工确认点；批准后再进入工作。</p></section><div class="collab-actions"><button class="btn primary" data-ind-settings="solutions">提议采用</button><button class="btn secondary" data-ind-conn-members="true">查看发布方与社区</button></div></div><footer class="companion-foot"><div class="composer-box" style="width:100%"><input placeholder="问伙伴它是否适合海岳…" /><button class="btn primary" data-ind-toast="已留在私人线程；尚未安装或授权">发送</button></div></footer></aside>`;
       }
 
+      // AWiki 条目的动作按对象类型分流：社区加入后原地查看，能力采用才进入配置事项。
+      function renderAwikiCommunityAware(){
+        const labels={solutions:"方案技能",agents:"智能体",content:"资讯与知识",communities:"社区"},items=awikiCatalog[state.awikiCat]||awikiCatalog.solutions,item=items[state.awikiIndex]||items[0];
+        const community=state.awikiCat==="communities",joined=community&&!!state.joinedCommunities[item.title];
+        const action=community?`<button class="btn primary" data-ind-community="true">${joined?'查看社区':'加入并查看'}</button>`:'<button class="btn primary" data-ind-settings="solutions">提议采用</button>';
+        const status=community?(joined?'已加入 · 可查看社区成员与公共资源':'可查看 · 尚未加入社区'):'可查看 · 尚未安装或授权';
+        const tail=community?`<section class="detail-section"><h3>社区关系如何进入工作</h3><p>加入社区只建立可撤销的社区关系，可查看成员、群组、方案与公共 Agent；不会自动安装插件，也不会获得海岳事项或企业数据权限。</p></section>`:`<section class="detail-section"><h3>采用后如何进入工作</h3><p>AWiki 伙伴会先生成配置事项，明确适用人员、所需连接、Agent 或专业服务、数据范围与确认关口。批准后，它才作为“工作 → 方案”中的能力包运行。</p></section>`;
+        return `<div class="pane awiki-layout flat-catalog"><section class="flat-main"><nav class="catalog-tabs" aria-label="AWiki 内容类型">${[["solutions","方案技能"],["agents","智能体"],["content","资讯与知识"],["communities","社区"]].map(x=>`<button class="catalog-tab ${state.awikiCat===x[0]?'on':''}" data-ind-awiki-cat="${x[0]}">${x[1]}<b>${awikiCatalog[x[0]].length}</b></button>`).join("")}</nav><div class="flat-body"><section class="object-list"><div class="object-list-head"><h2>${labels[state.awikiCat]}</h2><p>查看来源、适用角色与采用边界</p></div><label class="search" style="margin-top:10px">⌕<input placeholder="搜索 ${labels[state.awikiCat]}…" /></label><div class="object-list-scroll">${items.map((x,i)=>`<button class="object-row ${i===state.awikiIndex?'on':''}" data-ind-awiki-item="${i}"><i>${x.mark}</i><span><b>${x.title}</b><small>${x.sub}</small></span><time>›</time></button>`).join("")}</div></section><main class="object-detail"><header class="object-detail-head"><div><span class="eyebrow">${labels[state.awikiCat]} · VERIFIED SOURCE</span><h1>${item.title}</h1><p>${item.summary}</p></div><div class="head-actions"><button class="btn secondary" data-ind-toast="已关注后续版本与实践更新">关注</button>${action}</div></header><div class="object-detail-body"><section class="detail-section"><h3>基本信息</h3><div class="fact-grid"><div><span>发布与维护</span><b>${item.publisher}</b></div><div><span>适用范围</span><b>${item.fit}</b></div><div><span>使用边界</span><b>${item.boundary}</b></div><div><span>当前状态</span><b>${status}</b></div></div></section><section class="detail-section"><h3>${community?'社区内容':'包含内容'}</h3><div class="clean-list">${item.parts.map((x,i)=>`<div><span><b>${x}</b><small>${community?'加入后可按社区规则查看':'采用时按实际工作域配置'}</small></span><em>0${i+1}</em></div>`).join("")}</div></section>${tail}</div></main></div></section></div>`;
+      }
+
+      function awikiCompanionCommunityAware(){
+        const items=awikiCatalog[state.awikiCat]||awikiCatalog.solutions,item=items[state.awikiIndex]||items[0],community=state.awikiCat==="communities",joined=community&&!!state.joinedCommunities[item.title];
+        const advice=community?`这是一个社区关系。${joined?'你已加入，可以查看社区成员、群组和公共能力；具体采用仍需另行确认。':'加入后可以查看成员、群组和公共能力，但不会自动获得任何业务权限。'}`:`这个条目可以帮助海岳处理“${item.fit}”，但采用前仍要核对发布方、版本和使用边界：${item.boundary}。`;
+        return `<aside class="companion-pane awiki-companion"><header class="companion-head"><span class="companion-id"><i>A</i><span><b>AWiki 伙伴</b><small>${community?'社区导览':'能力评估'} · 私人在线</small></span></span><span class="pill purple">PRIVATE</span></header><div class="companion-body"><section class="context-card"><span class="eyebrow">${community?'当前社区':'正在评估'}</span><h3>${item.title}</h3><p>${item.summary}</p></section><section class="private-note"><header><h3>伙伴判断</h3><span class="pill purple">仅你可见</span></header><p>${advice}</p><p class="suggestion"><b>建议动作</b><br>${community?'先建立社区关系并查看成员与公共资源；需要采用具体方案或插件时，再单独生成配置事项。':'先生成配置事项，确认适用人员、连接、数据范围和人工确认点；批准后再进入工作。'}</p></section><div class="collab-actions">${community?`<button class="btn primary" data-ind-community="true">${joined?'查看社区':'加入社区'}</button><button class="btn secondary" data-ind-panel="community">预览成员与资源</button>`:'<button class="btn primary" data-ind-settings="solutions">提议采用</button><button class="btn secondary" data-ind-conn-members="true">查看发布方与社区</button>'}</div></div><footer class="companion-foot"><div class="composer-box" style="width:100%"><input placeholder="问伙伴它是否适合海岳…" /><button class="btn primary" data-ind-toast="已留在伙伴私人线程">发送</button></div></footer></aside>`;
+      }
+
+      function renderAwiki(){return renderAwikiCommunityAware()}
+      function awikiCompanion(){return awikiCompanionCommunityAware()}
+
       function renderSolutions(){
         const p=state.scene;
         return `<div class="pane solution-layout"><aside class="solution-menu"><div class="side-title"><h2>方案</h2><p>面向中化数智研讨的场景层原型</p></div><nav class="subnav-list"><button class="subnav-btn on"><span>产业链协同贸易</span><span>AWiki 伙伴</span></button><button class="subnav-btn" data-ind-toast="本版本聚焦一个完整场景，不扩散到其他方案"><span>连锁运营</span><span>—</span></button></nav><div class="notice"><span>!</span><span>全部组织、人物、订单与效果数据均为虚构研讨数据，不代表中化数智生产系统或真实成效。</span></div></aside><main class="solution-main"><section class="hero"><div><span class="eyebrow">ANP × AWIKI × AWiki 伙伴· TRUSTED DATA SPACE SCENE LAYER</span><h1>让可信数据空间从“数据可用”进入“人员可协同、事项可执行、结果可验收”</h1><p>化工厂持续报送可信数据产品；采购方发起需求喊单；多方 Agent 在事项群完成供需匹配；人员批准后派生合作执行与企业内部排产事项。数据空间是底座，AWiki 是面向人员和 Agent 的场景协同层。</p></div><div class="hero-actions"><button class="btn secondary" data-ind-reset="true">重置演示</button><button class="btn primary" data-ind-start="true">${p===1?'从数据报送事项开始':'继续当前事项'}</button></div></section><div class="proof-chain"><article><span>01 · DATA PRODUCT</span><b>产能 / 库存 / 需求证明</b></article><article><span>02 · AWiki 伙伴</span><b>角色化数据服务</b></article><article><span>03 · MATTER</span><b>多人多 Agent 协调</b></article><article><span>04 · HUMAN CHECK</span><b>具名人员决定</b></article><article><span>05 · AIC / ANP</span><b>最小投影与跨域协作</b></article><article><span>06 · RECEIPT</span><b>执行回单与 Impact</b></article></div>
@@ -532,6 +551,11 @@
         if(state.panel==="participants"){
           const id=state.workMatterId||state.matterId,m=matterDefs[id]||matterDefs.report,rows=matterParticipants[id]||[];
           return `<div class="context-panel-backdrop"><aside class="context-panel" role="dialog" aria-modal="true" aria-label="${m.title}参与者"><header class="context-panel-head"><div><h2>参与者</h2><p>${m.title} · ${rows.length} 个参与主体</p></div><button class="icon-btn" data-ind-panel-close="true" aria-label="关闭">×</button></header><div class="context-panel-body">${rows.map(x=>`<div class="context-panel-row"><i>${x[0]}</i><span><b>${x[1]}</b><small>${x[2]}</small></span><em>${x[3]}</em></div>`).join("")}</div></aside></div>`;
+        }
+        if(state.panel==="community"){
+          const item=(awikiCatalog.communities||[])[state.awikiIndex]||awikiCatalog.communities[0],joined=!!state.joinedCommunities[item.title];
+          const rows=state.awikiIndex===2?[["群","插件开发交流","社区讨论 · 36 条新动态","群组"],["人","林洋","社区管理员 · 已验证身份","成员"],["助","Plugin Helper","插件采用、配置与故障协助","公共能力"],["规","开发规范与权限声明","版本化社区资源","资源"]]:state.awikiIndex===1?[["群","数据产品服务化讨论","连接器、授权与回单实践","群组"],["人","周启明","共建组协调人 · 已验证身份","成员"],["连","连接器模板库","ERP / MES / DCS 接入实践","公共能力"],["模","数据产品模板","字段、用途、有效期与回单","资源"]]:[["群","化工供需协同讨论","喊单、接单、排产与履约实践","群组"],["人","刘涛","海岳供应商经理 · 已验证会员","成员"],["配","供需匹配服务","可信需求与供给候选发现","公共能力"],["贸","工厂喊单响应方案","SolutionSkill · v1.4","方案"]];
+          return `<div class="context-panel-backdrop"><aside class="context-panel" role="dialog" aria-modal="true" aria-label="${item.title}"><header class="context-panel-head"><div><h2>${item.title}</h2><p>${joined?'已加入社区':'社区公开预览'} · 成员、群组与公共资源</p></div><button class="icon-btn" data-ind-panel-close="true" aria-label="关闭">×</button></header><div class="context-panel-body"><div class="notice" style="margin:4px 4px 10px"><span>i</span><span>加入社区只建立社区关系，不自动安装方案、插件，也不获得海岳事项或企业数据权限。</span></div>${rows.map(x=>`<div class="context-panel-row"><i>${x[0]}</i><span><b>${x[1]}</b><small>${x[2]}</small></span><em>${x[3]}</em></div>`).join("")}</div></aside></div>`;
         }
         if(state.panel==="related"){
           const key=state.workSection,items=workCatalog[key]||[],item=items[state.workItem]||items[0],ids=relatedWorkMatters[key]?.[state.workItem]||[];
@@ -658,6 +682,7 @@
         if(t.dataset.indOpenService){state.connCat="serviceAccounts";state.connId=t.dataset.indOpenService;go("connections");return}
         if(t.dataset.indAwikiCat){state.awikiCat=t.dataset.indAwikiCat;state.awikiIndex=0;render();return}
         if(t.dataset.indAwikiItem!==undefined){state.awikiIndex=Number(t.dataset.indAwikiItem)||0;render();return}
+        if(t.dataset.indCommunity){const item=awikiCatalog.communities[state.awikiIndex]||awikiCatalog.communities[0];state.joinedCommunities[item.title]=true;state.panel="community";render();toast(`已加入「${item.title}」；未安装任何方案或插件`);return}
         if(t.dataset.indConnMembers){state.connCat="members";state.connId="supplier1";go("connections");return}
         if(t.dataset.indSetting){state.settings=t.dataset.indSetting;render();return}
         if(t.dataset.indWorkSection){state.workSection=t.dataset.indWorkSection;state.workItem=0;render();return}
