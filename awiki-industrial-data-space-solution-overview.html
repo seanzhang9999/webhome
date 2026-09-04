@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AWiki 化工产业数据空间｜整体方案讲解</title>
   <style>
-    :root{--ink:#142033;--muted:#62708a;--line:#dce3ee;--blue:#315fb8;--blue2:#eef4ff;--purple:#704dc0;--purple2:#f3efff;--green:#09775a;--green2:#e8f8f1;--amber:#a46300;--amber2:#fff5dc;--bg:#f5f7fb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.62 Inter,"PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1200px;margin:auto;padding:36px 26px 80px}.hero,.section{border:1px solid var(--line);border-radius:22px;background:#fff}.hero{padding:46px;background:linear-gradient(125deg,#fff 43%,#eaf1ff)}.kicker{font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;color:var(--blue)}h1{max-width:900px;margin:10px 0;font-size:42px;letter-spacing:-.04em;line-height:1.18}h2{margin:0;font-size:25px;line-height:1.32}h3{margin:0;font-size:16px}p{margin:0}.lead{max-width:820px;color:var(--muted);font-size:18px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.nav a{padding:7px 10px;border:1px solid #b8c9ed;border-radius:999px;color:var(--blue);background:#fff;text-decoration:none;font-size:12px;font-weight:700}.section{margin-top:18px;padding:30px}.section>p{margin-top:6px;color:var(--muted)}.statement{display:grid;grid-template-columns:46px 1fr;gap:15px;align-items:start;margin-top:20px;padding:18px;border-radius:14px;background:var(--blue2)}.statement i{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--blue);color:#fff;font-size:22px;font-style:normal}.statement b{display:block;font-size:18px}.statement span{display:block;margin-top:3px;color:var(--muted);font-size:14px}.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:20px}.layer{padding:18px;border:1px solid var(--line);border-radius:14px}.layer:nth-child(1){background:var(--blue2);border-color:#bed0f2}.layer:nth-child(2){background:var(--purple2);border-color:#d8caff}.layer:nth-child(3){background:var(--green2);border-color:#b8e5d5}.layer span{display:block;font:700 11px ui-monospace,monospace;color:var(--blue)}.layer b{display:block;margin-top:7px;font-size:17px}.layer p{margin-top:5px;color:var(--muted);font-size:13px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}.flow article{position:relative;min-height:145px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff}.flow article:not(:last-child):after{content:"→";position:absolute;z-index:2;right:-16px;top:57px;width:22px;text-align:center;color:var(--blue);font-size:20px;font-weight:800}.flow span,.flow b,.flow small{display:block}.flow span{color:var(--blue);font:700 11px ui-monospace,monospace}.flow b{margin-top:7px;font-size:15px}.flow small{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.45}.map{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:12px;align-items:stretch;margin-top:20px}.node{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.node h3{margin-bottom:9px}.node ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}.node li+li{margin-top:5px}.center{border-color:#b9cbee;background:linear-gradient(140deg,#fff,var(--blue2))}.center .badge{background:var(--blue);color:#fff}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:var(--purple2);color:var(--purple);font-size:11px;font-weight:700}.matter{display:grid;grid-template-columns:180px minmax(0,1fr);gap:11px;margin-top:20px}.matter-label{padding:17px;border-radius:13px;background:var(--blue);color:#fff}.matter-label b,.matter-label small{display:block}.matter-label b{font-size:17px}.matter-label small{margin-top:4px;opacity:.86;font-size:12px}.matter-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.matter-steps article{padding:12px;border:1px solid var(--line);border-radius:11px;background:#fff}.matter-steps span{color:var(--blue);font:700 10px ui-monospace,monospace}.matter-steps b,.matter-steps small{display:block}.matter-steps b{margin-top:4px;font-size:13px}.matter-steps small{margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}.matrix{display:grid;grid-template-columns:1.05fr 1fr 1fr;margin-top:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.matrix>div{padding:12px;border-bottom:1px solid var(--line);font-size:13px}.matrix>div:nth-child(-n+3){background:var(--blue2);color:var(--blue);font-weight:750}.matrix>div:nth-child(3n+1){font-weight:700}.matrix>div:nth-last-child(-n+3){border-bottom:0}.preview{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.card{padding:17px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}.card h3{display:flex;align-items:center;gap:8px}.icon{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--blue2);color:var(--blue);font-size:13px;font-weight:800}.card p{margin-top:8px;color:var(--muted);font-size:13px}.card .strip{margin-top:11px;padding:10px;border-radius:9px;background:#fff;border:1px solid var(--line);font-size:12px}.card.warn{border-color:#e7ca82;background:#fffcf5}.card.warn .icon{background:var(--amber2);color:var(--amber)}.quote{margin-top:20px;padding:21px;border-radius:14px;background:var(--ink);color:#fff;font-size:18px}.quote span{display:block;margin-top:4px;color:#c8d0de;font-size:13px}.foot{margin:18px 2px 0;color:var(--muted);font-size:12px}@media(max-width:880px){.wrap{padding:20px 13px 50px}.hero,.section{padding:25px}h1{font-size:32px}.layers,.map,.preview{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow article:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 11px);top:auto;bottom:-18px}.matter{grid-template-columns:1fr}.matter-steps{grid-template-columns:1fr}.matrix{grid-template-columns:1fr}.matrix>div:nth-child(-n+3){display:none}.matrix>div{padding:6px 12px;border-bottom:0}.matrix>div:nth-child(3n+1){padding-top:14px}.matrix>div:nth-child(3n){padding-bottom:14px;border-bottom:1px solid var(--line)}}
+    :root{--ink:#142033;--muted:#62708a;--line:#dce3ee;--blue:#315fb8;--blue2:#eef4ff;--purple:#704dc0;--purple2:#f3efff;--green:#09775a;--green2:#e8f8f1;--amber:#a46300;--amber2:#fff5dc;--bg:#f5f7fb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.62 Inter,"PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1200px;margin:auto;padding:36px 26px 80px}.hero,.section{border:1px solid var(--line);border-radius:22px;background:#fff}.hero{padding:46px;background:linear-gradient(125deg,#fff 43%,#eaf1ff)}.kicker{font:700 12px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.09em;color:var(--blue)}h1{max-width:900px;margin:10px 0;font-size:42px;letter-spacing:-.04em;line-height:1.18}h2{margin:0;font-size:25px;line-height:1.32}h3{margin:0;font-size:16px}p{margin:0}.lead{max-width:900px;color:var(--muted);font-size:18px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.nav a{padding:7px 10px;border:1px solid #b8c9ed;border-radius:999px;color:var(--blue);background:#fff;text-decoration:none;font-size:12px;font-weight:700}.section{margin-top:18px;padding:30px}.section>p{margin-top:6px;color:var(--muted)}.statement{display:grid;grid-template-columns:46px 1fr;gap:15px;align-items:start;margin-top:20px;padding:18px;border-radius:14px;background:var(--blue2)}.statement i{display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:var(--blue);color:#fff;font-size:22px;font-style:normal}.statement b{display:block;font-size:18px}.statement span{display:block;margin-top:3px;color:var(--muted);font-size:14px}.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:20px}.layer{padding:18px;border:1px solid var(--line);border-radius:14px}.layer:nth-child(1){background:var(--blue2);border-color:#bed0f2}.layer:nth-child(2){background:var(--purple2);border-color:#d8caff}.layer:nth-child(3){background:var(--green2);border-color:#b8e5d5}.layer span{display:block;font:700 11px ui-monospace,monospace;color:var(--blue)}.layer b{display:block;margin-top:7px;font-size:17px}.layer p{margin-top:5px;color:var(--muted);font-size:13px}.tier-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:20px}.tier{padding:20px;border:1px solid var(--line);border-radius:15px;background:var(--blue2)}.tier.package{background:var(--purple2);border-color:#d8caff}.tier>span{font:700 11px ui-monospace,monospace;color:var(--blue)}.tier.package>span{color:var(--purple)}.tier h3{margin-top:7px;font-size:19px}.tier ul{margin:9px 0 0;padding-left:19px;color:var(--muted);font-size:13px}.feature-table{width:100%;margin-top:18px;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px}.feature-table th,.feature-table td{padding:12px 13px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.feature-table th{background:var(--blue2);color:var(--blue);font-size:12px}.feature-table tr:last-child td{border-bottom:0}.feature-table td:first-child{width:130px;font-weight:750}.feature-table td:nth-child(2){width:210px}.flag{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:999px;background:var(--green2);color:var(--green);font-size:10px;font-weight:750}.flag.package{background:var(--purple2);color:var(--purple)}.logic-list{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:18px}.logic-list div{padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:#fbfcff;font-size:13px}.logic-list b{color:var(--blue)}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px}.flow article{position:relative;min-height:145px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff}.flow article:not(:last-child):after{content:"→";position:absolute;z-index:2;right:-16px;top:57px;width:22px;text-align:center;color:var(--blue);font-size:20px;font-weight:800}.flow span,.flow b,.flow small{display:block}.flow span{color:var(--blue);font:700 11px ui-monospace,monospace}.flow b{margin-top:7px;font-size:15px}.flow small{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.45}.map{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:12px;align-items:stretch;margin-top:20px}.node{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.node h3{margin-bottom:9px}.node ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}.node li+li{margin-top:5px}.center{border-color:#b9cbee;background:linear-gradient(140deg,#fff,var(--blue2))}.center .badge{background:var(--blue);color:#fff}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:var(--purple2);color:var(--purple);font-size:11px;font-weight:700}.matter{display:grid;grid-template-columns:180px minmax(0,1fr);gap:11px;margin-top:20px}.matter-label{padding:17px;border-radius:13px;background:var(--blue);color:#fff}.matter-label b,.matter-label small{display:block}.matter-label b{font-size:17px}.matter-label small{margin-top:4px;opacity:.86;font-size:12px}.matter-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.matter-steps article{padding:12px;border:1px solid var(--line);border-radius:11px;background:#fff}.matter-steps span{color:var(--blue);font:700 10px ui-monospace,monospace}.matter-steps b,.matter-steps small{display:block}.matter-steps b{margin-top:4px;font-size:13px}.matter-steps small{margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}.matrix{display:grid;grid-template-columns:1.05fr 1fr 1fr;margin-top:20px;border:1px solid var(--line);border-radius:14px;overflow:hidden}.matrix>div{padding:12px;border-bottom:1px solid var(--line);font-size:13px}.matrix>div:nth-child(-n+3){background:var(--blue2);color:var(--blue);font-weight:750}.matrix>div:nth-child(3n+1){font-weight:700}.matrix>div:nth-last-child(-n+3){border-bottom:0}.preview{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.card{padding:17px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}.card h3{display:flex;align-items:center;gap:8px}.icon{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--blue2);color:var(--blue);font-size:13px;font-weight:800}.card p{margin-top:8px;color:var(--muted);font-size:13px}.card .strip{margin-top:11px;padding:10px;border-radius:9px;background:#fff;border:1px solid var(--line);font-size:12px}.card.warn{border-color:#e7ca82;background:#fffcf5}.card.warn .icon{background:var(--amber2);color:var(--amber)}.foot{margin:18px 2px 0;color:var(--muted);font-size:12px}@media(max-width:880px){.wrap{padding:20px 13px 50px}.hero,.section{padding:25px}h1{font-size:32px}.layers,.map,.preview,.tier-grid,.logic-list{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow article:not(:last-child):after{content:"↓";right:auto;left:calc(50% - 11px);top:auto;bottom:-18px}.matter{grid-template-columns:1fr}.matter-steps{grid-template-columns:1fr}.matrix{grid-template-columns:1fr}.matrix>div:nth-child(-n+3){display:none}.matrix>div{padding:6px 12px;border-bottom:0}.matrix>div:nth-child(3n+1){padding-top:14px}.matrix>div:nth-child(3n){padding-bottom:14px;border-bottom:1px solid var(--line)}.feature-table{display:block;overflow:auto;white-space:normal}}
   </style>
 </head>
 <body>
@@ -13,8 +13,8 @@
     <header class="hero">
       <span class="kicker">AWIKI INDUSTRIAL DATA SPACE · SOLUTION OVERVIEW</span>
       <h1>把产业数据空间、Agent 与既有企业服务，落到每个工作人员的“接单—协作—履约”过程里</h1>
-      <p class="lead">这不是另建一个数据平台，也不是让每个参与方先变成 Agent。AWiki 作为场景工作面，由 AWiki 伙伴把可信数据空间的能力、企业系统、协作 Agent、专业 AI 应用与人的业务责任，组织进持续可追踪的事项。</p>
-      <nav class="nav"><a href="#why">为什么需要 AWiki</a><a href="#architecture">整体架构</a><a href="#journey">业务闭环</a><a href="#roles">各方如何进入</a><a href="#docpilot">合规服务示例</a></nav>
+      <p class="lead">AWiki 由基础产品与可安装服务包组成。AWiki Me 提供身份、消息、一览、连接、AWiki、基础设置和通用伙伴；“产业链协同贸易”等服务包进一步提供工作对象、专业伙伴经验、Agent与应用连接、业务规则和扩展设置。</p>
+      <nav class="nav"><a href="#why">方案目标</a><a href="#product">产品分层</a><a href="#functions">界面功能</a><a href="#settings">设置边界</a><a href="#architecture">场景架构</a><a href="#journey">业务闭环</a><a href="#docpilot">合规服务</a></nav>
     </header>
 
     <section class="section" id="why">
@@ -23,14 +23,53 @@
       <div class="statement"><i>◎</i><div><b>AWiki 伙伴将“可信连接”转成“可办理的工作”</b><span>外部喊单不是自动成交；它先成为一件有目标、责任人、权限、证据、状态和回单的事项。Agent 可以建议、检索和执行，但不能越过人的业务承诺。</span></div></div>
     </section>
 
-    <section class="section">
-      <h2>产品入口：消息管沟通，一览管变化，工作管持续办理</h2>
-      <p>一级导航为“消息｜一览｜连接｜AWiki｜工作｜设置”。进入“工作”后默认打开事项，没有额外的首页层级。</p>
-      <div class="layers">
-        <article class="layer"><span>MESSAGES</span><b>消息</b><p>只保留私人会话、群会话和 Agent 消息；明确目标可转为或关联事项。</p></article>
-        <article class="layer"><span>OVERVIEW</span><b>一览</b><p>只保留 Inbox、动态、提醒与待处理变化；资源和专题不再混在信息流里。</p></article>
-        <article class="layer"><span>WORK</span><b>工作</b><p>默认进入事项，并可切换资源、专题、方案。方案是不同的工作能力包。</p></article>
+    <section class="section" id="product">
+      <h2>产品分成 AWiki Me 基础层与可安装服务包层</h2>
+      <p>身份、消息、一览、连接、AWiki 和设置构成完整基础产品；“工作”承载已安装服务包提供的事项、资源、专题和方案。当前化工工作域已启用产业链协同贸易相关服务包。</p>
+      <div class="tier-grid">
+        <article class="tier"><span>01 · AWIKI ME BASE</span><h3>不安装行业服务包也能完整使用</h3><ul><li>身份与工作域</li><li>消息、Inbox 与动态</li><li>联系人、群组、Agent、设备、服务账号与授权</li><li>AWiki 能力和社区发现</li><li>通用 AWiki 伙伴与基础设置</li></ul></article>
+        <article class="tier package"><span>02 · INSTALLED SERVICE PACKAGES</span><h3>按需安装到 AWiki Me</h3><ul><li>工作：事项、资源、专题、方案</li><li>专业伙伴经验和业务规则</li><li>Agent、AI应用、企业系统与专家连接</li><li>专用卡片、报告和运行概览</li><li>服务包配置、权限模板与运行记录</li></ul></article>
       </div>
+    </section>
+
+    <section class="section" id="functions">
+      <h2>AWiki Me 基础界面功能</h2>
+      <p>这些入口不是化工方案专属。服务包可以在其上增加内容和动作，但不能改变基础对象的含义。</p>
+      <table class="feature-table">
+        <thead><tr><th>入口</th><th>页面结构</th><th>主要功能与逻辑</th></tr></thead>
+        <tbody>
+          <tr><td>身份<span class="flag">基础</span></td><td>当前个人、组织、角色与工作域</td><td>查看和切换代表身份、DID、设备与工作域。身份决定可见内容、授权能力和发送主体；当前化工工作域采用海岳化工组织视角。</td></tr>
+          <tr><td>消息<span class="flag">基础</span></td><td>会话列表｜当前聊天｜AWiki伙伴</td><td>联系人、群组、Agent和伙伴会话；搜索、发送、归档、查看连接。会话只负责沟通，用户通过“形成工作”创建事项草稿或关联已有事项。</td></tr>
+          <tr><td>一览<span class="flag">基础</span></td><td>Inbox/动态水平标签｜内容列表｜AWiki伙伴</td><td>Inbox接收用户、应用和Agent投递；动态汇聚需要知道或处理的变化。支持工作域过滤、列表/卡片切换、来源跳转和内容归类，不在一览直接形成业务承诺。</td></tr>
+          <tr><td>连接<span class="flag">基础</span></td><td>类型下拉｜对象列表｜详情｜AWiki伙伴</td><td>管理联系人、群组、社区会员、联系智能体、我的智能体、设备、服务账号和授权；查看DID、负责人、边界与关联事项。连接关系不等于业务授权。</td></tr>
+          <tr><td>AWiki<span class="flag">基础</span></td><td>方案技能/智能体/知识/社区水平标签｜列表｜详情</td><td>发现外部能力与关系。加入社区只建立社区关系；提议采用方案或Agent时先生成配置事项，批准后才安装到工作。</td></tr>
+          <tr><td>设置<span class="flag">基础</span></td><td>基础设置与服务包设置分区</td><td>基础区管理身份、消息、Inbox、一览、连接、授权、伙伴和数据安全；已安装服务包在下方注入自己的配置栏目。</td></tr>
+          <tr><td>AWiki伙伴<span class="flag">基础</span></td><td>各页面右侧私人工作区</td><td>跟随当前对象进行解释、整理、提醒和起草。伙伴私人分析不会自动发给别人、扩大授权或写入事项共同事实。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>安装服务包后出现“工作”</h2>
+      <p>服务包把可复用业务能力安装到“工作”。当前化工工作域已安装四个相关方案，进入工作后默认打开“事项”。</p>
+      <table class="feature-table">
+        <thead><tr><th>工作对象</th><th>回答的问题</th><th>主要逻辑</th></tr></thead>
+        <tbody>
+          <tr><td>事项<span class="flag package">服务包</span></td><td>正在持续推进什么？</td><td>保存目标、参与者、责任、状态、授权、共同事实、Agent指派和Receipt；左侧列表切换事项，中间持续办理，右侧伙伴私人协助。</td></tr>
+          <tr><td>资源<span class="flag package">服务包</span></td><td>工作使用和产生了什么？</td><td>保存文件、数据产品、证明、风控摘要与回单；可被多个事项引用，但每次使用仍按当前事项授权。</td></tr>
+          <tr><td>专题<span class="flag package">服务包</span></td><td>长期关注和沉淀什么？</td><td>汇聚跨事项材料、社区知识和复盘认识，不替代事项中的决定、状态与责任。</td></tr>
+          <tr><td>方案<span class="flag package">服务包</span></td><td>安装了哪些工作能力包？</td><td>管理事项模板、伙伴经验、Agent、应用连接、权限建议和专用界面；方案运行概览只做跨事项汇总，业务决定仍回到事项。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="settings">
+      <h2>设置必须明确区分基础能力与服务包注入</h2>
+      <div class="tier-grid">
+        <article class="tier"><span>AWIKI ME 基础设置</span><h3>始终存在</h3><ul><li>身份与工作域</li><li>消息与通知</li><li>Inbox与一览</li><li>连接与授权</li><li>AWiki伙伴默认行为</li><li>数据、设备与安全</li></ul></article>
+        <article class="tier package"><span>当前已安装服务包</span><h3>安装后注入</h3><ul><li>服务包与工作</li><li>方案协作规则</li><li>绑定的Agent、AI应用与企业系统</li><li>方案伙伴增强规则</li><li>权限模板、运行记录与Receipt</li></ul></article>
+      </div>
+      <div class="logic-list"><div><b>消息 ≠ 事项</b><br>沟通内容由用户确认后才进入持续工作。</div><div><b>连接 ≠ 授权</b><br>关系存在不代表可以读取业务数据。</div><div><b>加入社区 ≠ 安装方案</b><br>社区关系与能力采用分开处理。</div><div><b>伙伴建议 ≠ 共同事实</b><br>用户确认后才写入事项或发送给他人。</div><div><b>Agent执行 ≠ 人员决定</b><br>决定、指派、执行与回单分步发生。</div><div><b>服务包 ≠ 封闭应用</b><br>可组合Agent、传统系统、AI应用和真人专家。</div></div>
     </section>
 
     <section class="section" id="architecture">
@@ -43,8 +82,8 @@
     </section>
 
     <section class="section" id="journey">
-      <h2>演示中的一条完整业务闭环</h2>
-      <p>页面并不把所有内容压进一个越来越长的聊天窗口，而是让每段协作在合适的事项中连续发生。</p>
+      <h2>从可信供给到履约回单的完整业务闭环</h2>
+      <p>每段协作在相应事项中连续发生，并通过确认、授权和回单保持上下文与责任可追溯。</p>
       <div class="flow">
         <article><span>01 · REPORT</span><b>工厂报送可信能力</b><small>人员批准后，数据报送 Agent 从 ERP/MES/DCS 生成可承诺产能、窗口与质量等级证明。</small></article>
         <article><span>02 · MATCH</span><b>需求喊单与候选发现</b><small>需求 Agent 提交签名需求；公共匹配服务只使用合规数据产品寻找候选工厂。</small></article>
@@ -76,17 +115,13 @@
 
     <section class="section" id="docpilot">
       <h2>DocPilot 在整体中的位置：专业风险能力，而不是被伪装的“合规 Agent”</h2>
-      <p>它是本 Demo 证明“异构能力也能被 AWiki 伙伴编排”的例子。AWiki 伙伴不复制 DocPilot 的证据链、规则配置或人工审核界面。</p>
+      <p>DocPilot 作为可插拔专业服务接入当前工作。AWiki 伙伴使用其风险结论与证据索引，但不复制 DocPilot 的证据链、规则配置或人工审核界面。</p>
       <div class="preview">
         <article class="card warn"><h3><i class="icon">D</i>接单前：需求方资质与交易风险核验</h3><p>收到喊单后，AWiki 伙伴在当前事项授权范围内把需求主体、必要附件、公开查询条件和用途交给 DocPilot。</p><div class="strip"><b>AWiki 伙伴卡片预览：</b>主体一致、未命中失信 / 被执行；2 项历史合同纠纷；缺少最新审计材料。<br><b>建议：</b>可有条件响应，正式报价前补材料，首单分批交付并设置付款条件。</div></article>
         <article class="card"><h3><i class="icon">↗</i>合作前：合同审核关口</h3><p>双源供货方案冻结后，合同草案进入 DocPilot 的主体资格、公司信息、签字授权、权责和违约条款审核。</p><div class="strip"><b>边界：</b>服务结果可以形成风险建议与证据索引，但不能自动签约、自动付款，也不能替代法务的人工复核。</div></article>
       </div>
     </section>
 
-    <section class="section">
-      <h2>演示要传达的核心判断</h2>
-      <div class="quote">“产业数据空间不是终端用户产品；它需要通过 AWiki 进入真实的岗位决策。在 AWiki 伙伴协助下，AWiki 不以封闭的多 Agent 系统为目标，而是把 Agent、应用、系统与人共同组织成可承担责任的工作网络。”<span>— 化工产业协同贸易场景方案口径</span></div>
-    </section>
     <p class="foot">演示数据说明：组织、订单、指标与风险结论均为虚构研讨数据。DocPilot 仅作为合作伙伴能力的脱敏接入示例，不包含其后台界面、真实客户信息或真实风控结果。</p>
   </main>
 </body>
