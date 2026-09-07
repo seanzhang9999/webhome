@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AWiki 外贸询盘与履约协同场景设计说明。组织、人物、商品、订单与结论均为虚构演示数据。" />
+  <title>AWiki 外贸询盘与履约协同｜场景设计说明</title>
+  <style>
+    :root{--ink:#172235;--muted:#65728a;--line:#dce3ed;--blue:#315fb8;--blue2:#edf3ff;--green:#08765a;--green2:#e8f8f1;--purple:#6e4fc1;--purple2:#f1edff;--amber:#a76500;--amber2:#fff4dc;--bg:#f4f7fb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.62 Inter,"PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1220px;margin:auto;padding:34px 24px 72px}.hero,.section{border:1px solid var(--line);border-radius:21px;background:#fff}.hero{padding:43px;background:linear-gradient(130deg,#fff 46%,#eaf1ff)}.kicker,.step-no,.eyebrow{color:var(--blue);font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}h1{max-width:920px;margin:9px 0;font-size:40px;line-height:1.18;letter-spacing:-.035em}h2{margin:0;font-size:25px;line-height:1.32}h3{margin:0;font-size:16px}p{margin:0}.lead{max-width:900px;color:var(--muted);font-size:18px}.nav{display:flex;gap:7px;flex-wrap:wrap;margin-top:23px}.nav a{padding:6px 10px;border:1px solid #b9caec;border-radius:999px;color:var(--blue);background:#fff;text-decoration:none;font-size:12px;font-weight:700}.section{margin-top:17px;padding:29px}.section>p{margin-top:6px;color:var(--muted)}.scenario{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:18px}.scenario article,.card{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fbfcff}.scenario .primary{border-color:#aec2ea;background:var(--blue2)}.scenario span,.card span{display:block;margin-top:5px;color:var(--muted);font-size:13px}.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.facts div{padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}.facts small,.facts b{display:block}.facts small{color:var(--muted);font-size:10px}.facts b{margin-top:3px;font-size:12px}.architecture{margin-top:19px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#fbfcff}.clients{display:grid;grid-template-columns:1fr .55fr 1fr;gap:10px}.client,.matter-hub{padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff}.client-head b,.client-head span{display:block}.client-head span{margin-top:3px;color:var(--muted);font-size:10px}.client-inner{display:grid;grid-template-columns:.82fr 1fr;gap:7px;margin-top:10px}.client.seller .client-inner{grid-template-columns:1fr .82fr}.partner,.workface{display:grid;align-content:center;min-height:98px;padding:10px;border-radius:9px}.partner{background:var(--green2);color:var(--green);text-align:center}.partner i{width:28px;height:28px;display:grid;place-items:center;margin:0 auto 5px;border-radius:8px;background:#fff;font-style:normal;font-weight:800}.partner small,.workface small{display:block;margin-top:3px;color:var(--muted);font-size:9.5px}.workface{border:1px solid var(--line);background:#fbfcff}.matter-hub{display:grid;place-content:center;border-color:#b8e5d5;background:var(--green2);text-align:center}.matter-hub b{color:var(--green)}.matter-hub span{margin-top:4px;color:var(--muted);font-size:10px}.arrow{margin:7px;text-align:center;color:var(--purple);font-size:18px}.capabilities{display:grid;grid-template-columns:.82fr 1fr 1.15fr 1fr .82fr;gap:8px}.cap{padding:12px;border:1px solid #d9cbfa;border-radius:11px;background:var(--purple2)}.cap.app{border-color:#efd49b;background:var(--amber2)}.cap.space{border-color:#aa94eb;background:#ebe5ff;text-align:center}.cap b,.cap span{display:block}.cap span{margin-top:4px;color:var(--muted);font-size:10px}.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}.chips i{padding:3px 6px;border-radius:999px;background:#fff;color:var(--purple);font-size:9px;font-style:normal;font-weight:700}.foundation{position:relative;margin-top:24px;padding:16px;border:1px solid #9cb7eb;border-radius:12px;background:var(--blue2);text-align:center}.foundation:before{content:"↑ 以身份、授权、数据产品与回单支撑空间Agent";position:absolute;top:-22px;left:0;right:0;color:var(--blue);font-size:10px;font-weight:700}.foundation b,.foundation span{display:block}.foundation b{color:var(--blue);font-size:17px}.foundation span{margin-top:3px;color:var(--muted);font-size:10.5px}.loop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:18px}.loop{padding:17px;border:1px solid var(--line);border-radius:13px;background:#fff}.loop h3{margin-top:4px}.loop p{margin-top:5px;color:var(--muted);font-size:12.5px}.path{margin-top:10px;padding:8px 9px;border-radius:8px;background:var(--blue2);color:var(--blue);font-size:10.5px;font-weight:700}.loop:nth-child(even) .path{background:var(--purple2);color:var(--purple)}.matter-map{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}.matter{position:relative;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}.matter:not(:last-child):after{content:"→";position:absolute;right:-14px;top:45%;z-index:2;color:var(--blue);font-size:18px;font-weight:800}.matter b,.matter span{display:block}.matter span{margin-top:4px;color:var(--muted);font-size:11px}.matter small{display:block;margin-top:9px;color:var(--purple);font-size:9.5px;font-weight:700}.journey{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}.scene{display:grid;grid-template-columns:45px 1fr;gap:10px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}.scene>i{width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:var(--blue2);color:var(--blue);font:700 12px ui-monospace,monospace;font-style:normal}.scene h3{font-size:14px}.scene p{margin-top:4px;color:var(--muted);font-size:11.5px}.scene strong{display:block;margin-top:6px;color:var(--green);font-size:10px}.boundary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.boundary .card:nth-child(1){background:var(--blue2)}.boundary .card:nth-child(2){background:var(--green2)}.boundary .card:nth-child(3){background:var(--purple2)}.reuse{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.reuse ul{margin:8px 0 0;padding-left:19px;color:var(--muted);font-size:12.5px}.reuse li+li{margin-top:5px}.decision{margin-top:18px;padding:17px;border-radius:13px;background:#172235;color:#fff}.decision b{font-size:17px}.decision span{display:block;margin-top:4px;color:#cdd7e6;font-size:13px}.foot{margin:17px 3px 0;color:var(--muted);font-size:11px}@media(max-width:900px){.wrap{padding:18px 12px 45px}.hero,.section{padding:23px}h1{font-size:31px}.scenario,.facts,.clients,.capabilities,.loop-grid,.matter-map,.journey,.boundary,.reuse,.client-inner,.client.seller .client-inner{grid-template-columns:1fr}.matter:not(:last-child):after{content:"↓";top:auto;right:auto;bottom:-17px;left:50%}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <span class="kicker">AWIKI FOREIGN TRADE · SCENARIO DESIGN</span>
+      <h1>外贸询盘不是一条消息，而是一条跨企业、跨系统、跨语言持续推进的可信事项链</h1>
+      <p class="lead">独立场景以中国出口制造企业响应境外采购询盘为固定视角，展示 AWiki 如何把需求发现、资信核验、条款澄清、报价、合同、生产、报关物流和收款组织成可确认、可执行、可追溯的业务闭环。</p>
+      <nav class="nav"><a href="#scenario">固定剧情</a><a href="#architecture">总体结构</a><a href="#loops">六套闭环</a><a href="#matters">事项体系</a><a href="#journey">演示脚本</a><a href="#boundary">可信边界</a><a href="#build">改造范围</a></nav>
+    </header>
+
+    <section class="section" id="scenario">
+      <h2>固定身份与核心订单</h2>
+      <p>全程从一家中国出口制造企业的视角展开，避免在买方与卖方身份之间跳转。境外采购方只通过消息、事项群、Agent回单和经授权的资料出现。</p>
+      <div class="scenario">
+        <article class="primary"><span class="eyebrow">FIXED IDENTITY</span><h3>宁波澜海生活科技有限公司（虚构）</h3><span>当前用户：陈璐 · 外贸业务经理。代表供给方处理询盘、报价、订单与履约；AWiki伙伴始终服务于陈璐，不代表境外买方，也不替公司作出承诺。</span></article>
+        <article><span class="eyebrow">INBOUND RFQ</span><h3>德国零售商定制保温杯询盘</h3><span>Nordlicht Retail GmbH（虚构）计划采购 50,000 只定制不锈钢保温杯，要求送达汉堡，包含包装、检测与分批交付要求。</span></article>
+      </div>
+      <div class="facts"><div><small>数量</small><b>50,000 只</b></div><div><small>目的地</small><b>德国 · 汉堡</b></div><div><small>关键歧义</small><b>45天是离港还是到港</b></div><div><small>待确认条款</small><b>FOB / CIF · T/T / L/C</b></div></div>
+    </section>
+
+    <section class="section" id="architecture">
+      <h2>客户端承接人员工作，事项群连接业务各方</h2>
+      <p>买卖双方各自拥有 AWiki 客户端和内置伙伴。伙伴在本方边界内调用业务Agent、空间Agent和专业应用；双方只把共同协作所需的事实、决定与回单写入跨组织事项群。</p>
+      <div class="architecture">
+        <div class="clients">
+          <article class="client buyer"><div class="client-head"><b>境外需求方 AWiki客户端</b><span>采购经理及其工作域</span></div><div class="client-inner"><div class="partner"><i>A</i><b>需求方伙伴</b><small>需求整理与采购协助</small></div><div class="workface"><b>需求方工作界面</b><small>询盘、候选、合同与交付</small></div></div></article>
+          <article class="matter-hub"><b>跨组织事项群</b><span>双方人员、被指派Agent、物流/质检/银行等服务方按阶段加入</span></article>
+          <article class="client seller"><div class="client-head"><b>中国供给方 AWiki客户端</b><span>陈璐及澜海工作域</span></div><div class="client-inner"><div class="workface"><b>供给方工作界面</b><small>接询、报价、生产与履约</small></div><div class="partner"><i>A</i><b>供给方伙伴</b><small>私人分析与人员确认</small></div></div></article>
+        </div>
+        <div class="arrow">↕</div>
+        <div class="capabilities">
+          <article class="cap app"><b>需求方应用池</b><span>供应商尽调、采购系统、合同审核、支付与物流</span></article>
+          <article class="cap"><b>需求方业务Agent</b><span>需求、采购、候选比较、订单跟踪</span><div class="chips"><i>Buyer Agent</i><i>Procurement</i></div></article>
+          <article class="cap space"><b>跨境贸易空间Agent</b><span>撮合Agent居间；同时提供信用凭证核验、物流、预测与可信单证服务</span><div class="chips"><i>撮合</i><i>信用</i><i>物流</i><i>单证</i></div></article>
+          <article class="cap"><b>供给方业务Agent</b><span>机会响应、报价、生产、质检与履约</span><div class="chips"><i>Opportunity</i><i>Factory</i></div></article>
+          <article class="cap app"><b>供给方应用池</b><span>企业信用、翻译、合同、ERP/MES、报关、订舱与收款</span></article>
+        </div>
+        <div class="foundation"><b>跨境贸易可信数据空间</b><span>企业身份 · 产品与产能证明 · 认证/检测凭证 · 授权数据产品 · 调用与履约Receipt<br>撮合可请求各方提供本次实时价格、库存和船期投影；实时投影参与计算但不集中落盘。</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="loops">
+      <h2>六套闭环，而不是一张外贸功能菜单</h2>
+      <p>每套闭环都以一个需要处理的业务变化开始，以人员决定或可验证回单结束，并自然接续下一事项。</p>
+      <div class="loop-grid">
+        <article class="loop"><span class="step-no">01 · DISCOVER</span><h3>询盘到机会闭环</h3><p>境外Buyer Agent提交签名需求，撮合Agent使用可信供给能力寻找候选；范围化邀请进入陈璐的Inbox，经伙伴解释后形成询盘事项。</p><div class="path">需求投递 → 可信匹配 → Inbox → 伙伴筛选 → 创建询盘事项</div></article>
+        <article class="loop"><span class="step-no">02 · QUALIFY</span><h3>资质与意图核验闭环</h3><p>伙伴调用企业信用、制裁与交易风险服务，核对买方主体及询盘签名；只在卡片中显示结论和证据索引，需要时进入原应用复核。</p><div class="path">主体核验 → 风险服务 → 卡片预览 → 人员复核 → 接受/补证/暂缓</div></article>
+        <article class="loop"><span class="step-no">03 · CLARIFY & QUOTE</span><h3>澄清与报价闭环</h3><p>伙伴识别“45天是离港还是到港”等关键歧义，向对方发起结构化澄清；报价Agent结合成本、产能、汇率与运费形成FOB/CIF方案，由人员批准后发送。</p><div class="path">发现歧义 → 结构化问询 → 条件回单 → 报价草稿 → 人员批准</div></article>
+        <article class="loop"><span class="step-no">04 · CONTRACT</span><h3>订单与合同闭环</h3><p>买方接受商业条件后派生订单事项；合同审核服务检查主体、规格、交付、付款、验收和违约条款，双方确认的版本与签署回单成为共同事实。</p><div class="path">报价接受 → 订单事项 → 合同审核 → 双方确认 → 签署Receipt</div></article>
+        <article class="loop"><span class="step-no">05 · FULFILL</span><h3>生产与出口履约闭环</h3><p>工厂Agent接收内部任务投影，质检、报关和货代按阶段加入；生产、验货、订舱、报关、装运节点以回单更新订单事项，不暴露完整内部成本和MES。</p><div class="path">内部排产 → 质检 → 报关/订舱 → 装运 → 单证与状态回单</div></article>
+        <article class="loop"><span class="step-no">06 · SETTLE & LEARN</span><h3>收款与经验沉淀闭环</h3><p>银行或收款服务返回到账状态，差异处理与售后继续留在订单事项；最终将可复用的条款、风险模式和履约经验沉淀到资源、专题与方案版本。</p><div class="path">收款核验 → 差异处理 → 订单关闭 → AAR → 资源/专题/方案复用</div></article>
+      </div>
+    </section>
+
+    <section class="section" id="matters">
+      <h2>事项体系沿订单生命周期接续</h2>
+      <p>不把所有动作塞进一个超长群，也不把每个步骤切成孤立任务。事项在责任主体、参与范围或授权边界发生明显变化时派生。</p>
+      <div class="matter-map">
+        <article class="matter"><b>长期供给能力事项</b><span>维护产品、认证、产能区间、目标市场和可公开证明。</span><small>企业内部 · 长期</small></article>
+        <article class="matter"><b>境外询盘机会事项</b><span>承接匹配邀请、买方核验、条款澄清、样品与报价决定。</span><small>本轮演示主入口</small></article>
+        <article class="matter"><b>跨组织订单事项</b><span>双方确认合同、规格、交付计划、服务方和异常处理机制。</span><small>买卖双方共同</small></article>
+        <article class="matter"><b>内部履约与结算事项</b><span>排产、质检、报关、订舱、收款及售后，向订单事项回写必要状态。</span><small>按组织最小投影</small></article>
+      </div>
+    </section>
+
+    <section class="section" id="journey">
+      <h2>建议的十幕交互演示</h2>
+      <p>观众始终停留在陈璐的供给方身份。每一幕都包含一个可以点击验证的动作，而不是自动播放宣传动画。</p>
+      <div class="journey">
+        <article class="scene"><i>01</i><div><h3>身份与工作域</h3><p>打开身份面板，确认“澜海出口业务经理”身份及可用连接、授权和服务包。</p><strong>点击：查看身份与当前授权</strong></div></article>
+        <article class="scene"><i>02</i><div><h3>Inbox收到范围化询盘</h3><p>撮合Agent送达德国买方询盘，只呈现产品、数量、目的地和必要条件。</p><strong>点击：形成询盘事项</strong></div></article>
+        <article class="scene"><i>03</i><div><h3>伙伴识别歧义与风险</h3><p>右侧伙伴指出交期、贸易术语、付款与检测要求尚不明确，并建议先核验买方。</p><strong>点击：核验买方资信</strong></div></article>
+        <article class="scene"><i>04</i><div><h3>专业尽调报告</h3><p>在伙伴卡片预览风险摘要，再打开仿真实专业应用查看主体、信用、制裁与证据定位。</p><strong>点击：查看完整报告 / 要求补证</strong></div></article>
+        <article class="scene"><i>05</i><div><h3>结构化条款澄清</h3><p>伙伴起草问题，人员确认后发到事项群；Buyer Agent返回ETD、包装、检测和付款偏好。</p><strong>点击：确认发送澄清问题</strong></div></article>
+        <article class="scene"><i>06</i><div><h3>FOB/CIF报价比较</h3><p>报价Agent组合内部成本、汇率、产能和本次运价投影，伙伴解释利润与风险。</p><strong>点击：批准报价并指派发送</strong></div></article>
+        <article class="scene"><i>07</i><div><h3>还价与人员决定</h3><p>买方还价进入同一事项；伙伴给出可接受区间，但由陈璐确认是否让步。</p><strong>点击：接受 / 调整 / 暂缓</strong></div></article>
+        <article class="scene"><i>08</i><div><h3>派生订单并审核合同</h3><p>商业条件冻结后创建订单事项，调用合同审核服务并锁定双方确认版本。</p><strong>点击：查看条款差异 / 确认签署</strong></div></article>
+        <article class="scene"><i>09</i><div><h3>生产、质检与装运看板</h3><p>工厂、质检、报关和货代的状态以回单汇聚；可进入各自原应用查看细节。</p><strong>点击：查看履约看板与单证</strong></div></article>
+        <article class="scene"><i>10</i><div><h3>到账、关闭与复盘</h3><p>收款确认后关闭订单，伙伴生成AAR，并把可复用经验更新到外贸方案包。</p><strong>点击：确认关闭并沉淀经验</strong></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="boundary">
+      <h2>外贸场景必须突出三条可信边界</h2>
+      <div class="boundary">
+        <article class="card"><h3>跨境共享最小化</h3><span>对外提供产品、认证、可承诺产能和履约状态证明；内部成本、完整客户库、原始MES与其他买方报价不自然外流。</span></article>
+        <article class="card"><h3>伙伴建议不等于承诺</h3><span>伙伴可以翻译、分析、调用服务和起草内容；价格让步、合同接受、生产承诺和付款操作必须由具名人员确认。</span></article>
+        <article class="card"><h3>实时数据不集中落盘</h3><span>汇率、库存、船期和运价可作为本次任务投影参与撮合或报价；事项长期保存确认结果、必要证据索引和Receipt。</span></article>
+      </div>
+    </section>
+
+    <section class="section" id="build">
+      <h2>从化工样板复用产品骨架，重新构造外贸业务插件</h2>
+      <div class="reuse">
+        <article class="card"><h3>继续复用</h3><ul><li>AWiki Me 的身份、消息、一览、连接、AWiki和设置</li><li>工作中的事项、资源、专题和方案</li><li>列表切换、中间事项群、右侧私人伙伴的三栏交互</li><li>人员决定 → 指派Agent → 执行 → Receipt 的步骤约束</li><li>专业应用卡片预览、原应用展开与聊天自动滚底</li></ul></article>
+        <article class="card"><h3>外贸插件重新定义</h3><ul><li>买方、出口商、工厂、质检、货代、报关、银行等角色</li><li>询盘、报价、样品、合同、订单、装运、单证与收款对象</li><li>贸易条款澄清、跨币种报价和跨境合规关口</li><li>Buyer/Opportunity/Quotation/Factory/Logistics Agent</li><li>信用、翻译、合同、报关、物流与收款应用连接</li></ul></article>
+      </div>
+      <div class="decision"><b>建议交付方式</b><span>先以本说明锁定业务剧情和对象模型，再新增独立的 <code>awiki-foreign-trade-demo.html</code>。不修改现有化工Demo，不把外贸做成换名称、换商品的复制版本。</span></div>
+    </section>
+
+    <p class="foot">说明：本页用于场景设计与演示策划。组织、人物、产品、数量、交易条件、信用和履约结论均为虚构数据；正式业务中的监管、制裁、税务、海关、合同和支付判断应由相应专业系统及具名人员复核。</p>
+  </main>
+</body>
+</html>
