@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="伊智 SaaS 与 AWiki 人机协作能力联合方案：组合伊智经营智能与 AWiki 协作层，形成联合产品、技术接入与商务合作路径。" />
+  <title>伊智 × AWiki｜联合方案与合作框架</title>
+  <style>
+    :root{
+      --ink:#10182a;--muted:#667188;--line:#dce3ef;--soft:#f5f7fb;--paper:#fff;
+      --blue:#2457c5;--blue-soft:#edf3ff;--cyan:#087e8b;--cyan-soft:#e9f8f8;
+      --violet:#6d4cc7;--violet-soft:#f2efff;--amber:#a56300;--amber-soft:#fff5dd;
+      --green:#087454;--green-soft:#eaf8f2;--red:#b13c47;--red-soft:#fff0f1;
+      --navy:#101b35;--shadow:0 20px 55px rgba(20,35,70,.09)
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:82px}
+    body{margin:0;color:var(--ink);background:linear-gradient(180deg,#f0f4fb 0,#f7f9fc 420px);font:16px/1.7 Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+    button,a{font:inherit}
+    a{color:var(--blue)}
+    .topbar{position:sticky;z-index:20;top:0;border-bottom:1px solid rgba(220,227,239,.9);background:rgba(255,255,255,.92);backdrop-filter:blur(16px)}
+    .topbar-inner{max-width:1240px;height:62px;margin:auto;padding:0 24px;display:flex;align-items:center;gap:18px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;white-space:nowrap}.brand-mark{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:var(--navy);color:#fff;font-size:13px}.brand i{color:#9aa5bb;font-style:normal;font-weight:500}
+    .topnav{display:flex;gap:5px;margin-left:auto;overflow:auto}.topnav a{padding:7px 10px;border-radius:8px;color:#4d5970;text-decoration:none;font-size:13px;white-space:nowrap}.topnav a:hover{background:var(--blue-soft);color:var(--blue)}
+    .wrap{max-width:1240px;margin:auto;padding:30px 24px 88px}
+    .hero{position:relative;overflow:hidden;padding:50px;border:1px solid #cbd8ee;border-radius:26px;background:linear-gradient(130deg,#fff 0 52%,#e9f0ff);box-shadow:var(--shadow)}
+    .hero:after{content:"";position:absolute;width:330px;height:330px;right:-120px;top:-145px;border:62px solid rgba(36,87,197,.09);border-radius:50%}
+    .eyebrow{display:block;color:var(--blue);font:800 12px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase}
+    h1{position:relative;z-index:1;max-width:970px;margin:12px 0 13px;font-size:46px;line-height:1.16;letter-spacing:-.045em}
+    h2{margin:0;font-size:29px;line-height:1.3;letter-spacing:-.025em}h3{margin:0;font-size:18px;line-height:1.42}p{margin:0}
+    .lead{position:relative;z-index:1;max-width:940px;color:var(--muted);font-size:19px}
+    .hero-thesis{position:relative;z-index:1;display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;gap:9px;align-items:center;margin-top:30px}
+    .hero-node{min-height:132px;padding:18px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.9)}
+    .hero-node b,.hero-node span{display:block}.hero-node b{margin-top:7px;font-size:18px}.hero-node span:last-child{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.5}.hero-node.primary{border-color:#9eb6eb;background:#fff}.hero-node.accent{border-color:#9fd9d1;background:var(--green-soft)}.arrow{color:var(--blue);font-size:25px;text-align:center;font-weight:900}
+    .audience{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}.audience button{padding:8px 12px;border:1px solid #bbc9e3;border-radius:999px;background:#fff;color:#506078;cursor:pointer;font-size:13px;font-weight:750}.audience button.on{border-color:var(--blue);background:var(--blue);color:#fff}
+    .audience-panel{position:relative;z-index:1;margin-top:12px;padding:15px 17px;border:1px solid #cad7ee;border-radius:13px;background:rgba(255,255,255,.8);color:#3e4c66;font-size:14px}.audience-panel b{color:var(--ink)}
+    .section{margin-top:20px;padding:32px;border:1px solid var(--line);border-radius:22px;background:var(--paper);box-shadow:0 8px 28px rgba(24,43,80,.045)}
+    .section-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}.section-head>div>p{max-width:880px;margin-top:7px;color:var(--muted)}.section-no{color:#a5afc0;font:800 13px ui-monospace,monospace;letter-spacing:.08em}
+    .callout{display:grid;grid-template-columns:46px 1fr;gap:15px;margin-top:20px;padding:18px;border-radius:15px;background:var(--blue-soft)}.callout-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:#fff;font-weight:900}.callout b{display:block;font-size:18px}.callout span{display:block;margin-top:3px;color:var(--muted);font-size:14px}.callout.green{background:var(--green-soft)}.callout.green .callout-icon{background:var(--green)}
+    .five-stack{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:22px}.stack-card{position:relative;min-height:215px;padding:17px;border:1px solid var(--line);border-radius:15px;background:#fff}.stack-card:not(:last-child):after{content:"→";position:absolute;right:-16px;top:93px;width:22px;text-align:center;color:var(--blue);font-size:19px;font-weight:900;z-index:2}.stack-card .num{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:var(--blue-soft);color:var(--blue);font-weight:850;font-size:12px}.stack-card h3{margin-top:10px}.stack-card p{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.55}.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}.chip{padding:3px 7px;border-radius:999px;background:var(--soft);color:#536078;font-size:11px;font-weight:700}
+    .module-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}.module{padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.module.wide{grid-column:1/-1}.module-top{display:flex;align-items:center;gap:11px}.module-icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:var(--blue-soft);color:var(--blue);font-weight:850}.module p{margin-top:8px;color:var(--muted);font-size:14px}.module-footer{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.module-footer div{padding:10px;border-radius:10px;background:var(--soft);font-size:12px}.module-footer b{display:block;margin-bottom:2px;color:var(--ink)}
+    .evidence{width:100%;margin-top:22px;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:15px;overflow:hidden;font-size:14px}.evidence th,.evidence td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.evidence th{background:var(--navy);color:#fff;font-size:13px}.evidence tr:last-child td{border-bottom:0}.evidence td:first-child{width:21%;font-weight:800}.evidence td:nth-child(2){width:37%;background:#fbfcfe}.yes{color:var(--green);font-weight:800}.gap{color:var(--amber);font-weight:800}
+    .compare{display:grid;grid-template-columns:1fr 62px 1fr;gap:12px;align-items:stretch;margin-top:22px}.compare-side{padding:22px;border:1px solid var(--line);border-radius:17px}.compare-side.yizhi{background:var(--blue-soft);border-color:#c2d1ee}.compare-side.awiki{background:var(--green-soft);border-color:#b9dfd2}.compare-side h3{font-size:21px}.compare-side ul{margin:12px 0 0;padding-left:20px;color:#4f5d74}.compare-mid{display:grid;place-items:center;color:var(--blue);font-size:28px;font-weight:900}.joint-line{margin-top:13px;padding:13px 15px;border:1px dashed #aabbd8;border-radius:12px;background:#fff;font-weight:750;text-align:center}
+    .architecture{margin-top:22px;padding:21px;border:1px solid var(--line);border-radius:18px;background:#f9fbff}.arch-row{display:grid;grid-template-columns:180px minmax(0,1fr);gap:12px;align-items:stretch}.arch-row+.arch-row{margin-top:9px}.arch-label{display:grid;align-content:center;padding:14px;border-radius:12px;background:var(--navy);color:#fff}.arch-label b,.arch-label span{display:block}.arch-label span{margin-top:2px;color:#bdc9dd;font-size:11px}.arch-content{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.arch-content.three{grid-template-columns:repeat(3,1fr)}.arch-content.two{grid-template-columns:repeat(2,1fr)}.arch-node{padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff}.arch-node b,.arch-node span{display:block}.arch-node span{margin-top:3px;color:var(--muted);font-size:11.5px;line-height:1.45}.arch-row.awiki .arch-label{background:var(--green)}.arch-row.awiki .arch-node{border-color:#b5ddd0;background:var(--green-soft)}.arch-row.agents .arch-label{background:var(--violet)}.arch-row.agents .arch-node{border-color:#d9cdf6;background:var(--violet-soft)}.arch-row.brain .arch-label{background:var(--cyan)}.arch-row.brain .arch-node{border-color:#b8dedf;background:var(--cyan-soft)}.arch-row.data .arch-label{background:#496079}.arch-row.data .arch-node{background:#f2f5f8}
+    .vertical-note{margin:8px 0 8px 192px;color:#8290a6;font-size:12px;text-align:center}.vertical-note b{color:var(--blue)}
+    .workspace-view{display:grid;grid-template-columns:210px minmax(0,1fr) 245px;gap:10px;margin-top:22px;padding:13px;border:1px solid #c8d6eb;border-radius:18px;background:#eef3fa}.workspace-pane{min-height:280px;padding:15px;border:1px solid var(--line);border-radius:13px;background:#fff}.workspace-pane>span{display:block;color:var(--blue);font:800 10px ui-monospace,monospace;letter-spacing:.08em}.workspace-pane h3{margin-top:5px}.workspace-pane p{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.5}.agent-list{display:grid;gap:7px;margin-top:13px}.agent-item{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--soft);font-size:12px;font-weight:750}.agent-item.on{border-color:#9bb6ec;background:var(--blue-soft);color:var(--blue)}.matter-stream{display:grid;gap:8px;margin-top:13px}.stream-item{padding:11px 12px;border-left:3px solid var(--blue);border-radius:0 10px 10px 0;background:var(--soft);font-size:12px}.stream-item b,.stream-item small{display:block}.stream-item small{margin-top:2px;color:var(--muted);line-height:1.45}.stream-item.agent{border-left-color:var(--violet);background:var(--violet-soft)}.stream-item.human{border-left-color:var(--green);background:var(--green-soft)}.partner-card{margin-top:13px;padding:13px;border:1px solid #b9dfd2;border-radius:11px;background:var(--green-soft)}.partner-card b,.partner-card span{display:block}.partner-card span{margin-top:5px;color:#49665d;font-size:12px;line-height:1.5}.workspace-note{margin-top:10px;color:var(--muted);font-size:12px;text-align:center}
+    .loop{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:22px}.loop-step{position:relative;min-height:160px;padding:15px;border:1px solid var(--line);border-radius:14px}.loop-step:not(:last-child):after{content:"→";position:absolute;right:-15px;top:67px;width:21px;text-align:center;color:var(--blue);font-size:18px;font-weight:900;z-index:2}.loop-step span,.loop-step b,.loop-step small{display:block}.loop-step span{color:var(--blue);font:800 11px ui-monospace,monospace}.loop-step b{margin-top:8px;font-size:15px}.loop-step small{margin-top:6px;color:var(--muted);font-size:11.5px;line-height:1.5}.loop-step:nth-child(3),.loop-step:nth-child(4){background:var(--green-soft);border-color:#b9dfd2}.loop-step:last-child{background:var(--blue-soft)}
+    .matter-schema{display:grid;grid-template-columns:220px minmax(0,1fr);gap:13px;margin-top:22px}.matter-trigger{padding:20px;border-radius:16px;background:linear-gradient(140deg,var(--navy),#253c69);color:#fff}.matter-trigger span,.matter-trigger b,.matter-trigger small{display:block}.matter-trigger span{color:#9fc0ff;font:800 11px ui-monospace,monospace}.matter-trigger b{margin-top:8px;font-size:20px}.matter-trigger small{margin-top:8px;color:#ccd5e6}.matter-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.matter-field{padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff}.matter-field b,.matter-field span{display:block}.matter-field b{font-size:13px}.matter-field span{margin-top:3px;color:var(--muted);font-size:11.5px;line-height:1.45}
+    .roles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.role{padding:17px;border:1px solid var(--line);border-radius:14px}.role span{font:800 11px ui-monospace,monospace;color:var(--blue)}.role h3{margin-top:6px}.role p{margin-top:6px;color:var(--muted);font-size:13px}.role.private{background:var(--green-soft);border-color:#b9dfd2}.role.agent{background:var(--violet-soft);border-color:#d9cdf6}.role.external{background:var(--amber-soft);border-color:#ebd29b}
+    .scenario{display:grid;grid-template-columns:200px 1fr;gap:14px;margin-top:22px}.scenario-intro{padding:19px;border:1px solid #bed0ef;border-radius:15px;background:var(--blue-soft)}.scenario-intro b{display:block;font-size:18px}.scenario-intro p{margin-top:6px;color:var(--muted);font-size:13px}.scenario-track{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.scenario-track article{padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff}.scenario-track span,.scenario-track b,.scenario-track small{display:block}.scenario-track span{color:var(--blue);font:800 10px ui-monospace,monospace}.scenario-track b{margin-top:4px;font-size:13px}.scenario-track small{margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}
+    .boundary{margin-top:15px;padding:13px 15px;border-left:4px solid var(--amber);border-radius:0 11px 11px 0;background:var(--amber-soft);color:#5c4b31;font-size:13px}.boundary b{color:#6d4900}
+    .integration-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.integration-card{padding:19px;border:1px solid var(--line);border-radius:15px}.integration-card h3{display:flex;gap:9px;align-items:center}.integration-card h3 i{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue-soft);color:var(--blue);font-size:12px;font-style:normal}.integration-card ul{margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:13px}.integration-card li+li{margin-top:4px}.code-sample{margin-top:12px;padding:13px 14px;overflow:auto;border-radius:11px;background:#111a2c;color:#c8d5ee;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre}
+    .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:22px}.offer{padding:20px;border:1px solid var(--line);border-radius:16px}.offer.featured{border-color:#a9c1ef;background:var(--blue-soft)}.offer span{color:var(--blue);font:800 11px ui-monospace,monospace}.offer h3{margin-top:6px}.offer p{margin-top:6px;color:var(--muted);font-size:13px}.offer ul{margin:11px 0 0;padding-left:19px;font-size:13px;color:#4e5c73}
+    .roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}.phase{padding:18px;border-top:4px solid var(--blue);border-radius:8px 8px 14px 14px;background:var(--soft)}.phase:nth-child(2){border-color:var(--cyan)}.phase:nth-child(3){border-color:var(--green)}.phase:nth-child(4){border-color:var(--violet)}.phase span{color:var(--blue);font:800 11px ui-monospace,monospace}.phase h3{margin-top:6px}.phase p{margin-top:6px;color:var(--muted);font-size:13px}.phase b{display:block;margin-top:10px;font-size:12px}
+    .risk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.risk{padding:16px;border:1px solid #edc9cc;border-radius:13px;background:var(--red-soft)}.risk b{display:block;color:var(--red)}.risk span{display:block;margin-top:4px;color:#6e5960;font-size:13px}.risk.solve{border-color:#b9dfd2;background:var(--green-soft)}.risk.solve b{color:var(--green)}
+    .decision{margin-top:22px;padding:24px;border-radius:18px;background:var(--navy);color:#fff}.decision h3{font-size:23px}.decision p{margin-top:8px;color:#c7d2e5}.decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}.decision-grid div{padding:13px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:rgba(255,255,255,.06)}.decision-grid b,.decision-grid span{display:block}.decision-grid span{margin-top:3px;color:#bdc9dd;font-size:12px}
+    .sources{margin-top:20px;padding:22px;border:1px solid var(--line);border-radius:18px;background:#fbfcfe}.sources h3{font-size:15px}.sources ol{margin:10px 0 0;padding-left:21px;color:var(--muted);font-size:13px}.sources li+li{margin-top:5px}.sources a{word-break:break-all}
+    .footer{margin-top:18px;color:#77849a;font-size:12px;text-align:center}
+    .view-tag{display:none}.view-tag.show{display:inline-block;margin-left:7px;padding:2px 7px;border-radius:999px;background:var(--blue-soft);color:var(--blue);font-size:10px;font-weight:800;vertical-align:middle}
+    @media(max-width:980px){h1{font-size:38px}.hero{padding:38px}.hero-thesis{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.five-stack,.loop{grid-template-columns:1fr 1fr}.stack-card:not(:last-child):after,.loop-step:not(:last-child):after{display:none}.arch-content,.arch-content.three,.arch-content.two{grid-template-columns:1fr 1fr}.roles,.roadmap{grid-template-columns:1fr 1fr}.scenario,.matter-schema{grid-template-columns:1fr}.offer-grid{grid-template-columns:1fr}.scenario-track{grid-template-columns:1fr 1fr}.workspace-view{grid-template-columns:180px minmax(0,1fr)}.workspace-view .workspace-pane:last-child{grid-column:1/-1;min-height:auto}}
+    @media(max-width:700px){body{font-size:15px}.topnav{display:none}.wrap{padding:16px 12px 54px}.topbar-inner{padding:0 14px}.hero,.section{padding:23px;border-radius:18px}h1{font-size:31px}h2{font-size:24px}.lead{font-size:17px}.five-stack,.module-grid,.compare,.loop,.arch-row,.arch-content,.arch-content.three,.arch-content.two,.matter-fields,.roles,.scenario-track,.integration-grid,.roadmap,.risk-grid,.decision-grid,.workspace-view{grid-template-columns:1fr}.compare-mid{transform:rotate(90deg);min-height:42px}.vertical-note{margin-left:0}.module.wide{grid-column:auto}.evidence{display:block;overflow:auto}.evidence th,.evidence td{min-width:180px}.hero-node{min-height:auto}.section-head{display:block}.section-no{display:block;margin-top:8px}.audience button{flex:1}.matter-fields{gap:7px}.workspace-view .workspace-pane:last-child{grid-column:auto}}
+    @media print{.topbar,.audience{display:none}.wrap{max-width:none;padding:0}.hero,.section{box-shadow:none;break-inside:avoid}.section{margin-top:12px}.hero{border-radius:0}body{background:#fff}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="brand-mark">A</span><span>AWiki × 伊智</span><i>联合方案</i></div>
+      <nav class="topnav" aria-label="页面导航">
+        <a href="#yizhi">伊智框架</a><a href="#gap">协作缺口</a><a href="#joint">联合架构</a><a href="#scenario">场景验证</a><a href="#technology">技术接入</a><a href="#business">合作框架</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Joint solution · partner discussion · 2026.09</span>
+      <h1>伊智发现并发起事情，AWiki组织合适的人和Agent把事情办完</h1>
+      <p class="lead">伊智已经形成“经营数据—客户记忆—策略判断—私域执行”的纵向闭环。AWiki在这一基础上提供人机混合协作IM与事项体系，让五位AI同事、企业自建Agent和真实员工能够围绕业务目标共同工作。</p>
+      <div class="hero-thesis">
+        <article class="hero-node primary"><span class="eyebrow">01 · YIZHI</span><b>识别机会与异常</b><span>经营大脑持续观察客户与门店数据，形成判断并发起事项。</span></article>
+        <div class="arrow">→</div>
+        <article class="hero-node accent"><span class="eyebrow">02 · AWIKI</span><b>建立人机协作事项</b><span>按目标组织负责人、员工、AI同事、应用、权限、决定与回单。</span></article>
+        <div class="arrow">→</div>
+        <article class="hero-node"><span class="eyebrow">03 · JOINT</span><b>执行、复盘并回流</b><span>伊智能力执行，结果回到事项与运营大脑，成为下一轮判断依据。</span></article>
+      </div>
+      <div class="audience" role="tablist" aria-label="阅读视角">
+        <button class="on" data-view="owner" role="tab" aria-selected="true">伊智管理层</button>
+        <button data-view="business" role="tab" aria-selected="false">双方商务团队</button>
+        <button data-view="tech" role="tab" aria-selected="false">双方技术团队</button>
+      </div>
+      <div class="audience-panel" id="audiencePanel"><b>管理层视角：</b>联合方案把伊智已有AI能力组织成可被企业稳定使用、责任清楚、过程可追踪的协作生产力。</div>
+    </header>
+
+    <section class="section" id="summary">
+      <div class="section-head"><div><span class="eyebrow">Executive conclusion</span><h2>联合定位：经营智能与人机协作形成完整闭环</h2><p>伊智提供真实经营数据、垂直算法、客户运营和业务执行；AWiki提供用户侧伙伴、事项群和人机协作。双方共同形成服务伊智SaaS客户的联合方案。</p></div><span class="section-no">00</span></div>
+      <div class="callout green"><div class="callout-icon">✓</div><div><b>把伊智AI同事组织进统一协作工作面</b><span>五位AI同事、企业自建Agent、真实员工与外部服务可以围绕同一事项分工、交接、确认并形成回单。</span></div></div>
+    </section>
+
+    <section class="section" id="yizhi">
+      <div class="section-head"><div><span class="eyebrow">Yizhi capability stack</span><h2>拆解伊智：五层能力已经构成完整的经营技术栈</h2><p>四个公开页面共同呈现了一套从底层经营系统到上层AI员工的连续架构。理解每层的职责，才能避免重复建设。</p></div><span class="section-no">01</span></div>
+      <div class="five-stack">
+        <article class="stack-card"><span class="num">01</span><h3>SaaS经营底座</h3><p>保存门店、会员、预约、交易、支付、员工、服务、库存与财务事实。</p><div class="chips"><i class="chip">真实数据</i><i class="chip">组织权限</i><i class="chip">业务动作</i></div></article>
+        <article class="stack-card"><span class="num">02</span><h3>AI私域宝</h3><p>连接企业微信，按照SOP完成客户触达、回访、唤醒，并把高价值机会交给员工。</p><div class="chips"><i class="chip">自动触达</i><i class="chip">员工接手</i><i class="chip">结果回传</i></div></article>
+        <article class="stack-card"><span class="num">03</span><h3>AI运营大脑</h3><p>把客户数据转成动态记忆，识别生命周期、价值与品项阶段，生成下一步经营动作。</p><div class="chips"><i class="chip">客户决策</i><i class="chip">规则/模型</i><i class="chip">Flow</i></div></article>
+        <article class="stack-card"><span class="num">04</span><h3>AI数智员工</h3><p>AI店长、销冠、客服、陪练与ChatBI共享经营上下文，分别承接岗位能力。</p><div class="chips"><i class="chip">岗位Agent</i><i class="chip">共同数据</i><i class="chip">专业界面</i></div></article>
+        <article class="stack-card"><span class="num">05</span><h3>AI开放平台</h3><p>通过API、MCP、Skills、CLI向官方、WorkBuddy及企业自建Agent开放数据与执行能力。</p><div class="chips"><i class="chip">能力供给</i><i class="chip">自建Agent</i><i class="chip">企业本体</i></div></article>
+      </div>
+
+      <div class="module-grid">
+        <article class="module"><div class="module-top"><span class="module-icon">S</span><h3>连锁SaaS：事实系统与执行底盘</h3></div><p>会员、预约、交易、员工、门店、服务和财务持续在线，并能被总部统一治理，为Agent提供真实业务基础。</p><div class="module-footer"><div><b>核心资产</b>存量客户、门店覆盖和真实交易数据</div><div><b>联合中定位</b>由伊智持续承担唯一业务事实源</div></div></article>
+        <article class="module"><div class="module-top"><span class="module-icon">私</span><h3>私域宝：外部客户触达执行器</h3></div><p>其主要对象是外部客户：按照总部规则自动建档、发券、回访、提醒、唤醒，再把需要人工承接的机会交给门店。</p><div class="module-footer"><div><b>类似能力</b>慢病Demo中的客户触达Agent</div><div><b>联合中定位</b>接收事项指派并返回触达Receipt</div></div></article>
+        <article class="module"><div class="module-top"><span class="module-icon">脑</span><h3>运营大脑：持续客户决策引擎</h3></div><p>更接近“数据挖掘/客户决策＋自动化Flow＋LLM交互”：规则、指标或预测模型发现模式，LLM负责理解文本、生成解释、话术与自然语言问数。</p><div class="module-footer"><div><b>擅长回答</b>现在该关注谁、为什么、建议做什么</div><div><b>联合中定位</b>把机会或异常转成事项触发</div></div></article>
+        <article class="module"><div class="module-top"><span class="module-icon">AI</span><h3>五位AI同事：共享底座的岗位能力</h3></div><p>“共享经营上下文、数据互通”让各岗位Agent基于同一数据和认知底座开展工作；联合方案进一步把它们组织进可观察、可接续的人机协作事项。</p><div class="module-footer"><div><b>伊智能力</b>分岗位能力、数据共享、结果输出</div><div><b>联合增强</b>共同事项、明确分工、决定与回单</div></div></article>
+        <article class="module wide"><div class="module-top"><span class="module-icon">↗</span><h3>开放平台：解决Agent“能调用什么”，尚未解决用户“如何和多个Agent一起工作”</h3></div><p>平台把数据、知识、本体、算法与执行链路开放给更多Agent，这是供给侧基础设施。随着Agent越来越多，用户侧反而更需要发现、组队、授权、协作、确认、追踪和复盘的统一工作面。</p><div class="module-footer"><div><b>伊智继续负责</b>开放资源、工具、模型、官方Agent与业务执行</div><div><b>AWiki可以补充</b>人机协作IM、事项上下文、参与者、权限与Receipt</div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="evidence">
+      <div class="section-head"><div><span class="eyebrow">Capability foundation</span><h2>现有能力基础与联合接入重点</h2><p>伊智现有产品已经提供数据、经营智能与执行能力；联合落地将围绕协作实例、身份、指派和回单完成接口衔接。</p></div><span class="section-no">02</span></div>
+      <table class="evidence">
+        <thead><tr><th>主题</th><th>伊智现有能力基础</th><th>联合接入重点</th></tr></thead>
+        <tbody>
+          <tr><td>共享上下文</td><td><span class="yes">能力基础</span>：五位AI同事共享经营数据和客户理解。</td><td><span class="gap">联合增强</span>：让多个Agent在同一事项中分工、交接和互相接续。</td></tr>
+          <tr><td>自动执行</td><td><span class="yes">能力基础</span>：私域宝按SOP触发、自动触达、员工接手和结果回流。</td><td><span class="gap">接口衔接</span>：接收事项指派，并返回结构化、可关联的执行回单。</td></tr>
+          <tr><td>人工确认</td><td><span class="yes">能力基础</span>：价格、权益、敏感沟通及高风险动作需人工确认。</td><td><span class="gap">联合增强</span>：在事项中明确确认人、决定依据及后续执行关系。</td></tr>
+          <tr><td>开放能力</td><td><span class="yes">能力基础</span>：API、MCP、Skills、CLI、自建Agent及WorkBuddy接入。</td><td><span class="gap">接口衔接</span>：确认事件订阅、租户身份、写权限和可用接口。</td></tr>
+          <tr><td>组织协作</td><td><span class="yes">能力基础</span>：总部、区域、门店和岗位均有数据与权限模型。</td><td><span class="gap">联合增强</span>：形成围绕目标的人机组合、跨部门事项群和连续上下文。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="gap">
+      <div class="section-head"><div><span class="eyebrow">Collaboration gap</span><h2>真正可增强的部分：从“多个AI可用”到“人和多个AI共同办事”</h2><p>侧栏动态提醒解决“什么值得关注”，单个Agent页面解决“这个Agent能做什么”；但复杂工作还需要一个把目标、参与者、判断、执行和结果持续聚合起来的协作载体。</p></div><span class="section-no">03</span></div>
+      <div class="compare">
+        <article class="compare-side yizhi"><span class="eyebrow">Yizhi strengths</span><h3>伊智已经拥有的纵向闭环</h3><ul><li>真实经营数据与统一客户ID</li><li>动态客户记忆和机会识别</li><li>岗位化AI员工和经营界面</li><li>企微私域触达与员工接手</li><li>总部策略、门店执行和结果复盘</li></ul></article>
+        <div class="compare-mid">＋</div>
+        <article class="compare-side awiki"><span class="eyebrow">AWiki enhancement</span><h3>AWiki补充的横向协作层</h3><ul><li>每位用户自己的AWiki伙伴</li><li>围绕目标创建持续事项</li><li>按事项组织人、Agent和应用</li><li>私人判断与正式共同意见分离</li><li>人员决定、Agent指派和Receipt</li></ul></article>
+      </div>
+      <div class="joint-line">联合结果：经营大脑发现并发起事项 → AWiki配置人机组合 → 伊智能力执行 → 回单写回事项与经营大脑</div>
+      <div class="callout"><div class="callout-icon">IM</div><div><b>不是强制“双聊天界面”，而是提供两个权限空间</b><span>伙伴私人工作面用于解释、推演和草稿；事项共同工作面用于人和Agent正式协作。伊智现有动态侧栏可以继续作为事项入口。</span></div></div>
+    </section>
+
+    <section class="section" id="joint">
+      <div class="section-head"><div><span class="eyebrow">Joint architecture</span><h2>联合架构：AWiki作为伊智SaaS的嵌入式协作层</h2><p>伊智持续掌握客户与经营数据、策略和执行；AWiki提供嵌入式人机协作工作面及事项运行能力。事项只使用完成协作所需的数据引用和最小投影。</p></div><span class="section-no">04</span></div>
+      <div class="workspace-view" aria-label="伊智AI员工与AWiki事项协作界面示意">
+        <article class="workspace-pane">
+          <span>YIZHI AI SIDEBAR</span><h3>伊智AI员工边栏</h3><p>按当前门店与事项上下文选择岗位Agent，单独展开分析或调用。</p>
+          <div class="agent-list"><div class="agent-item on">AI店长 · 经营诊断</div><div class="agent-item">AI销冠 · 机会建议</div><div class="agent-item">AI客服 · 咨询承接</div><div class="agent-item">ChatBI · 数据问答</div><div class="agent-item">私域宝 · 客户触达</div></div>
+        </article>
+        <article class="workspace-pane">
+          <span>SHARED MATTER</span><h3>事项共同工作面</h3><p>中间区域面向共同目标，承载多Agent与真实人员的正式协作。</p>
+          <div class="matter-stream"><div class="stream-item agent"><b>运营大脑发起事项</b><small>识别高价值客户复购窗口，附触发原因与客户引用。</small></div><div class="stream-item agent"><b>AI店长补充门店判断</b><small>当前服务容量可承接，建议由王店长确认权益范围。</small></div><div class="stream-item human"><b>王店长确认执行条件</b><small>同意由私域宝触达；价格调整仍需人工确认。</small></div><div class="stream-item agent"><b>私域宝返回执行回单</b><small>已触达 18 人，4 人预约，2 人转人工跟进。</small></div></div>
+        </article>
+        <article class="workspace-pane">
+          <span>PRIVATE SIDECAR</span><h3>本人的AWiki伙伴</h3><p>始终服务当前用户，读取获准的事项上下文并协调其他Agent。</p>
+          <div class="partner-card"><b>伙伴建议</b><span>AI店长的容量判断与ChatBI数据一致。建议先确认权益边界，再把正式指令发送到事项。</span></div><div class="partner-card"><b>可执行动作</b><span>调用AI员工 · 整理分歧 · 起草决定 · 请求人工确认 · 追踪回单</span></div>
+        </article>
+      </div>
+      <p class="workspace-note">AI店长等能力仍由伊智提供；AWiki边栏负责嵌入使用，事项中区负责共同协作，用户自己的AWiki伙伴负责解释、调用与推进。</p>
+      <div class="architecture" aria-label="伊智与AWiki联合架构图">
+        <div class="arch-row"><div class="arch-label"><b>用户与组织</b><span>真实业务责任主体</span></div><div class="arch-content"><div class="arch-node"><b>总部管理者</b><span>定义目标、策略与治理边界</span></div><div class="arch-node"><b>区域 / 门店</b><span>承接任务、反馈现场事实</span></div><div class="arch-node"><b>专业人员</b><span>医生、顾问、客服、督导</span></div><div class="arch-node"><b>客户 / 外部方</b><span>通过企微及授权渠道参与</span></div></div></div>
+        <div class="vertical-note">↑ 人员进入工作、作出决定　　↓ 系统呈现动态与待处理</div>
+        <div class="arch-row awiki"><div class="arch-label"><b>AWiki协作层</b><span>联合方案新增</span></div><div class="arch-content"><div class="arch-node"><b>一览</b><span>机会、异常、阻塞与回单提醒</span></div><div class="arch-node"><b>伙伴私人工作面</b><span>解释、建议、推演和草稿</span></div><div class="arch-node"><b>事项共同工作面</b><span>人机组队、决定、消息和状态</span></div><div class="arch-node"><b>方案包</b><span>事项模板、角色语义、规则和UI</span></div></div></div>
+        <div class="vertical-note"><b>事项投影</b>：目标、证据索引、参与者、权限、截止时间、专业关口</div>
+        <div class="arch-row agents"><div class="arch-label"><b>Agent执行层</b><span>官方＋自建＋外部</span></div><div class="arch-content"><div class="arch-node"><b>AI店长</b><span>门店经营、容量与执行分析</span></div><div class="arch-node"><b>AI销冠 / 客服</b><span>客户机会与咨询承接</span></div><div class="arch-node"><b>私域宝</b><span>企微触达、回复和结果回传</span></div><div class="arch-node"><b>企业自建Agent</b><span>行业、专业及定制能力</span></div></div></div>
+        <div class="vertical-note">↑ 结构化结果 / Receipt　　↓ 明确任务 / 最小授权</div>
+        <div class="arch-row brain"><div class="arch-label"><b>智能与编排</b><span>伊智AI中台</span></div><div class="arch-content three"><div class="arch-node"><b>AI运营大脑</b><span>动态记忆、机会识别、策略和事项触发</span></div><div class="arch-node"><b>知识与业务本体</b><span>企业SOP、对象、规则和口径</span></div><div class="arch-node"><b>模型与能力路由</b><span>LLM、算法、MCP、Skills和API</span></div></div></div>
+        <div class="vertical-note">↑ 结果反馈与新信号　　↓ 业务事实、数据能力与执行接口</div>
+        <div class="arch-row data"><div class="arch-label"><b>经营事实层</b><span>伊智SaaS与生态</span></div><div class="arch-content"><div class="arch-node"><b>会员与客户</b><span>身份、关系、权益和授权摘要</span></div><div class="arch-node"><b>门店与员工</b><span>组织、岗位、排班和权限</span></div><div class="arch-node"><b>预约与服务</b><span>到店、项目、过程和结果</span></div><div class="arch-node"><b>交易与私域</b><span>支付、订单、企微互动和行为</span></div></div></div>
+      </div>
+    </section>
+
+    <section class="section" id="matter">
+      <div class="section-head"><div><span class="eyebrow">From signal to matter</span><h2>运营大脑可以发起事项，再交给指定人机组合跟进</h2><p>事项不是一条“请回访客户”的待办，而是一个带原因、目标、参与者、证据、授权、完成条件和升级规则的协作实例。</p></div><span class="section-no">05</span></div>
+      <div class="matter-schema">
+        <article class="matter-trigger"><span>BRAIN TRIGGER</span><b>检测到值得处理的客户或经营变化</b><small>例如复购窗口、服务异常、门店执行偏差、重要客户机会或专业复核需求。</small></article>
+        <div class="matter-fields"><article class="matter-field"><b>触发原因</b><span>哪些数据、规则或模型形成判断</span></article><article class="matter-field"><b>事项目标</b><span>需要得到什么业务结果</span></article><article class="matter-field"><b>对象与证据</b><span>客户ID、门店及必要数据索引</span></article><article class="matter-field"><b>推荐人机组合</b><span>负责人、员工、Agent与应用</span></article><article class="matter-field"><b>权限与关口</b><span>可读、可执行及必须人工确认内容</span></article><article class="matter-field"><b>完成与升级</b><span>Receipt、截止时间和异常分支</span></article></div>
+      </div>
+      <div class="loop">
+        <article class="loop-step"><span>01 · SENSE</span><b>识别信号</b><small>运营大脑从客户记忆和经营数据中发现机会或异常。</small></article>
+        <article class="loop-step"><span>02 · INITIATE</span><b>发起事项</b><small>带入原因、目标、对象、证据和建议处理方式。</small></article>
+        <article class="loop-step"><span>03 · TEAM</span><b>组织人机组合</b><small>伙伴建议参与者，人员确认Agent、应用和权限。</small></article>
+        <article class="loop-step"><span>04 · DECIDE</span><b>协作与决定</b><small>私人分析不外发；正式决定进入事项共同工作面。</small></article>
+        <article class="loop-step"><span>05 · EXECUTE</span><b>执行与回单</b><small>伊智AI员工、私域宝或人工按指派执行并回单。</small></article>
+        <article class="loop-step"><span>06 · LEARN</span><b>结果回流</b><small>事项结论更新客户记忆、经营指标及下一轮策略。</small></article>
+      </div>
+      <div class="roles">
+        <article class="role private"><span>PRIVATE</span><h3>AWiki伙伴</h3><p>面向具体用户解释触发原因、组合信息和准备草稿，不代替用户承诺。</p></article>
+        <article class="role"><span>ACCOUNTABLE</span><h3>具名人员</h3><p>确认目标、参与者、权限以及价格、权益、专业意见等关键决定。</p></article>
+        <article class="role agent"><span>EXECUTION</span><h3>Agent与应用</h3><p>只接收本步骤需要的上下文，按照指派执行并返回结构化结果。</p></article>
+        <article class="role external"><span>PARTICIPATION</span><h3>客户与外部方</h3><p>在授权渠道接收信息、作出选择；必要时加入受限的共同事项。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="scenario">
+      <div class="section-head"><div><span class="eyebrow">Joint scenario</span><h2>慢病连锁服务：伊智能力与AWiki协作层的联合场景</h2><p>总部、诊所、医生、运营人员、患者、多个Agent和外部系统通过事项持续协作，贯通活动运营、到店服务与随访接续。</p></div><span class="section-no">06</span></div>
+      <div class="scenario"><article class="scenario-intro"><b>闭环一：活动运营</b><p>总部制定目标，门店确认容量，运营大脑筛选机会，人员确认后由私域宝触达。</p></article><div class="scenario-track"><article><span>01</span><b>总部目标</b><small>定义活动、范围和合规边界</small></article><article><span>02</span><b>大脑发现</b><small>识别合适客群与门店机会</small></article><article><span>03</span><b>事项组队</b><small>负责人、医生、触达Agent</small></article><article><span>04</span><b>私域执行</b><small>仅触达已授权客户</small></article><article><span>05</span><b>结果复盘</b><small>预约、到店和未回复回单</small></article></div></div>
+      <div class="scenario"><article class="scenario-intro"><b>闭环二：到店服务</b><p>患者到店后形成服务事项；AI识别规则命中，专业人员完成复核，患者自主选择。</p></article><div class="scenario-track"><article><span>01</span><b>签到建档</b><small>确认身份与数据授权</small></article><article><span>02</span><b>基础采集</b><small>系统接收必要服务数据</small></article><article><span>03</span><b>规则命中</b><small>只提示需要专业复核</small></article><article><span>04</span><b>医生确认</b><small>专业意见进入事项</small></article><article><span>05</span><b>患者选择</b><small>形成自愿选择与服务回单</small></article></div></div>
+      <div class="scenario"><article class="scenario-intro"><b>闭环三：随访接续</b><p>服务结果触发三日随访；私域宝执行普通触达，异常反馈升级医生，结果进入下一周期。</p></article><div class="scenario-track"><article><span>01</span><b>计划生成</b><small>根据人员确认生成随访事项</small></article><article><span>02</span><b>授权触达</b><small>私域宝按渠道和频率执行</small></article><article><span>03</span><b>回复分流</b><small>正常、未回复、异常三分支</small></article><article><span>04</span><b>人工接手</b><small>医生或员工处理特殊情况</small></article><article><span>05</span><b>周期回流</b><small>更新记忆、指标和下一事项</small></article></div></div>
+      <div class="boundary"><b>专业边界：</b>在慢病Demo中，运营大脑和Agent只能识别规则、组织信息和执行已授权动作；诊断、处方、治疗调整及其他专业医疗决定必须由具备资格的人员完成。</div>
+    </section>
+
+    <section class="section" id="technology">
+      <div class="section-head"><div><span class="eyebrow">Technical integration</span><h2>技术落地：从事件、事项与回单最小闭环开始</h2><p>第一阶段打通一个完整闭环：运营大脑产生事件，AWiki创建事项，伊智能力接收指派，执行结果结构化回传。</p></div><span class="section-no">07</span></div>
+      <div class="integration-grid">
+        <article class="integration-card"><h3><i>IN</i>伊智 → AWiki</h3><ul><li>机会、异常和流程节点事件</li><li>客户、门店、员工的稳定引用ID</li><li>触发原因、数据口径和证据索引</li><li>推荐负责人、Agent与完成时限</li><li>当前授权摘要及敏感级别</li></ul><div class="code-sample">matter_trigger {
+  type, subject_ref, reason,
+  evidence_refs, goal,
+  recommended_team, deadline,
+  approval_policy
+}</div></article>
+        <article class="integration-card"><h3><i>OUT</i>AWiki → 伊智</h3><ul><li>事项创建、接受、阻塞和完成状态</li><li>人员确认、拒绝或修改的决定</li><li>向AI员工或私域宝的结构化指派</li><li>执行结果、错误和Receipt</li><li>可回流运营大脑的结果摘要</li></ul><div class="code-sample">matter_receipt {
+  matter_id, action_id, actor,
+  decision_or_result, status,
+  evidence_refs, occurred_at,
+  next_signal
+}</div></article>
+        <article class="integration-card"><h3><i>ID</i>身份、租户与角色</h3><ul><li>伊智租户、总部、区域和门店映射</li><li>员工账号与AWiki身份映射</li><li>官方Agent、自建Agent和服务账号身份</li><li>事项角色由方案包与调用点确定</li><li>所有写动作保留具名主体和审计记录</li></ul></article>
+        <article class="integration-card"><h3><i>UI</i>界面集成</h3><ul><li>保留伊智现有动态提醒和客户页面</li><li>AI店长等岗位Agent以AWiki边栏模式嵌入</li><li>中间区域作为多Agent与人员的事项共同工作面</li><li>用户自己的AWiki伙伴保持可见，负责解释、调用与推进</li><li>私域沟通继续由企业微信和私域宝承接</li></ul></article>
+      </div>
+      <table class="evidence">
+        <thead><tr><th>必须优先验证</th><th>理想能力</th><th>首期替代方案</th></tr></thead>
+        <tbody><tr><td>事件订阅</td><td>运营大脑Webhook推送机会与异常</td><td>定时读取待处理队列或人工发起</td></tr><tr><td>执行指派</td><td>API调用AI员工/私域宝并带业务引用</td><td>在事项生成待办，由员工在伊智页面执行</td></tr><tr><td>结构化回单</td><td>执行状态和结果自动关联matter_id</td><td>员工确认结果，附伊智记录链接</td></tr><tr><td>嵌入式页面</td><td>SSO＋组件/iframe/微前端</td><td>伊智页面深链打开联合事项页</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="section" id="business">
+      <div class="section-head"><div><span class="eyebrow">Joint offer</span><h2>合作产品：服务伊智SaaS，共同向其存量和新增客户销售</h2><p>联合商品不按“多了几个机器人”表达，而按“哪些复杂工作现在能够由人机组合稳定完成”表达。</p></div><span class="section-no">08</span></div>
+      <div class="offer-grid">
+        <article class="offer"><span>BASE MODULE</span><h3>伊智人机协作工作面</h3><p>适用于不同伊智客户的通用增强模块。</p><ul><li>一览与事项入口</li><li>伙伴私人工作面</li><li>事项共同工作面</li><li>人机组队、决定与Receipt</li></ul></article>
+        <article class="offer featured"><span>SCENARIO PACKAGE</span><h3>行业与业务方案包</h3><p>把通用协作能力变成客户能直接购买的闭环。</p><ul><li>事项模板和业务对象</li><li>角色与权限语义</li><li>SOP、专业关口和异常分支</li><li>专用卡片、指标和复盘</li></ul></article>
+        <article class="offer"><span>ECOSYSTEM SERVICE</span><h3>Agent与专业服务接入</h3><p>让伊智官方Agent之外的能力进入同一事项。</p><ul><li>企业自建Agent</li><li>第三方AI应用</li><li>专业服务机构</li><li>按次调用、回单和结算</li></ul></article>
+      </div>
+      <div class="compare">
+        <article class="compare-side yizhi"><span class="eyebrow">Yizhi</span><h3>伊智建议承担</h3><ul><li>客户入口、主销售与SaaS合同</li><li>数据、AI员工和执行能力</li><li>客户实施、运营与一线支持</li><li>联合产品在现有系统中的入口</li></ul></article>
+        <div class="compare-mid">×</div>
+        <article class="compare-side awiki"><span class="eyebrow">AWiki</span><h3>AWiki建议承担</h3><ul><li>伙伴、事项与协作引擎</li><li>方案包框架与首批场景设计</li><li>Agent协作、权限和回单规范</li><li>联合演示、售前和持续方案升级</li></ul></article>
+      </div>
+      <div class="roadmap">
+        <article class="phase"><span>PHASE 01 · ALIGN</span><h3>能力核验</h3><p>双方产品演示，确认数据、Agent、事件、执行与UI边界。</p><b>输出：联合能力地图</b></article>
+        <article class="phase"><span>PHASE 02 · POC</span><h3>最小闭环</h3><p>以慢病或另一现有客户场景，打通事件—事项—执行—回单。</p><b>输出：可销售联合Demo</b></article>
+        <article class="phase"><span>PHASE 03 · PILOT</span><h3>真实客户试点</h3><p>选一个连锁客户、一个高价值问题和有限门店验证运营效果。</p><b>输出：指标与客户案例</b></article>
+        <article class="phase"><span>PHASE 04 · SCALE</span><h3>商品化复制</h3><p>形成标准模块、行业方案包、报价、实施清单与联合销售机制。</p><b>输出：正式联合产品</b></article>
+      </div>
+    </section>
+
+    <section class="section" id="risks">
+      <div class="section-head"><div><span class="eyebrow">Delivery principles</span><h2>合作边界与实施保障</h2><p>双方共同明确产品、接口、方案资产与品牌分工，使联合方案能够从演示、试点稳定走向商品化复制。</p></div><span class="section-no">09</span></div>
+      <div class="risk-grid">
+        <article class="risk"><b>产品边界</b><span>客户、经营数据、运营策略与业务执行继续由伊智SaaS及其AI能力承载。</span></article>
+        <article class="risk solve"><b>协作增强</b><span>AWiki聚焦伙伴私人空间、事项群、人机组队、决定和回单。</span></article>
+        <article class="risk"><b>方案资产</b><span>共同明确通用引擎、方案模板、客户定制和后续版本的授权方式。</span></article>
+        <article class="risk solve"><b>产品化交付</b><span>将验证有效的SOP、角色、规则和界面沉淀为可持续升级的方案包。</span></article>
+        <article class="risk"><b>接口范围</b><span>双方结合真实产品确认事件订阅、数据引用、Agent指派与写操作范围。</span></article>
+        <article class="risk solve"><b>最小闭环核验</b><span>先用一个真实事件、一次Agent指派和一条结构化回单完成端到端验证。</span></article>
+        <article class="risk"><b>客户与品牌</b><span>伊智作为主产品和客户入口，AWiki提供协作与事项能力。</span></article>
+        <article class="risk solve"><b>联合市场机制</b><span>共同约定方案命名、售前、交付、案例使用和持续服务方式。</span></article>
+      </div>
+      <div class="decision">
+        <h3>建议带进第一次正式讨论的合作主张</h3>
+        <p>伊智已经让数据、规则和AI员工进入经营；AWiki帮助这些AI员工与真实员工围绕事项共同工作。双方先用一个高约束场景证明闭环，再把能力包装成服务伊智SaaS的通用协作模块和可安装行业方案包。</p>
+        <div class="decision-grid"><div><b>伊智业务底座</b><span>SaaS、运营大脑、私域宝与官方Agent</span></div><div><b>AWiki协作增强</b><span>用户伙伴、事项群、人机组合、决定与回单</span></div><div><b>双方共同销售</b><span>以伊智客户入口形成可复制的联合商品</span></div></div>
+      </div>
+    </section>
+
+    <section class="sources">
+      <h3>公开信息与方案依据</h3>
+      <ol>
+        <li><a href="https://meimeifa.com/open-platform" target="_blank" rel="noreferrer">伊智AI开放平台</a>：五层AI原生组织能力、API/MCP/Skills/CLI及自建Agent接入。</li>
+        <li><a href="https://meimeifa.com/solution/chain" target="_blank" rel="noreferrer">伊智连锁店务解决方案</a>：会员、预约、交易、服务、组织与数据底座。</li>
+        <li><a href="https://meimeifa.com/solution/private" target="_blank" rel="noreferrer">AI私域宝</a>：企业微信触达、SOP执行、员工接手和结果回流。</li>
+        <li><a href="https://meimeifa.com/ai-employees/operating-brain" target="_blank" rel="noreferrer">AI运营大脑</a>：动态客户记忆、策略判断、行动建议和持续反馈。</li>
+        <li><a href="https://meimeifa.com/ai-employees/ai-agents" target="_blank" rel="noreferrer">伊智AI数智员工</a>：五位AI同事的岗位能力与共享经营上下文。</li>
+      </ol>
+      <p style="margin-top:10px;color:var(--muted);font-size:12px">本页依据截至2026年9月可访问的伊智公开产品页面和AWiki现有原型形成；联合方案所涉及的具体接口与产品形态，由双方在产品演示和技术对接阶段共同确认。</p>
+    </section>
+    <footer class="footer">AWiki × 伊智 · 联合方案与合作框架 · 合作沟通版</footer>
+  </main>
+
+  <script>
+    const audienceCopy={
+      owner:'<b>管理层视角：</b>联合方案把伊智已有AI能力组织成可被企业稳定使用、责任清楚、过程可追踪的协作生产力。',
+      business:'<b>商务团队先看：</b>联合商品由“通用人机协作工作面＋可安装行业方案包”组成，继续服务伊智SaaS，由伊智主销售，双方共同交付与升级。',
+      tech:'<b>技术团队先看：</b>首期只打通事件触发、事项创建、Agent指派、结构化回单和身份映射；客户主数据和执行系统继续留在伊智。'
+    };
+    document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
+      document.querySelectorAll('[data-view]').forEach(item=>{const on=item===button;item.classList.toggle('on',on);item.setAttribute('aria-selected',String(on))});
+      document.getElementById('audiencePanel').innerHTML=audienceCopy[button.dataset.view];
+      document.querySelectorAll('.view-tag').forEach(item=>item.classList.remove('show'));
+      document.querySelectorAll(`.view-tag[data-for="${button.dataset.view}"]`).forEach(item=>item.classList.add('show'));
+    }));
+  </script>
+</body>
+</html>
