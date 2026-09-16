@@ -3,7 +3,7 @@ import vm from 'node:vm';
 const root=new URL('../',import.meta.url);
 const read=p=>readFile(new URL(p,root),'utf8');
 const original=await read('awiki-foreign-trade-demo.html');
-const css=original.match(/<style>([\s\S]*?)<\/style>/)[1];
+const css=original.match(/<style>([\s\S]*?)<\/style>/)[1].trim();
 const modules=await Promise.all(['scenario','engine','app'].map(n=>read(`coffee-demo/${n}.mjs`)));
 const js=modules.map(s=>s.replace(/^import .*;\r?\n/gm,'').replace(/^export /gm,'')).join('\n');
 new vm.Script(`(()=>{${js}\n})();`);
