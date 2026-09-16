@@ -2,6 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {events,groups,actors,docs} from './scenario.mjs';
 import {initial,reduce,pending,restore} from './engine.mjs';
+import {portuguese,partnerRecommendations} from './translations.mjs';
+test('every Brazilian speaker has original and translation; every gate has a private recommendation',()=>{
+ for(const e of events){
+  if(['seller','sales'].includes(e.actor)){assert.ok(portuguese[e.id]?.original);assert.ok(portuguese[e.id]?.translation);}
+  if(e.gate)assert.ok(partnerRecommendations[e.id]);
+ }
+ assert.equal(Object.keys(portuguese).length,3);
+});
 test('simulation never crosses a human decision gate',()=>{
  let s=initial();let approvals=0;
  for(let i=0;i<events.length;i++){
