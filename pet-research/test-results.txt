@@ -1,0 +1,41 @@
+✔ published artifact has a valid self-contained script (2.586129ms)
+✔ published artifact includes every human gate and release marker (0.377679ms)
+✔ every Brazilian speaker has original and translation; every gate has a private recommendation (0.997655ms)
+✔ simulation never crosses a human decision gate (3.176975ms)
+✔ pause, revocation and reset are effective (0.381074ms)
+✔ corrupt and skipped-gate saves cannot bypass authorization (0.542058ms)
+✔ three groups are sequential and references resolve (0.430489ms)
+✔ standalone script starts and all navigation projections render without runtime exception (VM, not browser) (8.586287ms)
+✔ UI human flow, keyboard gating, private note, replay and refresh (VM) (21.841962ms)
+✔ responsive breakpoints and semantic controls present; no layout claim (0.234464ms)
+✔ quarantined and historical UI results never show current comparisons or candidate advice (8.746673ms)
+✔ completed UI removes approval button and offers explicit next round (11.846922ms)
+✔ default conflict and autoplay cannot approve (1.487933ms)
+✔ S1 / S2 / clarification maintain choice semantics through replay (1.355283ms)
+✔ all L0–L7 contracts expose ownership dependencies versions stop and handoff (1.331227ms)
+✔ human path requires technician acceptance operation receipt measurement (3.221267ms)
+✔ device checks audience, identity, action, resource, purpose (4.588553ms)
+✔ device cannot use missing D1 card (3.480989ms)
+✔ parameter and calibration errors pause; correction needs renewed approval (9.441475ms)
+✔ revocation blocks even after revision or config (1.613784ms)
+✔ abnormal data quarantined, cannot feed L7 (1.440542ms)
+✔ strict threshold boundaries (0.235325ms)
+✔ new baseline retains historical results but cannot prove new conditions (1.413461ms)
+✔ duplicate operation id idempotent; stale command cannot overwrite (0.238079ms)
+✔ replay ignores forged state projections and malformed storage (2.126807ms)
+✔ private note stays private until explicit lead publication (0.215956ms)
+✔ 8+3 and sample-specific outputs (4.816061ms)
+✔ reject revise retry preserves rejection and superseded version (1.112347ms)
+✔ TREE internal loop is separate from research stage dependency; returns to customer gate (0.419813ms)
+✔ mode and config after completed L7 cannot inherit approval into new L7 (15.791524ms)
+✔ completed round has one L7 approval; explicit iteration requires fresh expert gate (4.444311ms)
+✔ each entered stage publishes substantive source narrative and frozen contract (2.034638ms)
+✔ quarantined and old-version data excluded from current evaluation and knowledge (2.140577ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 169.218794
