@@ -9,7 +9,7 @@ node pet-research/build.mjs
 node --test pet-research/*.test.mjs coffee-demo/*.test.mjs
 ```
 
-42项通过，0失败：28项科研状态/契约（含SIDE）、7项独立HTML/Node VM/构建检查、7项原咖啡回归。完整输出见test-results.txt。
+43项通过，0失败：28项科研状态/契约（含SIDE）、8项独立HTML/Node VM/构建检查、7项原咖啡回归。完整输出见test-results.txt。
 
 验证覆盖温度三种选择、审批stage/version绑定、人工/设备L6顺序、参数/校准故障、异常隔离、严格阈值、旧版本测量、幂等和过时回单、下一轮专家重审、实质Agent消息和冻结工件、私人发布边界。
 
@@ -55,3 +55,9 @@ PR保持draft，不合并main。Pages仅main push或workflow_dispatch部署，�
 根线程实际checkout远端6af0207后发现CRLF导致import移除失败（Cannot use import statement outside a module）。构建读取现已统一CRLF→LF，不依赖Git检出配置。新增真实子进程测试：临时目录将全部模块及构建文件写成CRLF，执行构建，确认产物无import且独立脚本可解析。测试已通过。
 
 根线程对6af0207人工新轮与隔离显示修复的真实浏览器复测已通过。该结果单独归属于6af0207；SIDE最终版尚待根线程按新SHA回归。
+
+## a747582 根线程实测与主体切换小修
+
+本会话根线程Codex在Windows实际构建a747582成功，42测试通过；真实浏览器验证E→I→S→E→D保持L0且未选基线，同一事件由客户/专家形成不同Task，访客建议expert仍为candidate且拒绝，实验员绑定到期后SIDE拒绝。上述证据属于a747582。
+
+根线程报告主体切换后SIDE显示滞后。核对a747582源码已有role赋值及render；本次明确在重绘前保存当前Task选择，新增VM回归核对主体、有效绑定、默认活动角色立即刷新及Task选择保留。云端43项测试通过；本次提交后冻结应用源，根线程按最终SHA继续完整真实浏览器验收。
