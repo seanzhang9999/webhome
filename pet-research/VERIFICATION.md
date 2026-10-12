@@ -9,7 +9,7 @@ node pet-research/build.mjs
 node --test pet-research/*.test.mjs coffee-demo/*.test.mjs
 ```
 
-43项通过，0失败：28项科研状态/契约（含SIDE）、8项独立HTML/Node VM/构建检查、7项原咖啡回归。完整输出见test-results.txt。
+44项通过，0失败：28项科研状态/契约（含SIDE）、9项独立HTML/Node VM/构建检查、7项原咖啡回归。完整输出见test-results.txt。
 
 验证覆盖温度三种选择、审批stage/version绑定、人工/设备L6顺序、参数/校准故障、异常隔离、严格阈值、旧版本测量、幂等和过时回单、下一轮专家重审、实质Agent消息和冻结工件、私人发布边界。
 
@@ -61,3 +61,9 @@ PR保持draft，不合并main。Pages仅main push或workflow_dispatch部署，�
 本会话根线程Codex在Windows实际构建a747582成功，42测试通过；真实浏览器验证E→I→S→E→D保持L0且未选基线，同一事件由客户/专家形成不同Task，访客建议expert仍为candidate且拒绝，实验员绑定到期后SIDE拒绝。上述证据属于a747582。
 
 根线程报告主体切换后SIDE显示滞后。核对a747582源码已有role赋值及render；本次明确在重绘前保存当前Task选择，新增VM回归核对主体、有效绑定、默认活动角色立即刷新及Task选择保留。云端43项测试通过；本次提交后冻结应用源，根线程按最终SHA继续完整真实浏览器验收。
+
+## 最后重置交互修订
+
+根线程Codex报告：ae2552原生confirm在IAB自动化中两次超时，getJsDialog未返回对话框；因此最终重置未验证通过。本次仅将重置改为页面内dialog，显示“建议先导出”、确认重置/取消。取消保留状态；确认清空演示及warning并持久化。新增实际Node VM回归验证打开/取消/确认/刷新及禁止原生confirm，44测试通过。此修订的真实浏览器重置与主体同步由根线程按新SHA复测，不能以VM替代。
+
+根线程另已实测：a747582人工/设备完整流程通过；ae2552三尺寸截图1440 Board、1280 TC-01、390 SIDE无横向溢出；导出schema2包含46 commands、67 events、8 contracts、3 results、4 config changes且不含私人marker；刷新保留L7 v7、撤销后修订仍阻断，console errors/warnings均0。截图位于根线程交付目录，云端未独立采集。根线程43项测试再过。以上证据按提交区分，后续以根线程BROWSER-QA.md全文补齐。应用逻辑在本次重置修订后冻结。
