@@ -37,7 +37,7 @@ if(wt==="space")return '<div class="eyebrow">WORK / SPACE</div><h1>我的工作�
 return '<div class="eyebrow">WORK / PACK</div><h1>我已知的服务方案</h1>'+bl("awiki.hk-ir-public@0.1-demo",'<p>公共来源访问、IR 问询交接、回单、用户侧持久委托。发行人披露授权与用户个人工作授权相互独立。</p>')+l("awiki-v55-distributed-research-guide.html","查看 V5.5 的方案与空间原理 ↗","btn mini");
 }
 function meLeft(tab){const s=A.s,owned=s.inquiries.filter(x=>(x.replyChannels||["awiki"]).includes("awiki"));let list=[],extra="",foot="";
-if(tab==="work"){const wt=s.ui.v3MeWorkTab||"matters";extra=sidebarTabs(workTabs,wt,"data-v3-me-work");if(wt==="matters"){list=s.tasks.map(t=>obj(t.title,t.id,"委","me-select:"+t.id))+owned.map(q=>obj(q.id,q.text.slice(0,55),"板","me-view-question:"+q.id,s.ui.meSelected===q.id));foot="事项按工作目标持续保存；具体 Board 按需关联。";}
+if(tab==="work"){const wt=s.ui.v3MeWorkTab||"matters";extra=sidebarTabs(workTabs,wt,"data-v3-me-work");if(wt==="matters"){list=s.tasks.map(t=>obj(t.title,t.id,"委","me-select:"+t.id)).concat(owned.map(q=>obj(q.id,q.text.slice(0,55),"板","me-view-question:"+q.id,s.ui.meSelected===q.id)));foot="事项按工作目标持续保存；具体 Board 按需关联。";}
 else if(wt==="resources"){list=A.DOCS.map(d=>obj(d.title,d.id,"文","me-doc:"+d.id));list.push(...owned.filter(q=>q.response).map(q=>obj(q.id,"正式回复 · 演示回单","件","me-view-question:"+q.id)));foot="资源区保留引用、版本和明确来源。";}
 else if(wt==="space"){list=[obj("我的工作空间","用户控制的私人工作","空","me-space:personal"),obj("IR 公共服务空间",s.space.id,"空","me-space:public")];foot="空间是规则和治理边界，不是一个万能共享数据库。";}
 else{list=[obj("HK IR Disclosure Pack","方案 · 角色 / 数据 / 发布规则","方","me-pack")];foot="各方按兼容的语义与角色约定配合。";}
