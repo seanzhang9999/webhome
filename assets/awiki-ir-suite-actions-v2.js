@@ -130,6 +130,7 @@ if(id.startsWith("bo-approve:")){A.approveInquiry(id.slice(11));return;}
 if(id.startsWith("bo-return:")){A.returnInquiry(id.slice(10));return;}
 if(id==="bo-draft-creator"){A.draftCreator();return;}
 if(id==="bo-approve-creator"){A.approveCreator();return;}
+if(id.startsWith("me-select:")||id.startsWith("me-doc:")||id.startsWith("me-space:")||id==="me-pack"||id==="v3-copy-prompt"||id==="v3-open-chatgpt")return;
 A.toast("此项演示操作尚未配置");
 }
 document.addEventListener("click",e=>{
