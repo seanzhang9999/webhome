@@ -42,7 +42,7 @@ else if(wt==="resources"){list=A.DOCS.map(d=>obj(d.title,d.id,"文","me-doc:"+d.
 else if(wt==="space"){list=[obj("我的工作空间","用户控制的私人工作","空","me-space:personal"),obj("IR 公共服务空间",s.space.id,"空","me-space:public")];foot="空间是规则和治理边界，不是一个万能共享数据库。";}
 else{list=[obj("HK IR Disclosure Pack","方案 · 角色 / 数据 / 发布规则","方","me-pack")];foot="各方按兼容的语义与角色约定配合。";}
 }else if(tab==="overview"){list=owned.map(q=>obj(q.id,q.text.slice(0,52),"板","me-view-question:"+q.id,s.ui.meSelected===q.id)).concat(s.tasks.map(t=>obj(t.id,t.title.slice(0,58),"委","me-select:"+t.id)));foot="一览收束用户私人委托与跨主体的问询回单。";}
-else if(tab==="messages"){list=s.inbox.map(n=>obj(n.title,n.text.slice(0,56),"信",n.ref?"me-view-question:"+n.ref:"me-open-overview")).slice(0,14);foot="跨场景的稳定收件箱。邮箱通道另行验证并投递。";}
+else if(tab==="messages"){list=s.inbox.map(n=>obj(n.title,n.text.slice(0,56),"信",n.ref?((n.category==="task"||n.category==="routing")?"me-open-overview":"me-view-question:"+n.ref):"me-open-overview")).slice(0,14);foot="跨场景的稳定收件箱。邮箱通道另行验证并投递。";}
 else if(tab==="connections"){list=[obj("我的阿维 AURA","用户 DID / 多节点委托","✦","me-open-overview"),obj("上市公司 IR 服务","已知公共服务入口","IR","me-open-overview"),obj("ChatGPT 连接示例","外部 Personal Agent","AI","me-open-overview")];foot="DID 绑定、授权和委派分别管理。";}
 else if(tab==="awiki"){list=[obj("维港样例控股","公开 IR 智媒体 Space","A","me-open-overview"),obj("财经创作者 IR 合作","发行人公开资料内容服务","IR","me-open-overview")];foot="公开门户只使用获准发布的内容。";}
 else{list=[obj("账户与演示范围","演示设置","⚙","me-open-overview")];foot="演示没有真实登录或云端身份。";}
