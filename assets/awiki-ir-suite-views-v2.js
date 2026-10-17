@@ -142,6 +142,6 @@ if(page==="portal")A.drawQR("irQr");
 document.title=({hub:"演示导航",portal:"上市公司 PR 独立站",chatgpt:"ChatGPT 接入模拟",me:"AWiki Me",backoffice:"V5.5 IR 协同后台"}[page]||"IR")+" · AWiki V5.5";
 const scroll=document.getElementById("chatArea");if(scroll)scroll.scrollTop=scroll.scrollHeight;
 }
-window.IRViews={hub,portal,chat,me,backend,render,docRows,timeline,notices};
+window.IRViews={hub,portal,chat,me,backend,render,docRows,timeline,notices,meOverview,meMessages,meConnections,meAwiki,backendOverview,backendPack,backendSpace,backendMatters,backendBoards,backendArtifacts,backendCreator,inquiryDetail,portalContent,portalInteractive,portalCreator};
 A.render=render;render();
 })();
