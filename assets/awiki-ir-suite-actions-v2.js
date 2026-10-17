@@ -95,6 +95,7 @@ if(id==="chat-poll"){chatPoll();return;}
 if(id==="chat-send"){chatSend();return;}
 if(id==="chat-submit"){chatSubmit();return;}
 if(id==="chat-create-task"){chatTask();return;}
+if(id==="me-open-overview"){A.s.ui.meTab="overview";A.save();return;}
 if(id==="me-submit-question"){meSend();return;}
 if(id.startsWith("me-read:")){A.markRead(id.slice(8));return;}
 if(id.startsWith("me-route-chatgpt:")){A.routeTask(id.slice(17),"chatgpt");return;}
