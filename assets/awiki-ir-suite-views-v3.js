@@ -57,7 +57,7 @@ if(wt==="matters"){items=[obj("公开信息制作与审核群","服务商 → �
 if(wt==="resources"){items=A.DOCS.map(d=>obj(d.title,d.id+" · 已批准公开示例","文","bo-resource:"+d.id)).concat(s.inquiries.map(q=>obj("Board "+q.id,q.text.slice(0,65),"板","bo-select:"+q.id,u.selectedInquiry===q.id)));foot="Board 为资源中的持续共同工作对象，Artifact / Snapshot 保留输出与回执。";}
 if(wt==="space"){items=[obj("港股 IR 可信协作空间",s.space.id,"空","bo-tab-space",true),obj("创作者限权准入",s.space.creator.joined?"已完成双方准入":"需要发行人与服务商分别同意","G","bo-tab-space")];foot="空间成员、读资料、起草和正式发布是不同权限。";}
 if(wt==="pack"){items=[obj("HK IR Disclosure Pack","awiki.hk-ir-public@0.1-demo","方","bo-tab-pack",true)];foot="语义契约、角色断言、工件 Schema 与共同治理规则。";}
-return sideList("工作","V5.5 · Matter / Resource / Space / Pack",items.join(""),foot,extra);
+return sideList("工作","事项协同 · 工件资源 · 空间治理 · 方案包",items.join(""),foot,extra);
 }
 function backendCurrent(nav){const u=A.s.ui;const tab=u.backTab||"space";
 if(nav==="work"){
