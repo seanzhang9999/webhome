@@ -1,0 +1,150 @@
+{
+  "schema": "awiki.smartmedia.public.v1",
+  "generated_for": "侯宏老师 × AWiki 智媒体会谈",
+  "demo": true,
+  "is_official_author_website": false,
+  "author": {
+    "name": "侯宏",
+    "focus": [
+      "数字经济",
+      "人工智能产业",
+      "智能体互联网",
+      "企业战略与智能原生组织"
+    ],
+    "publisher_note": "产品展示用的专题入口；文章链接指向可查的公开发表来源，非侯老师授权运营的正式个人站点。"
+  },
+  "content": [
+    {
+      "id": "HOU-ARTICLE-2024-01",
+      "title": "生成式AI产业发展的前途与挑战",
+      "kind": "研究文章",
+      "date": "2024-04-15",
+      "authors": [
+        "侯宏"
+      ],
+      "source": "清华大学经济管理学院网站",
+      "url": "https://www.sem.tsinghua.edu.cn/info/1171/35748.htm",
+      "topics": [
+        "产业经济",
+        "生成式 AI"
+      ],
+      "summary": "从数字化浪潮与产业生态出发讨论生成式 AI 的意义和发展条件；本页提供的是编辑式导读，不代替原文。",
+      "questions": [
+        "AI 产业发展的供需条件有哪些？",
+        "生成式 AI 与互联网阶段有什么不同？"
+      ],
+      "status": "external-public-source"
+    },
+    {
+      "id": "HOU-ARTICLE-2025-02",
+      "title": "智能体互联网：被“人工智能+”行动忽视的关键未来",
+      "kind": "联合署名文章",
+      "date": "2025-11-13",
+      "authors": [
+        "侯宏",
+        "田溯宁"
+      ],
+      "source": "北大国发院文章转载",
+      "url": "https://finance.sina.com.cn/cj/2025-11-13/doc-infxhkcu5220933.shtml",
+      "topics": [
+        "智能体互联网",
+        "平台生态"
+      ],
+      "summary": "围绕 AI 与互联网的互补关系以及新型连接与产业生态提出讨论；具体立场以原文为准。",
+      "questions": [
+        "智能体互联网与传统平台有何联系？",
+        "Personal Agent 为什么仍需要开放网络？"
+      ],
+      "status": "external-public-source"
+    },
+    {
+      "id": "HOU-ARTICLE-2026-03",
+      "title": "让AI真正进入组织——超越替代逻辑",
+      "kind": "公开讲座整理",
+      "date": "2026-08-29",
+      "authors": [
+        "侯宏（演讲）"
+      ],
+      "source": "北大国发院商学内容转载",
+      "url": "https://finance.sina.com.cn/roll/2026-08-29/doc-inipxutc9445292.shtml",
+      "topics": [
+        "组织与AI",
+        "企业创新"
+      ],
+      "summary": "从组织视角讨论 AI 如何改变企业运作，而不只停留在单个员工使用模型或人员替代。",
+      "questions": [
+        "个人用 AI 与 AI 进入组织有何不同？",
+        "企业如何重新定义人机协作？"
+      ],
+      "status": "external-public-source"
+    },
+    {
+      "id": "HOU-ARTICLE-2026-04",
+      "title": "大型企业智能原生转型顶层设计（PPT）",
+      "kind": "研究议程与演讲材料",
+      "date": "2026-05-22",
+      "authors": [
+        "侯宏"
+      ],
+      "source": "公开分享转载",
+      "url": "https://finance.sina.com.cn/wm/2026-05-22/doc-inhytqkw6279891.shtml",
+      "topics": [
+        "智能原生",
+        "企业战略"
+      ],
+      "summary": "关注技术、组织、战略融合，以及企业数字化走向智能原生时的系统性设计。",
+      "questions": [
+        "智能原生企业与传统数字化有什么区别？",
+        "如何看待智能体互联网与企业原生转型的关系？"
+      ],
+      "status": "external-public-source"
+    }
+  ],
+  "agent_usage": {
+    "public_read": {
+      "allowed": true,
+      "login": false
+    },
+    "interactive_example": {
+      "allowed": true,
+      "engine": "browser-only deterministic arithmetic demo"
+    },
+    "discuss_and_feedback": {
+      "allowed": "local-browser demonstration only",
+      "requires_author_moderation": true
+    },
+    "save_private_work": {
+      "allowed": "local-browser demonstration only",
+      "requires_user_selection": true
+    },
+    "private_context": {
+      "owner": "user",
+      "default_visibility": "private",
+      "public_site_access": "none until explicit scope approval"
+    },
+    "send_result": {
+      "allowed": "simulated preparation only",
+      "requires_confirmation": true
+    },
+    "mcp_or_pap": {
+      "available": false,
+      "note": "No deployed real agent API; public metadata does not grant execution rights"
+    }
+  },
+  "declared_actors": [
+    "文章作者",
+    "学生/读者",
+    "用户阿维",
+    "公开内容服务 Agent",
+    "外部 ChatGPT/Personal Agent",
+    "讨论 Board",
+    "用户本地/云端执行节点"
+  ],
+  "privacy_constraints": [
+    "公开文章与私人上下文分离",
+    "即使用户登录也不自动把原始私人资料发给站长",
+    "调用外部模型若传输明文须如实告知并取得适用授权",
+    "共享只含用户明确选中的内容及有限回单",
+    "本页面所有身份、收件箱、跨 Agent 委派和发布均为前端模拟"
+  ]
+}
