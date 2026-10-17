@@ -10,9 +10,11 @@ function selectPortalTab(tab){A.s.ui.portalTab=tab;A.s.ui.portalForm="none";rere
 function showPortalForm(f){A.s.ui.portalTab="inquiry";A.s.ui.portalForm=f;rerender();}
 function signin(){A.signin();}
 function sendPortalQuestion(){
-if(!checked("portalQuestionConsent")){A.toast("请先确认本次共享范围");return;}
-const id=A.inquiry({text:val("portalQuestion"),source:val("portalSource")||"IR-DEMO-AR25",origin:"pr"});
-if(id){A.s.ui.portalTab="inquiry";A.s.ui.portalForm="none";rerender();A.toast("已进入 IR 服务商事项队列："+id+"（本地演示）");}
+if(!checked("portalQuestionConsent")){A.toast("请先确认本次要共享的问题与回执渠道");return;}
+const chosen=val("portalReplyChannel")||A.s.ui.v3ReplyChannel||"awiki";
+const replyChannels=chosen==="both"?["awiki","email"]:[chosen];
+const id=A.inquiry({text:val("portalQuestion"),source:val("portalSource")||"IR-DEMO-AR25",origin:"pr",replyChannels,replyEmail:val("portalEmail")});
+if(id){A.s.ui.portalTab="inquiry";A.s.ui.portalForm="none";A.save();A.toast("已创建 IR 问询 "+id+"（模拟）；不会真的发送邮件。");}
 }
 function makePortalTask(){
 if(!checked("portalTaskConsent")){A.toast("请先确认私人任务保存范围");return;}
@@ -38,18 +40,22 @@ if(/跟踪|提醒|订阅|通知/.test(input))answer="你可以创建私人跟踪
 A.chatMsg("assistant",answer);
 }
 async function chatRead(){
-A.chatMsg("user","请通过提供的独立 PR URL 读取公司已公布的资料，保留来源。");
+A.chatMsg("user","请先阅读独立 PR 站的 Skill 说明和公开数据，并保留来源。");
+A.chatMsg("tool","read_public_content({skill: './awiki-ir-skill-v3.md', public_content: './awiki-ir-public-content-v2.json'})");
 try{
-const res=await fetch("./awiki-ir-public-content-v2.json",{cache:"no-store"});if(!res.ok)throw new Error("HTTP "+res.status);
-const o=await res.json();if(!o.demo||!Array.isArray(o.sources))throw new Error("不是预期格式");
-const titles=o.sources.map(s=>s.title+" ["+s.id+"]").join("；");
-A.chatMsg("assistant","已从 GitHub Pages 上的实际公开 JSON 文件读取演示资料："+titles+"。\\n注意：发行人完全虚构，没有真实公告、投资建议或任何账户访问。");
-}catch(e){A.chatMsg("assistant","读取静态 JSON 失败："+String(e.message||e)+"。你仍可以从独立 PR 页面查看相同的演示内容；无法声称已成功访问远程资料。");}
+const [skillRes,dataRes]=await Promise.all([fetch("./awiki-ir-skill-v3.md",{cache:"no-store"}),fetch("./awiki-ir-public-content-v2.json",{cache:"no-store"})]);
+if(!skillRes.ok||!dataRes.ok)throw new Error("公开资料 GET 失败");
+const skill=await skillRes.text(),data=await dataRes.json();
+if(!skill.includes("demo_only: true")||!data.demo||!Array.isArray(data.sources))throw new Error("公开说明并非预期的演示版本");
+A.chatMsg("tool","read_public_content → HTTP 200；来源数量："+data.sources.length+"；Skill 标记：demo_only；受保护动作接口：尚未接入真实 MCP。");
+A.chatMsg("assistant","已从公开页面实际读取 Skill 和演示 JSON。可引用的来源："+data.sources.map(x=>x.id+"（"+x.title+"）").join("；")+"。这些都是虚构资料；如需提交 IR 请求，我会先让你确认文本与授权范围。");
+}catch(e){A.chatMsg("tool","read_public_content failed："+String(e.message||e));A.chatMsg("assistant","无法完成公开资料读取。不会假装成功调用了 Skill 或 MCP，请稍后再试或直接阅读独立 PR 页面。");}
 }
 function chatInterpret(){
-A.chatMsg("user","请解释两年的演示收入变化，并说明出处与信息边界。");
-const v=((8.4-7.8)/7.8*100).toFixed(2);
-A.chatMsg("assistant","使用演示来源 IR-DEMO-AR25 的虚构数值：2024 年 HK$7.8bn，2025 年 HK$8.4bn，数学变化率约 "+v+"%。\\n这不是上市公司的真实财务信息，更不是证券推荐或经营预测。无法凭这些数字推断未来经营表现。");
+A.chatMsg("user","根据公开 IR 演示数据计算两年收入变化，并给出处。");
+A.chatMsg("tool","read_public_content('IR-DEMO-AR25') → 已读取演示来源；以下为本地数学计算，不是模型预测。");
+const n=((8.4-7.8)/7.8*100).toFixed(2);
+A.chatMsg("assistant","演示来源 IR-DEMO-AR25：2024 年 HK$7.8bn，2025 年 HK$8.4bn，数学变化约 "+n+"%。虚构数据不对应任何真实上市公司；不能据此推断经营前景或提供投资建议。");
 }
 function chatPrefill(){
 A.s.ui.chatPrefill="请依据 FY2025 公开资料说明 2024 与 2025 收入的统计口径，并指出可引用的报告段落。";
@@ -57,28 +63,33 @@ A.chatMsg("user","请准备正式 IR 问询草稿，但先不要发送。");
 A.chatMsg("assistant","草稿已放入下方“从 ChatGPT 发起 IR 问询”。必须由你检查文本、勾选共享范围并确认后，才在 AWiki 本地演示中创建 Board。");
 }
 function chatSubmit(){
-if(!checked("chatConsent")){A.toast("必须明确确认提交范围后才能发送");return;}
-const t=val("chatQuestion");
-const id=A.inquiry({text:t,origin:"chatgpt",source:"IR-DEMO-AR25"});
-if(id){A.chatMsg("assistant","已按你的确认，在 AWiki 本地创建 IR 请求 "+id+"；它将由服务商和发行人分步处理。不会自动向真实公司发送。");}
+if(!checked("chatConsent")){A.toast("必须明确确认向 IR 提交的内容和范围");return;}
+const text=val("chatQuestion");
+const id=A.inquiry({text,origin:"chatgpt",source:"IR-DEMO-AR25",replyChannels:["awiki"]});
+if(id){
+A.chatMsg("tool","create_service_request({source:'IR-DEMO-AR25', scope:'approved_question_only', reply_channel:'awiki', confirmation:true}) → "+id+"（本浏览器模拟）");
+A.chatMsg("assistant","已按照你的确认将本次具体问题归入 AWiki 模拟服务事项 "+id+"。服务商会准备草稿，发行人独立审核；不是通过真实 ChatGPT 连接器发送，也不是证券正式披露。");
+}
 }
 function chatTask(){
 const id=A.task({title:val("chatTask"),route:"chatgpt",origin:"chatgpt",source:"IR-DEMO-AR25"});
-if(id)A.chatMsg("assistant","已生成私人委托 "+id+"。AWiki Me 一览将显示此任务，后续可以从本模拟页主动读取。不属于企业 IR 的共享资料。");
+if(id){
+A.chatMsg("tool","save_to_awiki({scope:'private_workhub', route:'chatgpt', user_confirmed:true}) → "+id+"（模拟）");
+A.chatMsg("assistant","你的私人工作委托 "+id+" 已写入本浏览器 AWiki WorkHub 模拟；在 AWiki Me 一览能看到。它不会自动共享给上市公司，也不会触发真实 ChatGPT。");
+}
 }
 function chatPoll(){
 const tasks=A.s.tasks.filter(t=>t.route==="chatgpt");
-const q=A.s.inquiries.filter(x=>x.status==="approved");
-const taskText=tasks.length?tasks.slice(0,5).map(t=>t.id+": "+t.title).join("；"):"没有指定给本模拟 PA 接续的私人任务";
-const replyText=q.length?q.slice(0,4).map(x=>x.id+": "+x.response.slice(0,180)).join("；"):"当前没有新的模拟 IR 已批准回复";
-A.chatMsg("user","请查询我在 AWiki 工作代理里的事项和新回单。");
-A.chatMsg("assistant","这是一次模拟的授权状态读取，不是实际 ChatGPT MCP/Webhook 推送。\\n私人委托："+taskText+"。\\nIR 回单："+replyText+"。");
+const replies=A.s.inquiries.filter(x=>x.status==="approved"&&(x.replyChannels||["awiki"]).includes("awiki"));
+A.chatMsg("user","请读取我的 AWiki 私人委托和已批准的新 IR 回单。");
+A.chatMsg("tool","get_work_status({user_scope:'awiki_only', permitted_refs:true}) → "+tasks.length+" private task(s), "+replies.length+" approved AWiki reply/replies（本地模拟）");
+A.chatMsg("assistant","这是一次模拟的授权状态读取，不是实际 ChatGPT Webhook 推送。\n私人委托："+(tasks.length?tasks.map(t=>t.id+"："+t.title).join("；"):"暂无")+"。\nIR 回单："+(replies.length?replies.map(x=>x.id+"："+x.response.slice(0,150)).join("；"):"暂无")+"。");
 }
 function clickAction(id){
 const u=A.s.ui;
 if(id==="reset"){A.reset();return;}
 if(id==="signin"){signin();return;}
-if(id==="wake"){A.wake(document.body.dataset.page==="portal"?"维港样例控股 · 公开 IR 资料":"AWiki Me · 我的持续事项");return;}
+if(id==="wake"){if(document.body.dataset.page==="portal")u.v3AuraVisible=true;A.wake(document.body.dataset.page==="portal"?"维港样例控股 · 公开 IR 资料":"AWiki Me · 我的持续事项");return;}
 if(id==="export"){A.exportData();return;}
 if(id==="copy-portal"){A.copy(A.portalUrl());return;}
 if(id==="portal-form-question"){showPortalForm("question");return;}
@@ -110,6 +121,7 @@ if(id.startsWith("me-followup:")){
   u.meTab="messages";u.mePrefill="关于此前请求 "+q.id+"（"+q.source+"），我想进一步确认：";
   rerender();return;
 }
+if(id.startsWith("bo-resource:")){u.backTab="resource";u.v3SelectedResource=id.slice(12);u.v3BackNav="work";rerender();return;}
 if(id.startsWith("bo-tab-")){u.backTab=id.slice(7);rerender();return;}
 if(id.startsWith("bo-select:")){u.selectedInquiry=id.slice(10);u.backTab="boards";rerender();return;}
 if(id==="bo-vote"){A.voteCreator();return;}
