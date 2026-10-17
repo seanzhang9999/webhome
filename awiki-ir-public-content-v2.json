@@ -1,0 +1,97 @@
+{
+  "schema_version": "awiki.ir.public.demo.v2",
+  "demo": true,
+  "issuer": {
+    "id": "issuer-demo-001",
+    "name": "Vela Harbour Holdings｜维港样例控股（虚构）",
+    "identity": "did:wba:issuer.example.invalid:vela",
+    "notice": "虚构香港上市企业；所有数据、公司信息、报告与活动均为教学演示，不代表真实证券、公告或投资建议。"
+  },
+  "publisher": {
+    "name": "Harbour IR Studio（虚构 IR 服务商）",
+    "role": "受托运营内容、整理客户请求，不代替发行人批准正式回复"
+  },
+  "source_policy": {
+    "public": "仅预置可公开的演示材料",
+    "private": "未公开数据、员工底稿和个人研究不通过此接口提供",
+    "review": "正式发行人发布须经授权人员批准"
+  },
+  "sources": [
+    {
+      "id": "IR-DEMO-AR25",
+      "title": "FY2025 经营概览（虚构）",
+      "version": "demo-1.0",
+      "status": "public-demo",
+      "type": "financial-summary",
+      "facts": {
+        "revenue_2024_hkd_bn": 7.8,
+        "revenue_2025_hkd_bn": 8.4
+      },
+      "note": "演示单位 HK$ 十亿；数字纯属虚构，不是实际财务披露。",
+      "sections": [
+        "报告目的：展示披露来源、版本与公开问答的关系。",
+        "业绩数据：2024 年营收 7.8、2025 年 8.4（均为虚构示例）。",
+        "所有变化解释需引用经批准的公开来源；页面计算不等同发行人预测。"
+      ]
+    },
+    {
+      "id": "IR-DEMO-1H26",
+      "title": "2026 年中期业务观察（虚构）",
+      "version": "demo-0.9",
+      "status": "public-demo",
+      "type": "operating-update",
+      "facts": {
+        "revenue_2026h1_hkd_bn": 4.6
+      },
+      "note": "中期业务数字亦为虚构，仅作为演示数据。",
+      "sections": [
+        "本示例仅展示按来源组织业务进度，不披露任何真实发行人的内部信息。"
+      ]
+    },
+    {
+      "id": "IR-DEMO-EVENT",
+      "title": "投资者公开资料交流会（虚构）",
+      "version": "demo-1.0",
+      "status": "public-demo",
+      "type": "event",
+      "note": "演示中展示一个面向所有受众的公开资料交流入口。",
+      "sections": [
+        "活动仅讨论已公开材料；未公开重大信息不得通过私下答复提供。"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "open_public",
+      "description": "读取公开资料",
+      "auth": "none"
+    },
+    {
+      "id": "create_private_followup",
+      "description": "在用户工作空间保存资讯跟踪",
+      "auth": "demo-user-confirmation"
+    },
+    {
+      "id": "submit_ir_question",
+      "description": "用户明确确认后提交 IR 问询",
+      "auth": "demo-identity-and-confirmation"
+    },
+    {
+      "id": "get_status",
+      "description": "查询自己提交请求的状态和回执",
+      "auth": "demo-identity"
+    }
+  ],
+  "interfaces": {
+    "real_api": false,
+    "real_mcp": false,
+    "real_chatgpt_connector": false,
+    "real_did_signing": false
+  },
+  "provider_handoffs": {
+    "agent": "公开资料助手回答已知范围",
+    "ir_operator": "准备答复与来源审核",
+    "issuer_approver": "批准正式发布",
+    "user_aura": "用户侧持续跟进与回单"
+  }
+}
