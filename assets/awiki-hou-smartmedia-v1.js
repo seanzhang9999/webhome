@@ -14,7 +14,7 @@ const now=()=>new Date().toISOString();
 const base=()=>({
  version:1,tab:"home",bound:false,auraOpen:false,selectedArticle:null,articlesLocal:[],
  threads:[],outgoing:[],privateWork:[],delegations:[],inbox:[],deliveryDraft:null,
- privateCompute:null,lab:{requests:1200,cost:0.12,reuse:60,value:0.5},pendingQuestionSource:null,
+ privateCompute:null,auraAnswer:null,lab:{requests:1200,cost:0.12,reuse:60,value:0.5},pendingQuestionSource:null,
  selectedThread:null,seq:1,authorAuthDemo:false,lastAction:""
 });
 let st=base(),publicData=null;
@@ -93,11 +93,12 @@ if(!st.auraOpen)return "";
 const item=selected();
 const contextUsed=st.privateCompute;
 const scope='<div class="bubble"><h3>本次分身可见什么？</h3><p>公开来源：'+esc(item?item.id:"未选择")+'；用户 DID：'+esc(st.bound?"演示已绑定":"未绑定")+'；私人上下文：默认无权限。</p>'+tag("公开内容可读","green")+" "+tag("无真实云端数据接口","gold")+'</div>';
+const chat='<div class="bubble"><h3>公开资料问答 · 只用当前来源</h3><p>基于当前文章的公开来源索引提供一种受限说明，不伪装成作者本人或实时模型。</p><textarea class="input inputarea" id="aura-question" maxlength="400" placeholder="例如：这篇文章讨论的主要经济问题是什么？"></textarea>'+bid("aura-ask","依据公开资料模拟解释","sm primary")+(st.auraAnswer?'<div class="user-preview" style="margin-top:10px">'+esc(st.auraAnswer)+'</div>':"")+'</div>';
 const cmp='<div class="bubble private"><h3>① 从 AWiki 选择局部私有上下文</h3><p>可输入一段“用户自己的研究目标”以模拟 AWiki 私域资料。这里不会发送给侯老师或外部模型。</p><textarea class="input inputarea" id="aura-private-note" maxlength="600" placeholder="例如：我正在比较企业的 AI 组织能力与多智能体经济结构……（仅在点击计算时处理）"></textarea><label class="check"><input type="checkbox" id="aura-allow-private">允许本次在浏览器本地模拟计算中使用上述私人笔记；不向本站公开原文。</label>'+bid("aura-compute","在 AWiki 私域内计算（本机模拟）","sm primary")+(contextUsed?'<div class="user-preview" style="margin-top:10px">'+esc(contextUsed.summary)+'</div>':"")+'</div>';
 const write='<div class="bubble"><h3>② 把结果写回用户自己的 WorkHub</h3><p>只保存选定的结果与公开来源引用；不自动把本人的私人研究发到网站。</p>'+bid("aura-save","保存用户侧 Artifact / Receipt","sm primary")+'</div>';
 const send='<div class="bubble"><h3>③ 将选定结果发送／抄送到哪里？</h3><div class="field"><label for="aura-channel">发送目标</label><select class="input" id="aura-channel"><option value="self">当前网页用户 / 本人的 Inbox</option><option value="discussion">作者讨论 Board（需另行共享）</option><option value="other">其他用户 DID / Handle</option><option value="email">邮箱（仅模拟准备，不发送）</option></select></div><div class="field"><label for="aura-recipient">目标 DID／邮箱（可选；选择他人时必填）</label><input id="aura-recipient" class="input" placeholder="did:example:... / person@example.com"></div><div class="field"><label for="aura-cc">抄送（可选；仅模拟）</label><input id="aura-cc" class="input" placeholder="其他 DID / 邮箱；需要单独授权"></div><div class="row">'+bid("aura-preview-send","预览共享与回执","sm")+ (st.deliveryDraft?bid("aura-confirm-send","确认创建发送记录（模拟）","sm primary"):"")+'</div>'+(st.deliveryDraft?'<div class="user-preview" style="margin-top:10px">'+esc(st.deliveryDraft.preview)+'</div>':"")+'</div>';
 const delegate='<div class="bubble"><h3>④ 把执行委托给我的其他 Agent／设备</h3><p>可创建本地电脑、个人云端 Agent 或 ChatGPT 的待执行请求。正式 ACP、MYA／OVAIM、MCP 和事件适配尚未实现。</p><div class="row">'+bid("aura-delegate-local","委托本地节点","sm")+bid("aura-delegate-cloud","委托自有云 Agent","sm")+bid("copy-chatgpt","交给 ChatGPT","sm")+'</div></div>';
-return '<aside class="aura" aria-label="私人阿维即时分身"><div class="aura-head"><div class="row"><span class="aura-logo">✦</span><div><strong>我的阿维 AURA</strong><small>当前网页的受限私人分身</small></div></div>'+bid("close-aura","收起","sm")+'</div><div class="aura-body">'+scope+cmp+write+send+delegate+'</div><div class="aura-footer"><p>独立站只接收用户明确共享的最小数据。当前演示计算在浏览器执行；正式云端或第三方模型须说明实际数据出域情况。</p></div></aside>';
+return '<aside class="aura" aria-label="私人阿维即时分身"><div class="aura-head"><div class="row"><span class="aura-logo">✦</span><div><strong>我的阿维 AURA</strong><small>当前网页的受限私人分身</small></div></div>'+bid("close-aura","收起","sm")+'</div><div class="aura-body">'+scope+chat+cmp+write+send+delegate+'</div><div class="aura-footer"><p>独立站只接收用户明确共享的最小数据。当前演示计算在浏览器执行；正式云端或第三方模型须说明实际数据出域情况。</p></div></aside>';
 }
 function footer(){return '<footer class="footer"><div class="limit"><div class="row between"><div><b>AWiki · Smart Media</b><p>内容是入口，互动是使用，委托是工作，Board 是共同确认；用户自己的数据与权利不应被单一 Agent 平台锁定。</p></div><div class="row"><a href="./awiki-smartmedia-blueprint-v1.html">商业模式与分支流程图 ↗</a><a href="./awiki-ir-demo-hub-v2.html">香港 IR 四端样例 ↗</a></div></div><div class="tiny" style="color:#83a5aa">概念展示 · 非侯老师本人官方站点 · 所有互动均为本浏览器模拟，真实部署须取得作者与机构授权。</div></div></footer>';}
 function drawQR(){const canvas=document.getElementById("site-qr");if(!canvas||!canvas.getContext)return;const ctx=canvas.getContext("2d"),n=QR_GRID.size,raw=atob(QR_GRID.data);ctx.fillStyle="#fff";ctx.fillRect(0,0,n*4,n*4);ctx.fillStyle="#17444d";for(let i=0;i<n*n;i++){if(raw.charCodeAt(i>>3)&(1<<(7-(i%8))))ctx.fillRect((i%n)*4,Math.floor(i/n)*4,4,4);}}
@@ -123,6 +124,17 @@ if(t.length<5||summary.length<12){toast("请输入完整的演示标题和导读
 const id="LOCAL-DRAFT-"+st.seq++;st.articlesLocal.unshift({id,title:t,kind:"本站本地编辑模拟",date:now().slice(0,10),authors:["演示编辑操作（未经作者授权）"],source:"当前浏览器 localStorage",url:null,topics:[category],summary,status:"local-only",questions:["该议题的核心论证是什么？","怎样核对相关证据？"]});save();toast("演示文章已出现在本浏览器列表，但未公开发布");}
 function replyDraft(id){const q=st.threads.find(x=>x.id===id);if(!q||q.status!=="pending")return;q.status="draft";q.answer="运营助手整理的候选答复：已收到你的问题，可先参考所选公开原文核对概念与证据。此答复尚未获任何真实作者批准。";q.events.push({at:now(),actor:"数字编辑（演示）",kind:"候选答复",text:"准备公开原文链接，等待作者本人审核。"});save();}
 function replyApprove(id){const q=st.threads.find(x=>x.id===id);if(!q||q.status!=="draft")return;q.status="replied";q.answer+="【本地模拟审核完成，不是侯宏老师的真实发言或回复。】";q.events.push({at:now(),actor:"模拟运营角色",kind:"生成回应记录",text:"仅创建当前浏览器的演示回单，没有外部邮件、DID 或公开系统发送。"});if(q.channel==="did"&&st.bound)st.inbox.unshift({id:"IN-"+st.seq++,time:now(),text:"讨论 "+q.id+" 产生本地模拟回复，可回到议题页查看。",type:"did-receipt"});if(q.channel==="email")q.deliveryStatus="email_prepared_not_sent";save();}
+function auraAsk(){
+const q=document.getElementById("aura-question")?.value?.trim()||"";
+if(q.length<5){toast("请提出一个具体的问题");return;}
+const doc=selected(),title=doc?.title||"AI 与经济学",ref=doc?.id||"无";
+let out="仅依据公开来源索引 "+ref+"《"+title+"》提供有限的演示解释：\n"+(doc?.summary||"当前暂无可用公开导读。")+"\n";
+if(/Token|token|成本|复用|经济性/.test(q))out+="你可以打开“学生互动”，用可复用率与单位推理成本做确定性的课堂计算；它不是正式学术模型。\n";
+else if(/组织|企业|战略|转型/.test(q))out+="建议把个人 AI 工具使用与企业组织协同的实际制度变革区分研究。\n";
+else if(/智能体|agent|平台|互联网/i.test(q))out+="可以进一步研究 Agent 的执行与认知能力，如何与互联网的主体连接能力共同影响商业生态。\n";
+out+="重要：此功能不调用真实模型，没有读取全文。请回到原文核查具体论点；以上不代表侯老师本人回复。";
+st.auraAnswer=out;save();toast("已根据公开来源索引给出受限模拟解释");
+}
 function auraCompute(){
 if(!needBind())return;
 const el=document.getElementById("aura-private-note");const allow=document.getElementById("aura-allow-private")?.checked;
@@ -170,7 +182,7 @@ if(a.startsWith("article-")){st.selectedArticle=a.slice(8);st.tab="articles";sav
 if(a.startsWith("discussion-source-")){st.pendingQuestionSource=a.slice(18);st.tab="discussion";save();return;}
 if(a==="disc-submit"){discussionSubmit();return;}if(a==="editor-publish"){editorPublish();return;}
 if(a.startsWith("editor-draft-")){replyDraft(a.slice(13));return;}if(a.startsWith("editor-approve-")){replyApprove(a.slice(15));return;}
-if(a==="aura-compute"){auraCompute();return;}if(a==="aura-save"||a==="aura-save-public"){if(a==="aura-save-public"){st.auraOpen=true;}savePrivate("source");return;}
+if(a==="aura-ask"){auraAsk();return;}if(a==="aura-compute"){auraCompute();return;}if(a==="aura-save"||a==="aura-save-public"){if(a==="aura-save-public"){st.auraOpen=true;}savePrivate("source");return;}
 if(a==="lab-save"){savePrivate("lab");return;}if(a==="lab-to-discussion"){st.pendingQuestionSource=selected()?.id||"";st.tab="discussion";save();toast("请选择要分享的结论后提交，私人参数不会自动公开");return;}
 if(a==="aura-preview-send"){prepareShare();return;}if(a==="aura-confirm-send"){confirmShare();return;}
 if(a==="aura-delegate-local"){delegateTo("local");return;}if(a==="aura-delegate-cloud"){delegateTo("cloud");return;}
