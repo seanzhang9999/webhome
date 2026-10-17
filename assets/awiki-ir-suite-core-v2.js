@@ -36,17 +36,25 @@ async function copy(text){try{await navigator.clipboard.writeText(String(text));
 function signed(){if(!s.identity.signed){toast("请先在页面上模拟绑定 AWiki 用户身份");return false;}return true;}
 function signin(){if(!s.identity.signed){s.identity.signed=true;logAura("identity","已模拟绑定 AWiki 用户 DID 与 AURA 身份；没有联系真实身份服务器。");notice("阿维身份已准备","浏览器演示身份可以保存私人任务、提交选定的 IR 请求。","","identity");save();toast("模拟身份已绑定")}else toast("当前已处于模拟登录状态")}
 function wake(context){s.aura.awake=true;s.aura.lastContext=context||"IR 智媒体公开资料";logAura("context","受限分身已装载 "+s.aura.lastContext+"；未读取其他应用的聊天历史。");save();toast("阿维已在当前环境唤起（模拟）")}
-function inquiry({text,source="IR-DEMO-AR25",origin="pr",kind="investor"}){
-if(!signed())return null;
+function inquiry({text,source="IR-DEMO-AR25",origin="pr",kind="investor",replyChannels=["awiki"],replyEmail=""}){
+const channels=Array.isArray(replyChannels)?[...new Set(replyChannels.filter(x=>x==="awiki"||x==="email"))]:["awiki"];
+if(!channels.length){toast("请选择至少一个正式回复接收方式");return null;}
+if(channels.includes("awiki")&&!signed()){toast("使用 AWiki 收件箱需先模拟绑定 AWiki 身份");return null;}
+const mail=String(replyEmail||"").trim();
+if(channels.includes("email")&&!/^[^\s@]{1,64}@[^\s@]+\.[^\s@]+$/.test(mail)){toast("请输入格式有效的接收邮箱；此演示不会发送邮件");return null;}
 text=String(text||"").trim();
 if(text.length<8){toast("请填写至少八个字的具体请求");return null;}
 if(!DOCS.some(d=>d.id===source)){toast("请选择本演示的公开资料来源");return null;}
+function maskEmail(address){let parts=address.split("@");return parts[0].slice(0,1)+"***@"+parts[1];}
+const emailMasked=channels.includes("email")?maskEmail(mail):"";
 const id="IR-Q-"+s.seq.inquiry++;
-const row={id,kind,issuer:"issuer-demo",provider:"provider-demo",origin,text,source,status:"submitted",createdAt:stamp(),updatedAt:stamp(),draft:"",response:"",audience:"private_to_requester",scope:["用户主动提交的问题","公开来源 "+source],events:[{at:stamp(),actor:"投资者个人阿维",kind:"提交经确认请求",text:"按照所选范围发送到模拟 IR 服务空间；不包含个人私人研究。"}]};
+const row={id,kind,issuer:"issuer-demo",provider:"provider-demo",origin,text,source,status:"submitted",createdAt:stamp(),updatedAt:stamp(),draft:"",response:"",audience:"private_to_requester",replyChannels:channels,replyEmailMasked:emailMasked,emailVerified:false,emailDelivery:"not_sent_demo",scope:["用户明确提交的此条问题","公开来源 "+source,"回执方式："+channels.join("+")],events:[{at:stamp(),actor:channels.includes("awiki")?"投资者个人阿维（模拟）":"邮箱访问者（演示）",kind:"提交经确认请求",text:"仅按所选范围向本地模拟 IR 服务空间提交，不含私人研究。"+(emailMasked?" 模拟邮箱渠道："+emailMasked+"；未验证、未发信。":"")}]};
 s.inquiries.unshift(row);
+if(channels.includes("awiki")){
 notice("IR 问询已提交（模拟）",id+"：已进入 IR 服务商受理队列。",id,"submitted");
-logAura("delegation",id+" 发送到服务空间；等待受理。");save();
-toast("模拟 IR 请求 "+id+" 已提交；后台可查看");
+logAura("delegation",id+" 已提交给 IR 服务空间；等待受理。");
+}
+save();toast("已创建本地模拟 IR 请求 "+id+"；后台可查看");
 return id;
 }
 function creatorRequest(text,origin){if(!signed())return null;const safe=String(text||"").trim();if(safe.length<12){toast("请具体描述创作者合作需求");return null;}return inquiry({text:safe,source:"IR-DEMO-EVENT",kind:"creator",origin:origin||"pr"});}
@@ -66,8 +74,16 @@ q.events.push({at:stamp(),actor:"Harbour IR Studio（模拟）",kind:"准备审�
 function approveInquiry(id){if(s.ui.role!=="issuer"){toast("只有发行人审批视角可作此演示动作");return;}const q=s.inquiries.find(x=>x.id===id);if(!q||q.status!=="drafted"){toast("仅待发行人审核的草稿可以批准");return;}
 q.status="approved";q.updatedAt=stamp();q.response=q.draft+"【注意：这里仅是浏览器内的演示回复，未签署、未通过真实上市公司审阅，亦未对外发送。】";
 q.events.push({at:stamp(),actor:"维港样例控股（模拟）",kind:"模拟批准回复",text:"已按流程形成回单；本地按钮不是现实世界的 DID 签名或正式上市公司披露。"});
+const channels=q.replyChannels||["awiki"];
+if(channels.includes("awiki")){
 notice(q.kind==="creator"?"内容合作服务已回复（模拟）":"IR 正式流程回单（模拟）",q.id+"：发行人模拟审批完成。可在 AWiki Me／ChatGPT 接入模拟查看已接收的回单。",q.id,"reply");
-logAura("receipt",q.id+" 已收到模拟 IR 服务回单，相关资料可从本人工作界面继续。");save();toast("已通过模拟发行人审批，并写入用户回单")}
+logAura("receipt",q.id+" 已进入用户 AWiki Inbox（本地模拟）。");
+}
+if(channels.includes("email")){
+q.emailDelivery="prepared_not_sent";
+q.events.push({at:stamp(),actor:"邮箱回执适配器（模拟）",kind:"待发送邮件",text:"仅生成面向 "+(q.replyEmailMasked||"未验证邮箱")+" 的邮件发送示例；没有发送外部邮件，也未验证邮箱所有权。"});
+}
+save();toast("已完成模拟审批；按选定渠道记录回单（不发送真实邮件）")}
 function returnInquiry(id){if(s.ui.role!=="issuer"){toast("仅模拟发行人可退回草稿");return;}const q=s.inquiries.find(x=>x.id===id);if(!q||q.status!=="drafted"){toast("当前状态不可退回");return;}q.status="revision";q.draft="";q.updatedAt=stamp();q.events.push({at:stamp(),actor:"发行人审批方（模拟）",kind:"发回修改",text:"来源或措辞仍需要核对，尚未形成对外回应。"});save();toast("已退回服务商重新准备")}
 function voteCreator(){const r=s.ui.role;if(!["provider","issuer"].includes(r))return;s.space.creator[r+"Vote"]=true;s.space.events.push({at:stamp(),actor:r==="issuer"?"发行人（模拟）":"IR 服务商（模拟）",text:"批准内容合作方加入限定的公开资料合作范围；仅为模拟流程。"});if(s.space.creator.providerVote&&s.space.creator.issuerVote)s.space.creator.joined=true;save();toast("已记录当前角色的模拟邀请投票")}
 function draftCreator(){if(s.ui.role!=="provider"){toast("仅服务商可准备合作方案");return;}s.creator.draft="合作对象：财经内容创作者；服务购买方：发行人／IR 服务机构。交付：公开资料解读稿和线上交流内容。要求：显著商业合作标识、引用正式披露、禁止个性化荐股；需发行人审批后公开。";s.creator.status="drafted";s.creator.events.push({at:stamp(),actor:PROVIDER,kind:"拟定公开内容合作方案",text:"已形成范围和赞助披露条款，交发行人审核。"});save();toast("内容合作 Board 草稿已准备")}
