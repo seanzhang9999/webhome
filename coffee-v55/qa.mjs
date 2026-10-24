@@ -48,7 +48,7 @@ while((await get()).cursor<38){
     // Custom governance step before the customs handoff.
     if(key==='experiment-handoff'){
       await clickAction('v5-space-governance');await role('client');await clickAction('v5-vote:client');await role('research');await clickAction('v5-vote:research');
-      await role('lab');await clickAction('v5-install:lab');await clickAction('v5-join:lab');await role('client');await clickAction('current');
+      await role('lab');await clickAction('v5-install:lab');await clickAction('v5-join:lab');await role('client');await page.evaluate(()=>goCurrent());
     }
     await clickAction('openboard:'+key);
     await page.locator('input[name="board-choice"][value="approve"]').first().check();
@@ -64,7 +64,6 @@ while((await get()).cursor<38){
   if(![0,1,2].includes((await get()).group))throw new Error('unexpected group');
   // Move with an authorized person; the visible role picker is part of this test.
   await role('client');
-  await clickAction('current');
   await page.keyboard.press('n');
   const after=(await get()).cursor;
   if(after===pos)throw new Error('Failed to advance at event '+(pos+1)+'; gate '+(await get()).gate);
@@ -75,7 +74,7 @@ assert.equal(decisions,7);
 assert.equal((await page.evaluate(()=>s.created.length)),3);
 console.log('PASS: 39 events, 7 Boards, 3 dynamic matter groups');
 await role('client');
-await clickAction('current');
+await page.evaluate(()=>goCurrent());
 await page.locator('#privateInput').fill('QA_PRIVATE_LIN');
 await page.locator('#privateForm button[type="submit"]').click();
 await role('research');
