@@ -66,7 +66,7 @@ while((await get()).cursor<38){
   await role('client');
   await clickAction('next');
   const after=(await get()).cursor;
-  if(after===pos)throw new Error('Failed to advance at event '+(pos+1)+'; gate '+(await get()).gate);
+  if(after===pos){const details=await page.evaluate(()=>({role:currentRole,view,tab:workTab,selected,cursor:s.cursor,gate:E[s.cursor].gate,created:s.created,toast,buttons:[...document.querySelectorAll('[data-action="next"]')].map(x=>({disabled:x.disabled,text:x.textContent})),tail:document.body.innerText.slice(-550)}));throw new Error('Failed to advance event '+(pos+1)+' '+JSON.stringify(details));}
 }
 assert.equal((await get()).cursor,38);
 const decisions=await page.evaluate(()=>Object.values(s.boards).filter(b=>b.status==='confirmed'&&b.choice==='approve').length);
