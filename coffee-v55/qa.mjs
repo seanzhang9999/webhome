@@ -64,7 +64,7 @@ while((await get()).cursor<38){
   if(![0,1,2].includes((await get()).group))throw new Error('unexpected group');
   // Move with an authorized person; the visible role picker is part of this test.
   await role('client');
-  await page.keyboard.press('n');
+  await clickAction('next');
   const after=(await get()).cursor;
   if(after===pos)throw new Error('Failed to advance at event '+(pos+1)+'; gate '+(await get()).gate);
 }
