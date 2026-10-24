@@ -1,0 +1,38 @@
+name: Coffee V5.5 Browser QA
+
+on:
+  push:
+    branches:
+      - feat/coffee-import-v55-20261024
+  pull_request:
+    paths:
+      - awiki-coffee-import-v55.html
+      - coffee-v55/**
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install browser runner
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run interactive browser QA
+        run: |
+          python3 -m http.server 8765 >/tmp/coffee-v55-server.log 2>&1 &
+          sleep 2
+          node coffee-v55/qa.mjs
+      - name: Save QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coffee-v55-browser-evidence
+          path: |
+            coffee-v55-screen-*.png
+            coffee-v55-qa-result.json
+          if-no-files-found: ignore
