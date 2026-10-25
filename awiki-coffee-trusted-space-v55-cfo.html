@@ -244,7 +244,7 @@ function renderMentionMenu(){
 function renderReferenceChips(){return composerRefs.map((r,i)=>`<span class="ref-chip">${r.kind==='actor'?'@':r.kind==='board'?'#':'&'} ${esc(r.label)} <button type="button" data-ref-remove="${i}" aria-label="移除引用 ${esc(r.label)}">×</button></span>`).join('');}
 function updateMentionDom(){const menu=q('#mention-menu');if(menu){menu.innerHTML=renderMentionMenu();menu.hidden=!composerMenu;}const chips=q('#reference-chips');if(chips)chips.innerHTML=renderReferenceChips();}
 function handleComposerInput(input){
- composerDraft=input.value;
+ composerDraft=input.value;composerRefs=composerRefs.filter(r=>composerDraft.includes(r.token));
  const before=composerDraft.slice(0,input.selectionStart??composerDraft.length),m=/(?:^|\s)([@&#])([^\s@&#]*)$/.exec(before);
  composerMenu=m?{kind:m[1]==='@'?'actor':m[1]==='#'?'board':'artifact',query:m[2]}:null;
  updateMentionDom();
@@ -252,6 +252,7 @@ function handleComposerInput(input){
 function pickReference(kind,id){
  const candidate=referenceCandidates(kind==='source'?'artifact':kind).find(x=>x.id===id&&x.kind===kind);
  if(!candidate)return notify('该引用对象目前不可访问。');
+ if(kind==='board'&&!s.boards[id]&&!ensureBoard(id))return;
  const input=q('#group-text');if(!input)return;
  const prefix=kind==='actor'?'@':kind==='board'?'#':'&',token=prefix+candidate.label;
  const caret=input.selectionStart??input.value.length,before=input.value.slice(0,caret),after=input.value.slice(caret),match=/(?:^|\s)([@&#])([^\s@&#]*)$/.exec(before);
@@ -445,7 +446,7 @@ document.addEventListener('submit',evt=>{const form=evt.target.closest('form[dat
  if(type==='group'){submitGroup(form,text);return;}
  if(type==='board-comment'){const id=form.elements.board.value;if(!allowedBoard(id))return notify('没有此 Board 的协作权限。');const b=s.boards[id],kind=form.elements.kind.value;b.activity.push({id:`ACT-${b.activity.length+1}`,person:s.actor,type:kind,text:text.slice(0,800)+(kind==='change'?'（候选变更，需重新按版本签收）':''),sourceIndex:BOARDS[id].at,at:now(),simulation:true});b.revision++;audit('board.comment',{board:BOARDS[id].uid,kind});persist();boardTab='activity';render();}
 });
-document.addEventListener('keydown',evt=>{if(evt.key==='Escape'&&modal){modal=null;render();return;}if(evt.repeat||evt.ctrlKey||evt.altKey||evt.metaKey||evt.shiftKey||modal||evt.target.closest('input,textarea,select,[contenteditable]'))return;if(evt.key==='n'||evt.key==='N'||evt.key==='ArrowRight'){evt.preventDefault();stop();step();}});
+document.addEventListener('keydown',evt=>{if(evt.key==='Escape'&&modal){modal=null;render();return;}if(evt.key==='Escape'&&composerMenu){composerMenu=null;updateMentionDom();return;}if(evt.repeat||evt.ctrlKey||evt.altKey||evt.metaKey||evt.shiftKey||modal||evt.target.closest('input,textarea,select,[contenteditable]'))return;if(evt.key==='n'||evt.key==='N'||evt.key==='ArrowRight'){evt.preventDefault();stop();step();}});
 window.__AWIKI_COFFEE_QA__={snapshot:()=>structuredClone(s),events:()=>EVENTS.length,boards:()=>Object.keys(BOARDS),peek:()=>({cursor:s.cursor,actor:s.actor,currentGroup:active().g,gate:gateKey(),gateSatisfied:gateSatisfied(),created:s.created,joined:s.registry.participants,privateCount:s.notes.filter(x=>x.kind==='private').length})};
 render();
 })();
