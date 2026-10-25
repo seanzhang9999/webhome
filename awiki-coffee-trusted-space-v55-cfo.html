@@ -300,7 +300,24 @@ function auxiliary(){if(view==='overview')return overviewPage();if(view==='messa
  return `<main class="page"><span class="eyebrow">AWIKI / CAPABILITY DISCOVERY</span><h1>发现能力，连接责任</h1><p>这里是跨组织能力目录：贸易撮合、财务审查、物流与关务等能力可以被不同方案引用。具体使用仍需空间准入和单项授权。</p><div class="grid">${[['贸易撮合 Agent','可在授权范围内收集候选与核验资料'],['外部 CFO 专业服务','可独立审查合同付款条款、现金流、汇率风险，不读取未授权预算'],['巴西供货方 Agent','可对话并提出合同条件，不自动代表企业签署'],['关务与银行外部系统','仅模拟受理/放行与银行结果，不真实连接法定系统']].map(([n,d])=>`<div class="tile"><h3>${n}</h3><p>${d}</p>${pill('概念性服务 · 未真实连接','gray')}</div>`).join('')}</div></main>`;}
 function partnerGuidance(){if(view!=='work')return '你现在不在具体的事项群。当前私人 AI 伙伴帮你理解上下文，不代替你对外发言，也不把普通会话提升为付款或贸易委托。';if(workTab==='solutions')return '方案给出可执行的业务规则与共同语义。实际跨机构数据、付款与报关都需要再授权，并且应由各方自己的控制端点执行。';if(workTab==='topics')return '在空间里理解成员资格、资源范围和专题知识。CFO虽然可加入同一空间，但其业务预算读取必须经过买方另行授权。';if(workTab==='resources')return '我帮你快速查阅 Board、工件和来源，提示版本差异与责任人。建议和私人备注不会成为正式共同结论。';const g=gateKey();if(g==='mandate')return '夜间委托先确定允许/禁止事项。内部预算5.30/kg不要带进撮合群；对方要求40%预付锁货必须退回你决定。';if(g==='verify')return '夜间资料已经补齐，建议继续核验并询样，但不接受价格或费用；M02要单独授权。';if(g==='trade')return '采购事项只把数量、样品、装运窗口和待谈条款交给卖方。供应商不应该看到候选B或内部预算。';if(g==='contract')return '注意中英文质量异议期原来不一致；保险附件须明确。双方先在同一个 Board 上确认v3，签署还要等之后的独立回执。';if(g==='financeReview')return 'CFO 是独立专业服务方，不是买方付款授权人。请核对合同金额、30%和70%付款窗口、汇率敞口、税费和营运资金的不确定性；必要时向买方请求预算比较授权。';if(g==='prepay')return '这一次请周敏本人检查合同v3、收款主体和30%预付款USD 29,952；外部CFO风险意见不等于买方资金审批，更不等于银行已执行。';if(g==='discrepancy')return '提单草稿300袋和合同320袋相差20袋、1,200kg。应保留v1差异、核对实际装载依据，并让货代和关务分别签收v2。';if(g==='tailpay')return '70%尾款USD 69,888以合同约定的装运单据复核为前提；付款和到仓质量验收不是同一件事。';if(g==='customs')return '报关委托有单独主体范围。专业人员可以处理申报，但受理不等于放行，不能由Agent自行产生监管批准。';if(s.selected===2)return 'CFO视角重点：30/70付款资金计划、币种敞口、收款主体一致性及费用未知项。我的职责是帮助本方核对，不替顾问签署独立意见。';return '你当前查看的是工作事项的自然对话和可引用工件。我会整理你要完成的动作、标准与风险；批准、验收和变更须由指定主体正式写回。';}
 function partnerContext(){
- if(view!=='work'||!allowedGroup(s.selected))return null;
+ if(view!=='work')return null;
+ if(workTab==='resources'&&selectedResource){
+  if(selectedResource.startsWith('board:')){
+   const id=selectedResource.slice(6),d=BOARDS[id],b=s.boards[id];
+   if(d&&b&&allowedBoard(id)){
+    const docs=d.doc&&allowedDoc(d.doc)&&DOCS[d.doc].origin<=s.cursor?[d.doc]:[];
+    return {group:null,resourceOnly:true,latest:{title:d.title,text:d.purpose,id:d.uid,time:'V'+b.version},docs,boards:[id]};
+   }
+  }
+  if(selectedResource.startsWith('doc:')){
+   const id=selectedResource.slice(4),d=DOCS[id];
+   if(d&&allowedDoc(id)&&d.origin<=s.cursor){
+    const e=EVENTS[d.origin];
+    return {group:null,resourceOnly:true,latest:{title:d.title,text:d.lines[0]||d.type,id:e.id,time:e.time},docs:[id],boards:Object.keys(s.boards).filter(k=>allowedBoard(k)&&BOARDS[k].doc===id)};
+   }
+  }
+ }
+ if(!allowedGroup(s.selected))return null;
  const group=s.selected,ev=EVENTS.map((e,index)=>({...e,index})).filter(e=>e.g===group&&e.index<=s.cursor),latest=ev[ev.length-1];
  if(!latest)return null;
  const ids=[...new Set(ev.map(e=>e.doc).filter(Boolean).reverse())].filter(id=>allowedDoc(id));
@@ -355,7 +372,7 @@ function partner(){
   const visibleDocs=partnerShowAll?ctx.docs:ctx.docs.slice(0,4),visibleBoards=partnerShowAll?ctx.boards:ctx.boards.slice(0,3);
   const selectedPanel=choice?(choice.startsWith('board:')?partnerBoardPanel(choice.slice(6)):partnerDocPanel(choice.slice(4))):'<p class="muted">随着事项推进，相关来源、工件与 Board 会出现在这里。</p>';
   const personGate=gate&&PERSONAL_GATES[gate]?`<section class="p-card ctx-gate"><h3>本次关口 · ${esc(PERSONAL_GATES[gate].title)}</h3><p>${esc(PERSONAL_GATES[gate].text)}</p>${decisionResolved(gate)?pill('已记录本人决定','ok'):s.actor===PERSONAL_GATES[gate].role?btn('核验并形成本人决定','person:'+gate,'primary'):pill('仅具名财务授权人可决定','warn')}${decisionResolved(gate)&&s.selected===active().g&&workTab==='matters'?btn('继续等待外部结果回单','next','tiny'):''}</section>`:'';
-  contextHtml=`<section class="p-card private"><div class="ctx-topline"><b>当前 Matter · ${esc(GROUPS[ctx.group].tag)}</b>${pill(ctx.group===active().g?'进行中':'历史事项','gray')}</div><h3>${esc(ctx.latest.title)}</h3><p>${esc(ctx.latest.text)}</p><p class="ctx-hint">${esc(ctx.latest.id)} · ${esc(ctx.latest.time)} · ${esc(guidance)}</p></section>${personGate}<section class="p-card ctx-catalog"><h3>本进度关联的资源 <span class="ctx-count">${total}</span></h3><p class="ctx-hint">按当前角色权限自动汇集；点击即在下方展开，不离开 Matter。</p>${ctx.boards.length?`<div class="ctx-subhead">共同 Board · 状态与签收</div>${visibleBoards.map(id=>item('board',id)).join('')}`:''}${ctx.docs.length?`<div class="ctx-subhead">来源与工件 · 版本及证据</div>${visibleDocs.map(id=>item('doc',id)).join('')}`:''}${!partnerShowAll&&total>visibleDocs.length+visibleBoards.length?btn('显示全部 '+total+' 项相关资源','partner:all','tiny'):partnerShowAll&&total>7?btn('折叠较早资源','partner:compact','tiny'):''}</section><section class="p-card ctx-container" id="partner-detail"><h3>嵌入式查看与操作</h3>${selectedPanel}</section>`;
+  contextHtml=`<section class="p-card private"><div class="ctx-topline"><b>${ctx.resourceOnly?'当前资源 · 受限协同':'当前 Matter · '+esc(GROUPS[ctx.group].tag)}</b>${pill(ctx.group===active().g?'进行中':'历史事项','gray')}</div><h3>${esc(ctx.latest.title)}</h3><p>${esc(ctx.latest.text)}</p><p class="ctx-hint">${esc(ctx.latest.id)} · ${esc(ctx.latest.time)} · ${esc(guidance)}</p></section>${personGate}<section class="p-card ctx-catalog"><h3>本进度关联的资源 <span class="ctx-count">${total}</span></h3><p class="ctx-hint">按当前角色权限自动汇集；点击即在下方展开，不离开 Matter。</p>${ctx.boards.length?`<div class="ctx-subhead">共同 Board · 状态与签收</div>${visibleBoards.map(id=>item('board',id)).join('')}`:''}${ctx.docs.length?`<div class="ctx-subhead">来源与工件 · 版本及证据</div>${visibleDocs.map(id=>item('doc',id)).join('')}`:''}${!partnerShowAll&&total>visibleDocs.length+visibleBoards.length?btn('显示全部 '+total+' 项相关资源','partner:all','tiny'):partnerShowAll&&total>7?btn('折叠较早资源','partner:compact','tiny'):''}</section><section class="p-card ctx-container" id="partner-detail"><h3>嵌入式查看与操作</h3>${selectedPanel}</section>`;
  }else{
   contextHtml=`<section class="p-card private"><h3>当前任务怎么做</h3><p>${esc(guidance)}</p></section>`;
  }
@@ -420,7 +437,7 @@ function submitGroup(form,text){
  composerDraft='';composerRefs=[];composerMenu=null;persist();render(true);
 }
 function handleInput(evt){if(evt.target.id==='side-search'){search=evt.target.value;const box=q('.items');for(const x of box?.querySelectorAll('.item')||[])x.hidden=!(x.textContent||'').toLowerCase().includes(search.toLowerCase());}if(evt.target.id==='group-text')handleComposerInput(evt.target);}
-document.addEventListener('click',evt=>{const el=evt.target.closest('button');if(!el||el.disabled)return;if(el.dataset.pickKind){pickReference(el.dataset.pickKind,el.dataset.pickId);return;}if(el.dataset.refRemove!==undefined){removeReference(Number(el.dataset.refRemove));return;}if(el.dataset.resourceKind){resourceFilter=el.dataset.resourceKind;selectedResource='';render();return;}if(el.dataset.worktab){view='work';workTab=el.dataset.worktab;resourceFilter='all';search='';stop();render();return;}if(el.dataset.object){selectObject(el.dataset.object);return;}if(el.dataset.boardtab){boardTab=el.dataset.boardtab;render();return;}if(el.dataset.spacetab){spaceTab=el.dataset.spacetab;topic='__space';render();return;}if(el.dataset.action){action(el.dataset.action);return;}});
+document.addEventListener('click',evt=>{const el=evt.target.closest('button');if(!el||el.disabled)return;if(el.dataset.pickKind){pickReference(el.dataset.pickKind,el.dataset.pickId);return;}if(el.dataset.refRemove!==undefined){removeReference(Number(el.dataset.refRemove));return;}if(el.dataset.resourceKind){resourceFilter=el.dataset.resourceKind;selectedResource='';render();return;}if(el.dataset.worktab){view='work';workTab=el.dataset.worktab;resourceFilter='all';resourceOriginFilter='all';search='';stop();render();return;}if(el.dataset.object){selectObject(el.dataset.object);return;}if(el.dataset.boardtab){boardTab=el.dataset.boardtab;render();return;}if(el.dataset.spacetab){spaceTab=el.dataset.spacetab;topic='__space';render();return;}if(el.dataset.action){action(el.dataset.action);return;}});
 document.addEventListener('change',evt=>{const el=evt.target;if(el.id==='role-select'){stop();switchRole(el.value);return;}if(el.dataset.boardChoice){chooseBoard(el.dataset.boardChoice,el.value);return;}if(el.id==='resource-filter'){resourceFilter=el.value;render();return;}if(el.id==='resource-origin'){resourceOriginFilter=el.value;selectedResource='';render();return;}});
 document.addEventListener('input',handleInput);
 document.addEventListener('submit',evt=>{const form=evt.target.closest('form[data-form]');if(!form)return;evt.preventDefault();const type=form.dataset.form,text=String(form.elements.text?.value||'').trim();if(!text)return;
