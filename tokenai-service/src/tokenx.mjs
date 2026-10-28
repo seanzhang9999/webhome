@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { ProxyAgent, fetch as proxyFetch } from 'undici';
 import { uid, now } from './store.mjs';
 import { redact } from './config.mjs';
+import { rewriteWorkOrderResult } from './work-order-view.mjs';
 
 export const WORK_ORDER_TOOLS = new Set(['scenario_work_orders', 'scenario_work_order']);
 export const READ_TOOLS = new Set(['scenario_list', 'scenario_status', 'scenario_result', ...WORK_ORDER_TOOLS]);
@@ -97,7 +98,8 @@ export class TokenX {
       // No automatic replay of tools/call, including uncertain network failures.
       const result = await this.client.callTool({ name, arguments: args }, undefined, { timeout: 60000, signal });
       if (result.isError) throw Object.assign(new Error(resultText(result) || 'TokenX 工具返回错误'), { toolError: true });
-      return JSON.parse(redact(result, this.config));
+      const safe = JSON.parse(redact(result, this.config));
+      return name === 'scenario_work_order' ? rewriteWorkOrderResult(safe, this.config.publicOrigin) : safe;
     } catch (e) {
       if (!e.toolError) { await this.client?.close().catch(() => {}); this.client = null; this.status = { connected: false, checkedAt: now(), error: redact(e.message, this.config) }; }
       throw Object.assign(new Error(redact(e.message, this.config)), { toolError: !!e.toolError });

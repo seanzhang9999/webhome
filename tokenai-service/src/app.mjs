@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { Store, uid, now } from './store.mjs';
 import { authenticate, issueCode, exchangeCode, hash } from './auth.mjs';
-import { TokenX } from './tokenx.mjs';
+import { TokenX, resultText } from './tokenx.mjs';
+import { requireWorkOrderAccess, publicWorkOrder, exportWorkOrderMarkdown } from './work-order-view.mjs';
 import { PiAgent } from './agent.mjs';
 import { redact } from './config.mjs';
 
@@ -24,7 +25,7 @@ export async function buildApp(config, overrides = {}) {
   app.decorate('services', { store, tokenx, agent });
   const loginAttempts = new Map();
   await app.register(cors, { origin: (origin, cb) => cb(null, !origin || config.allowedOrigins.includes(origin)),
-    methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type'], maxAge: 600 });
+    methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type'], exposedHeaders: ['Content-Disposition', 'X-TokenAI-Report-Source'], maxAge: 600 });
   await app.register(multipart, { limits: { fileSize: config.fileLimit, files: 1, fields: 0, parts: 1 } });
   app.addHook('onRequest', async (req, reply) => {
     reply.header('Cache-Control', 'no-store').header('X-Content-Type-Options', 'nosniff').header('Referrer-Policy', 'no-referrer');
@@ -49,6 +50,8 @@ export async function buildApp(config, overrides = {}) {
   };
   app.get('/healthz', async () => ({ status: 'ok' }));
   app.get('/', async (req, reply) => reply.type('text/html').send(await readFile(join(publicDir, 'index.html'), 'utf8')));
+  app.get('/work-orders/:subjectId', async (req, reply) => reply.type('text/html').send(await readFile(join(publicDir, 'index.html'), 'utf8')));
+  app.get('/work-orders/:subjectId/report', async (req, reply) => reply.type('text/html').send(await readFile(join(publicDir, 'index.html'), 'utf8')));
   app.get('/auth', async (req, reply) => reply.type('text/html').send(await readFile(join(publicDir, 'auth.html'), 'utf8')));
   app.get('/auth.js', async (req, reply) => reply.type('application/javascript').send(await readFile(join(publicDir, 'auth.js'), 'utf8')));
   app.get('/status.js', async (req, reply) => reply.type('application/javascript').send(await readFile(join(publicDir, 'status.js'), 'utf8')));
@@ -82,6 +85,24 @@ export async function buildApp(config, overrides = {}) {
   });
   app.get('/api/v1/solutions', async req => {
     authenticate(store, req); return [{ id: 'expense-control', name: '报销费控协同方案', agent: 'tokenai', connected: tokenx.status.connected }];
+  });
+  async function workOrder(req) {
+    const user = authenticate(store, req), id = req.params.subjectId;
+    requireWorkOrderAccess(config, user, id);
+    try {
+      const result = await tokenx.call('scenario_work_order', { subject_id: id, include_detail: true, include_share: false });
+      const data = JSON.parse(resultText(result));
+      if (data.subject_id !== id) throw new Error('Mismatched work-order response');
+      return publicWorkOrder(data, config.publicOrigin);
+    } catch(e) { throw bad(e.toolError ? 404 : 400, e.toolError ? '工单不存在或无法读取' : '暂时无法读取审核结果，请稍后重试'); }
+  }
+  app.get('/api/v1/work-orders/:subjectId', async req => workOrder(req));
+  app.get('/api/v1/work-orders/:subjectId/report', async (req, reply) => {
+    const data = await workOrder(req);
+    const encoded = encodeURIComponent(data.report.file_name).replace(/['()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+    reply.header('Content-Disposition', "attachment; filename=\"audit-result.md\"; filename*=UTF-8''" + encoded);
+    reply.header('X-TokenAI-Report-Source', 'structured-export');
+    return reply.type('text/markdown; charset=utf-8').send(exportWorkOrderMarkdown(data));
   });
   app.post('/api/v1/solutions/expense-control/matter:ensure', async req => {
     const user = authenticate(store, req); return store.ensureMatter(user);

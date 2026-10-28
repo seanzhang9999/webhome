@@ -10,6 +10,8 @@ import { TokenX } from '../src/tokenx.mjs';
 import { PiAgent } from '../src/agent.mjs';
 import { buildApp } from '../src/app.mjs';
 import { createServer } from 'node:http';
+import { DatabaseSync } from 'node:sqlite';
+import { publicWorkOrder, exportWorkOrderMarkdown, rewriteWorkOrderResult } from '../src/work-order-view.mjs';
 
 function fixture() {
   const dir = mkdtempSync(join(tmpdir(), 'tokenai-test-'));
@@ -37,6 +39,38 @@ test('PKCE code is bound to origin, single use, and account is checked', () => {
     f.store.run('UPDATE users SET disabled=1 WHERE id=?', f.a.id);
     assert.throws(() => authenticate(f.store, { headers: { authorization: 'Bearer ' + result.accessToken } }), /过期/);
   } finally { f.cleanup(); }
+});
+
+test('remembered sessions last seven days, and a short authorization cannot be upgraded during exchange', () => {
+  const f = fixture();
+  try {
+    const verifier = 'v'.repeat(43), origin = f.config.publicOrigin;
+    const input = { username: 'finance-a', password: 'test-only-password-a', origin, codeChallenge: challenge(verifier) };
+    const code = issueCode(f.store, f.config, { ...input, remember: true });
+    const remembered = exchangeCode(f.store, { code, verifier, origin });
+    assert.equal(remembered.remember, true);
+    assert.ok(remembered.expiresAt > Date.now() + 6 * 24 * 60 * 60000);
+    const short = exchangeCode(f.store, { code: issueCode(f.store, f.config, input), verifier, origin, remember: true });
+    assert.equal(short.remember, false);
+    assert.ok(short.expiresAt < Date.now() + 31 * 60000);
+    f.store.run('DELETE FROM tokens WHERE hash=?', hash(remembered.accessToken));
+    assert.throws(() => authenticate(f.store, { headers: { authorization: 'Bearer ' + remembered.accessToken } }), /过期/);
+  } finally { f.cleanup(); }
+});
+
+test('remember preference migration preserves an existing authorization-code table', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'tokenai-migration-'));
+  const legacy = new DatabaseSync(join(dir, 'tokenai.sqlite'));
+  legacy.exec('CREATE TABLE codes(hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,origin TEXT NOT NULL,challenge TEXT NOT NULL,expires INTEGER NOT NULL)');
+  legacy.prepare('INSERT INTO codes VALUES(?,?,?,?,?)').run('old-code', 'old-user', 'https://tokenai.awiki.ai', 'challenge', Date.now() + 60000);
+  legacy.close();
+  const store = new Store(dir);
+  try {
+    assert.ok(store.get('SELECT * FROM codes WHERE hash=?', 'old-code'));
+    assert.equal(store.all('PRAGMA table_info(codes)').length, 5, 'Old releases can still insert five-column codes after rollback');
+    assert.equal(store.get('SELECT COUNT(*) AS n FROM auth_code_preferences').n, 0);
+  }
+  finally { store.close(); rmSync(dir, { recursive: true, force: true }); }
 });
 
 test('fixed matter is idempotent, persists, and is isolated by tenant and membership', () => {
@@ -207,4 +241,42 @@ test('attachment upload uses an explicit schema mapping and never exposes bytes 
     tx.config.uploadContentField = 'wrong_schema_field';
     assert.throws(() => tx.attachmentArgs(f.store, matter.id, fileId), /尚未/);
   } finally { f.cleanup(); }
+});
+
+test('work-order pages and report exports use TokenAI authentication and never fetch localhost URLs', async () => {
+  const f = fixture(), config = { ...f.config, workOrderTenant: f.a.tenant };
+  const id = '11111111-1111-4111-8111-111111111111', calls = [];
+  const data = { subject_id: id, title: '测试合同审核', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '请核对付款条件', rule_summary: { passed: 1, failed: 1 }, rule_results: [{ name: '付款节点', status: 'failed', summary: '材料不完整', evidence: ['合同附件缺失'], suggestion: '补齐附件' }], console_url: 'http://localhost:8089/doc?subjectId=' + id, report: { file_name: 'contract.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview?sign=private-signature' } };
+  const tokenx = { status: {}, tools: [], allowed: () => true, close: async () => {}, call: async (name, args) => { calls.push({ name, args }); return { content: [{ type: 'text', text: JSON.stringify(data) }] }; } };
+  const app = await buildApp(config, { store: f.store, tokenx, agent: { active: new Map(), close: async () => {} } });
+  const headers = { authorization: 'Bearer ' + f.token, origin: config.allowedOrigins[1] };
+  const foreignToken = 'B'.repeat(43);
+  f.store.run('INSERT INTO tokens VALUES(?,?,?)', hash(foreignToken), f.b.id, Date.now() + 60000);
+  try {
+    assert.equal((await app.inject('/work-orders/' + id)).statusCode, 200);
+    assert.equal((await app.inject('/api/v1/work-orders/' + id)).statusCode, 401);
+    assert.equal((await app.inject({ url: '/api/v1/work-orders/' + id, headers: { authorization: 'Bearer ' + foreignToken } })).statusCode, 403);
+    assert.equal((await app.inject({ url: '/api/v1/work-orders/not-a-subject', headers })).statusCode, 400);
+    const detail = await app.inject({ url: '/api/v1/work-orders/' + id, headers });
+    assert.equal(detail.statusCode, 200);
+    assert.equal(detail.json().console_url, config.publicOrigin + '/work-orders/' + id);
+    assert.equal(detail.json().report.original_file_available, false);
+    assert.equal(detail.body.includes('localhost'), false);
+    assert.equal(detail.body.includes('private-signature'), false);
+    const download = await app.inject({ url: '/api/v1/work-orders/' + id + '/report', headers });
+    assert.equal(download.statusCode, 200);
+    assert.match(download.headers['content-type'], /text\/markdown/);
+    assert.match(download.headers['content-disposition'], /attachment/);
+    assert.equal(download.headers['x-tokenai-report-source'], 'structured-export');
+    assert.ok(download.body.includes('合同附件缺失'));
+    assert.ok(download.body.includes('不等同于控制台原报告文件'));
+    assert.equal(download.body.includes('localhost'), false);
+    assert.ok(calls.every(c => c.name === 'scenario_work_order' && c.args.include_share === false));
+    const rewritten = publicWorkOrder(data, config.publicOrigin);
+    const mcp = rewriteWorkOrderResult({ content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: data }, config.publicOrigin);
+    assert.equal(JSON.stringify(mcp).includes('localhost'), false);
+    assert.equal(JSON.stringify(mcp).includes('private-signature'), false);
+    assert.equal(publicWorkOrder(rewritten, config.publicOrigin).report.file_name, rewritten.report.file_name);
+    assert.ok(exportWorkOrderMarkdown(rewritten).includes('补齐附件'));
+  } finally { await app.close(); f.cleanup(); }
 });

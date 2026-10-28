@@ -16,6 +16,7 @@ export class Store {
       PRAGMA foreign_keys=ON;
       CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY, username TEXT UNIQUE NOT NULL, name TEXT NOT NULL, tenant TEXT NOT NULL, password TEXT NOT NULL, disabled INTEGER DEFAULT 0);
       CREATE TABLE IF NOT EXISTS codes(hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,origin TEXT NOT NULL,challenge TEXT NOT NULL,expires INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS auth_code_preferences(hash TEXT PRIMARY KEY REFERENCES codes(hash) ON DELETE CASCADE,remember INTEGER NOT NULL DEFAULT 0);
       CREATE TABLE IF NOT EXISTS tokens(hash TEXT PRIMARY KEY,user_id TEXT NOT NULL,expires INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS matters(id TEXT PRIMARY KEY,tenant TEXT NOT NULL,business_key TEXT NOT NULL,title TEXT NOT NULL,session_file TEXT, UNIQUE(tenant,business_key));
       CREATE TABLE IF NOT EXISTS members(matter_id TEXT NOT NULL,user_id TEXT NOT NULL,PRIMARY KEY(matter_id,user_id));
