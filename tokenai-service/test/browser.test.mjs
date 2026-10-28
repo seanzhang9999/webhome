@@ -8,6 +8,7 @@ import { Store } from '../src/store.mjs';
 import { addUser } from '../src/auth.mjs';
 import { configuration } from '../src/config.mjs';
 import { buildApp } from '../src/app.mjs';
+import { FinanceCompanion } from '../src/companion.mjs';
 
 test('existing page opens a persistent finance matter, authenticates and displays backend replies', { timeout: 45000 }, async () => {
   const dir = await mkdtemp(join(tmpdir(), 'tokenai-browser-'));
@@ -21,11 +22,12 @@ test('existing page opens a persistent finance matter, authenticates and display
   for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
   const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async () => ({ content: [{ type: 'text', text: JSON.stringify({ subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: { name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] } }, review_result: { results: [{ name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] }] }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } }) }] }) };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
-    store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text);
+    store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text + '\n\n## 审核摘要\n\n| 项目 | 状态 |\n| --- | --- |\n| 合同附件 | 待补充 |\n\n- 第一项\n- 第二项\n\n```json\n{"readOnly":true}\n```\n\n<script>window.__markdownInjected=true</script><img src=x onerror="window.__markdownInjected=true">[危险链接](javascript:alert(1))');
     store.run("UPDATE turns SET status='completed' WHERE id=?", turn.id);
     store.event(matter.id, turn.id, 'turn_completed', { turnId: turn.id });
   } };
-  const app = await buildApp(config, { store, tokenx, agent });
+  const companion = new FinanceCompanion(config, store, { generate: async ({ sourceSeq }) => '## 建议行动\n\n- 基于主聊天消息 ' + sourceSeq + ' 核对审核结论。\n- 建议只供财务人员判断。' });
+  const app = await buildApp(config, { store, tokenx, agent, companion });
   await app.listen({ host: '127.0.0.1', port: 0 });
   const address = 'http://127.0.0.1:' + app.server.address().port;
   const browser = await chromium.launch({ headless: true, ...(process.env.TOKENAI_BROWSER_PATH ? { executablePath: process.env.TOKENAI_BROWSER_PATH } : {}) });
@@ -35,9 +37,9 @@ test('existing page opens a persistent finance matter, authenticates and display
   try {
     await context.route('https://seanzhang9999.github.io/webhome/**', async route => {
       const url = new URL(route.request().url()), name = url.pathname.split('/').pop();
-      if (!['awiki-coffee-trusted-space-v55-cfo.html', 'tokenai-expense.js'].includes(name)) return route.abort();
+      if (!['awiki-coffee-trusted-space-v55-cfo.html', 'tokenai-expense.js', 'tokenai-markdown.js', 'tokenai-markdown.css'].includes(name)) return route.abort();
       const body = await readFile(new URL('../../' + name, import.meta.url));
-      await route.fulfill({ status: 200, body, contentType: name.endsWith('.js') ? 'application/javascript' : 'text/html' });
+      await route.fulfill({ status: 200, body, contentType: name.endsWith('.js') ? 'application/javascript' : name.endsWith('.css') ? 'text/css' : 'text/html' });
     });
     await context.route('https://tokenai.awiki.ai/**', async route => {
       const request = route.request(), url = new URL(request.url());
@@ -87,6 +89,14 @@ test('existing page opens a persistent finance matter, authenticates and display
     await page.locator('#expense-root [name=text]').fill('查询当前可用场景');
     await page.locator('[data-expense-form=message] button[type=submit]').click();
     await page.locator('.bubble').filter({ hasText: '浏览器接口验收回复：查询当前可用场景' }).waitFor();
+    assert.equal(await page.locator('.bubble .tokenai-markdown h2').filter({ hasText: '审核摘要' }).count(), 1);
+    assert.equal(await page.locator('.bubble .tokenai-markdown table').count(), 1);
+    assert.equal(await page.locator('.bubble .tokenai-markdown pre code').count(), 1);
+    assert.equal(await page.locator('.bubble script,.bubble img,.bubble a[href^="javascript:"]').count(), 0);
+    assert.equal(await page.evaluate(() => window.__markdownInjected === true), false);
+    const latestSeq = store.get('SELECT MAX(seq) AS seq FROM messages WHERE matter_id=?', firstMatterId).seq;
+    await page.locator('#expense-companion .tokenai-markdown').filter({ hasText: '基于主聊天消息 ' + latestSeq }).waitFor();
+    assert.equal(store.all('SELECT * FROM messages WHERE matter_id=?', firstMatterId).length, historyCount + 2, 'Private advice must never enter the shared chat');
     await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; }, null, { timeout: 5000 });
     await page.locator('[data-worktab=solutions]').click();
     await page.locator('[data-object="pack:expense-control"]').click();

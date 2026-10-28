@@ -26,11 +26,13 @@ export class Store {
       CREATE TABLE IF NOT EXISTS operations(id TEXT PRIMARY KEY,matter_id TEXT NOT NULL,user_id TEXT NOT NULL,tool TEXT NOT NULL,args TEXT NOT NULL,state TEXT NOT NULL,result TEXT,expires INTEGER NOT NULL,created TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY,matter_id TEXT NOT NULL,operation_id TEXT,tool TEXT NOT NULL,remote_id TEXT,result TEXT NOT NULL,created TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS files(id TEXT PRIMARY KEY,matter_id TEXT NOT NULL,user_id TEXT NOT NULL,name TEXT NOT NULL,mime TEXT NOT NULL,path TEXT NOT NULL,size INTEGER NOT NULL,created TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS companion_advice(matter_id TEXT NOT NULL REFERENCES matters(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,source_seq INTEGER NOT NULL DEFAULT 0,requested_seq INTEGER NOT NULL DEFAULT 0,text TEXT NOT NULL DEFAULT '',status TEXT NOT NULL,error TEXT,updated TEXT,PRIMARY KEY(matter_id,user_id));
       CREATE INDEX IF NOT EXISTS messages_matter ON messages(matter_id,seq);
       CREATE INDEX IF NOT EXISTS events_matter ON events(matter_id,seq);
     `);
     // Never replay uncertain writes after a process restart.
     if (recover) this.db.exec("UPDATE operations SET state='unknown' WHERE state='executing'; UPDATE turns SET status='interrupted' WHERE status IN ('queued','running','stopping')");
+    if (recover) this.db.exec("UPDATE companion_advice SET status='interrupted' WHERE status='generating'");
   }
   get(sql, ...args) { return this.db.prepare(sql).get(...args); }
   all(sql, ...args) { return this.db.prepare(sql).all(...args); }

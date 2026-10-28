@@ -3,8 +3,8 @@
   'use strict';
   const base = 'https://tokenai.awiki.ai';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  const state = { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', busy: false, cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null };
-  let streamController, loginWindow, loginRequest;
+  const state = { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', busy: false, cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null, companion: { status: 'idle', text: '' } };
+  let streamController, loginWindow, loginRequest, companionTimer;
   const sessionKey = 'tokenai.session.v1';
   let pendingOrder = location.origin === base ? location.pathname.match(/^\/work-orders\/([0-9a-f-]{36})(?:\/report)?$/i)?.[1] : null;
   function savedSession() {
@@ -17,40 +17,75 @@
   }
   function clearSession(forget = true) {
     streamController?.abort();
+    clearTimeout(companionTimer);
     if (forget) { try { localStorage.removeItem(sessionKey); } catch {} }
-    Object.assign(state, { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null });
+    Object.assign(state, { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null, companion: { status: 'idle', text: '' } });
   }
   const b64 = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const random = () => b64(crypto.getRandomValues(new Uint8Array(32)));
   const labels = { pending: '等待确认', completed: '已完成', executing: '正在执行', unknown: '结果待核实', rejected: '已拒绝', expired: '确认已过期', failed: '执行失败' };
   function renderText(value) {
-    const text = String(value || ''); let output = '', cursor = 0;
-    for (const match of text.matchAll(/https?:\/\/[^\s<>`"')]+/g)) {
-      output += esc(text.slice(cursor, match.index)); let action = null, id = null, legacy = false;
+    const template = document.createElement('template');
+    template.innerHTML = window.TokenAIMarkdown ? window.TokenAIMarkdown.render(value) : esc(value).replace(/\n/g, '<br>');
+    for (const element of template.content.querySelectorAll('a, code')) {
+      const text = element.tagName === 'A' ? element.getAttribute('href') : element.textContent;
+      let action = null, id = null, legacy = false;
       try {
-        const url = new URL(match[0]);
+        const url = new URL(text);
         if (url.origin === base) {
           const path = url.pathname.match(/^\/work-orders\/([0-9a-f-]{36})(\/report)?$/i);
           if (path) { id = path[1]; action = path[2] ? 'download-report' : 'view-order'; }
         } else if (['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname === '/doc') { id = url.searchParams.get('subjectId'); if (/^[0-9a-f-]{36}$/i.test(id || '')) { action = 'view-order'; legacy = true; } }
       } catch {}
-      output += action ? `<button type="button" class="btn tiny" data-expense-action="${action}" data-subject="${esc(id)}">${action === 'download-report' ? '下载审核结果（Markdown）' : '查看审核明细'}</button>${legacy ? ` <button type="button" class="btn tiny" data-expense-action="download-report" data-subject="${esc(id)}">下载审核结果（Markdown）</button>` : ''}` : esc(match[0]);
-      cursor = match.index + match[0].length;
+      if (action) {
+        const replacement = document.createElement('span');
+        replacement.innerHTML = `<button type="button" class="btn tiny" data-expense-action="${action}" data-subject="${esc(id)}">${action === 'download-report' ? '下载审核结果（Markdown）' : '查看审核明细'}</button>${legacy ? ` <button type="button" class="btn tiny" data-expense-action="download-report" data-subject="${esc(id)}">下载审核结果（Markdown）</button>` : ''}`;
+        element.replaceWith(replacement);
+      } else if (element.tagName === 'A') {
+        element.target = '_blank'; element.rel = 'noopener noreferrer';
+        try { if (['localhost', '127.0.0.1'].includes(new URL(text, location.href).hostname)) element.removeAttribute('href'); } catch {}
+      }
     }
-    return output + esc(text.slice(cursor));
+    return template.innerHTML;
+  }
+  function partnerHtml() {
+    const advice = state.companion, status = !state.token ? '待登录' : ({ waiting: '等待主聊天结果', generating: '正在分析', ready: '建议已更新', error: '暂时无法更新', interrupted: '等待更新', idle: '等待主聊天' }[advice.status] || '等待更新');
+    const body = !state.token ? '<p class="companion-note">登录后，AI 伙伴会根据主聊天中的新结果，为财务经理提供私人建议。</p>' : advice.text ? `<div class="tokenai-markdown">${renderText(advice.text)}</div>` : '<p class="companion-note">主聊天产生新内容后，我会自动整理需要关注的风险、待补材料和下一步建议。</p>';
+    const updated = advice.updatedAt ? new Date(advice.updatedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' }) : '';
+    return `<aside class="partner tokenai-companion" id="expense-companion"><header class="partner-head"><span class="companion-icon">✦</span><div><b>财务经理的 AI 伙伴</b><small>独立 Pi · DeepSeek · 私人建议</small></div><span class="companion-status" role="status">${esc(status)}</span></header><div class="partner-scroll"><section class="p-card">${body}</section>${advice.error ? '<p class="companion-note">建议暂时未能更新，可以稍后点击“更新建议”。主聊天仍可继续使用。</p>' : ''}<p class="companion-note">${updated ? '最近建议更新于北京时间 ' + esc(updated) + '。' : ''}建议依据当前事项可见聊天，不会作为群消息发送。</p></div><footer class="partner-foot"><button type="button" class="btn tiny" data-expense-action="companion-refresh" ${!state.token || !state.matter || ['waiting','generating'].includes(advice.status) ? 'disabled' : ''}>更新建议</button><p>辅助判断 · 由财务人员决定，不自动审批或执行。</p></footer></aside>`;
+  }
+  function drawCompanion() {
+    const root = document.querySelector('#expense-companion'); if (!root) return;
+    const top = root.querySelector('.partner-scroll')?.scrollTop || 0; root.outerHTML = partnerHtml();
+    const scroll = document.querySelector('#expense-companion .partner-scroll'); if (scroll) scroll.scrollTop = top;
+  }
+  async function updateCompanion(force = false) {
+    clearTimeout(companionTimer);
+    if (!state.token || !state.matter) return;
+    const accessToken = state.token, matterId = state.matter.id;
+    try {
+      const result = await api('/api/v1/matters/' + matterId + (force ? '/companion:refresh' : '/companion'), force ? {} : undefined);
+      if (state.token !== accessToken || state.matter?.id !== matterId) return;
+      state.companion = result; drawCompanion();
+      if (['waiting','generating','interrupted'].includes(result.status)) companionTimer = setTimeout(() => updateCompanion(), 1800);
+    } catch (error) {
+      if (state.token !== accessToken) return;
+      state.companion = { ...state.companion, status: 'error', error: error.message }; drawCompanion();
+    }
   }
   function workOrderHtml() {
     const data = state.workOrder; if (!data) return '';
     const rules = Array.isArray(data.rule_results) ? data.rule_results : Array.isArray(data.review_result?.results) ? data.review_result.results : Object.values(data.rule_results || {});
-    return `<div style="position:fixed;inset:0;background:#17253b90;z-index:1000;display:grid;place-items:center;padding:16px"><section id="work-order-panel" role="dialog" aria-modal="true" aria-label="工单审核明细" style="background:white;color:#233145;border-radius:14px;width:min(900px,100%);max-height:90dvh;overflow:auto;padding:22px"><div class="headflex"><h2>${esc(data.title || '工单审核明细')}</h2><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></div><p>审核状态：${esc(data.status)} · 风险等级：${esc(data.risk_level)} · 业务类型：${esc(data.scenario_type)}</p><p style="white-space:pre-wrap">${esc(data.audit_summary || data.review_result?.audit_summary || '')}</p><div class="btn-row"><button class="btn primary" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载审核结果（Markdown）</button></div><p class="muted small">下载内容由 TokenX 实时审核结果导出，包含规则结论与证据。控制台原报告文件尚不能通过当前公网通道下载。</p><h3>规则明细 · ${rules.length} 项</h3>${rules.map((r, i) => `<details style="border-top:1px solid #dce4ef;padding:12px 0"><summary>${i + 1}. ${esc(r.name || r.rule_code || '审核规则')} · ${esc(r.status || '')}</summary><p style="white-space:pre-wrap">${esc(r.summary || '')}</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px">${esc(JSON.stringify(r, null, 2))}</pre></details>`).join('')}<details><summary>完整审核数据</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px">${esc(JSON.stringify(data, null, 2))}</pre></details></section></div>`;
+    return `<div style="position:fixed;inset:0;background:#17253b90;z-index:1000;display:grid;place-items:center;padding:16px"><section id="work-order-panel" role="dialog" aria-modal="true" aria-label="工单审核明细" style="background:white;color:#233145;border-radius:14px;width:min(900px,100%);max-height:90dvh;overflow:auto;padding:22px"><div class="headflex"><h2>${esc(data.title || '工单审核明细')}</h2><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></div><p>审核状态：${esc(data.status)} · 风险等级：${esc(data.risk_level)} · 业务类型：${esc(data.scenario_type)}</p><div class="tokenai-markdown">${renderText(data.audit_summary || data.review_result?.audit_summary || '')}</div><div class="btn-row"><button class="btn primary" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载审核结果（Markdown）</button></div><p class="muted small">下载内容由 TokenX 实时审核结果导出，包含规则结论与证据。控制台原报告文件尚不能通过当前公网通道下载。</p><h3>规则明细 · ${rules.length} 项</h3>${rules.map((r, i) => `<details style="border-top:1px solid #dce4ef;padding:12px 0"><summary>${i + 1}. ${esc(r.name || r.rule_code || '审核规则')} · ${esc(r.status || '')}</summary><div class="tokenai-markdown">${renderText(r.summary || '')}</div><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px">${esc(JSON.stringify(r, null, 2))}</pre></details>`).join('')}<details><summary>完整审核数据</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px">${esc(JSON.stringify(data, null, 2))}</pre></details></section></div>`;
   }
   async function api(path, body, method) {
-    const headers = state.token ? { Authorization: 'Bearer ' + state.token } : {};
+    const requestToken = state.token;
+    const headers = requestToken ? { Authorization: 'Bearer ' + requestToken } : {};
     if (body && !(body instanceof FormData)) headers['Content-Type'] = 'application/json';
     const response = await fetch(base + path, { method: method || (body ? 'POST' : 'GET'), headers, body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined, credentials: 'omit' });
     const result = await response.json().catch(() => ({ error: '服务返回了无法识别的响应' }));
     if (!response.ok) {
-      if (response.status === 401) clearSession();
+      if (response.status === 401 && state.token === requestToken) clearSession();
       throw new Error(result.error || '服务请求失败（' + response.status + '）');
     }
     return result;
@@ -61,16 +96,18 @@
   function html() {
     const members = state.matter?.members || [{ name: '财务人员 · 登录后确认', kind: 'human' }, { name: 'TokenAI 报销费控助手', kind: 'agent' }];
     const operations = state.operations.filter(o => o.state === 'pending' || o.state === 'unknown').map(o => `<section class="advance ${o.state === 'unknown' ? 'warn' : ''}"><h3>${esc(o.tool)} · ${esc(labels[o.state])}</h3><p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(JSON.stringify(o.args, null, 2))}</p>${o.state === 'pending' && o.user_id === state.user?.id ? `<div class="btn-row"><button type="button" class="btn primary" data-expense-action="approve" data-id="${esc(o.id)}" ${state.busy ? 'disabled' : ''}>确认执行本次操作</button><button type="button" class="btn" data-expense-action="reject" data-id="${esc(o.id)}" ${state.busy ? 'disabled' : ''}>拒绝</button></div>` : '<p>请先核查远程状态，避免重复提交。</p>'}</section>`).join('');
-    const messages = state.messages.map(m => `<article class="msg"><span class="avatar ${m.actor === 'tokenai' ? 'agent' : 'human'}">${m.actor === 'tokenai' ? 'AI' : esc(m.name.slice(0, 1))}</span><div class="body"><div class="meta"><b>${esc(m.name)}</b><span>报销费控事项</span><time>${esc(new Date(m.created).toLocaleString())}</time></div><div class="bubble"><p style="overflow-wrap:anywhere">${renderText(m.text)}</p></div></div></article>`).join('');
-    return `<main class="center" id="expense-root"><header class="chat-head"><div class="headflex"><div><span class="eyebrow">持续协作事项 · EXPENSE CONTROL</span><h2>报销费控工作台</h2><p>TokenAI · Pi Agent · TokenX Suite</p></div><span class="pill ${state.token ? 'ok' : 'gray'}">${state.token ? '已登录 · ' + esc(state.user?.name || '') : '待登录'}</span></div><div class="members">${members.map(m => `<span class="member"><span class="avatar ${m.kind === 'agent' ? 'agent' : 'human'}">${m.kind === 'agent' ? 'AI' : esc(m.name.slice(0, 1))}</span>${esc(m.name)}</span>`).join('')}</div></header><div class="chat-scroll" id="expense-scroll"><div class="timeline"><div class="split-note">本事项通过 TokenAI 处理真实请求。已授权财务组织可按日期、业务类型查询 TokenX 工单和审核明细，无需先提供 run_id；企业完整报销台账、付款和到账情况取决于业务系统实际提供的能力。</div>${!state.token ? `<section class="advance"><h3>连接财务工作台</h3><p>使用管理员开通的财务账号登录。页面中的演示角色选择不改变真实账号权限。</p><button type="button" class="btn primary" data-expense-action="login">登录 TokenAI 并连接</button></section>` : ''}${state.status ? `<div class="split-note">Pi ${esc(state.status.piVersion)} · ${esc(state.status.model.name)} · TokenX：${state.status.mcp.connected ? "已连接，" + state.status.mcp.discoveredTools + " 个工具" : esc(state.status.mcp.error || "未连接")}</div>` : ""}${state.error ? `<div class="advance error" role="alert"><h3>请求未完成</h3><p>${esc(state.error)}</p>${state.pendingMessage ? '<button type="button" class="btn" data-expense-action="retry">重试同一条消息</button>' : ''}</div>` : ''}${state.messages.length >= 100 && state.before ? '<button type="button" class="btn tiny" data-expense-action="older">加载更早消息</button>' : ''}${messages}${state.partial ? `<article class="msg"><span class="avatar agent">AI</span><div class="body"><div class="meta"><b>TokenAI 报销费控助手</b><span>正在回复</span></div><div class="bubble"><p style="overflow-wrap:anywhere">${esc(state.partial)}</p></div></div></article>` : ''}${operations}<p class="muted small" role="status">${esc(state.progress)}</p></div></div><footer class="chat-compose"><form data-expense-form="message" class="partner-compose"><input name="text" maxlength="12000" value="${esc(state.draft)}" placeholder="例如：查询今日合同付款审核明细" aria-label="向 TokenAI 提问" ${!state.token || state.busy ? 'disabled' : ''}><button class="btn primary" type="submit" ${!state.token || state.busy ? 'disabled' : ''}>发送</button></form><div class="btn-row"><button class="btn tiny" type="button" data-expense-action="refresh" ${!state.token || state.busy ? 'disabled' : ''}>刷新记录</button><label class="btn tiny">添加附件<input type="file" data-expense-file hidden ${!state.token || state.busy ? 'disabled' : ''}></label>${state.token ? '<button class="btn tiny" type="button" data-expense-action="logout">退出登录</button>' : ''}<a class="btn tiny" href="${base}" target="_blank" rel="noopener noreferrer">服务状态</a></div><small>消息保存在服务端；审核和取消等操作需确认。附件上传到本事项后，是否可提交给 TokenX 以服务能力为准。</small></footer>${workOrderHtml()}</main>`;
+    const messages = state.messages.map(m => `<article class="msg"><span class="avatar ${m.actor === 'tokenai' ? 'agent' : 'human'}">${m.actor === 'tokenai' ? 'AI' : esc(m.name.slice(0, 1))}</span><div class="body"><div class="meta"><b>${esc(m.name)}</b><span>报销费控事项</span><time>${esc(new Date(m.created).toLocaleString())}</time></div><div class="bubble"><div class="tokenai-markdown">${renderText(m.text)}</div></div></div></article>`).join('');
+    return `<main class="center" id="expense-root"><header class="chat-head"><div class="headflex"><div><span class="eyebrow">持续协作事项 · EXPENSE CONTROL</span><h2>报销费控工作台</h2><p>TokenAI · Pi Agent · TokenX Suite</p></div><span class="pill ${state.token ? 'ok' : 'gray'}">${state.token ? '已登录 · ' + esc(state.user?.name || '') : '待登录'}</span></div><div class="members">${members.map(m => `<span class="member"><span class="avatar ${m.kind === 'agent' ? 'agent' : 'human'}">${m.kind === 'agent' ? 'AI' : esc(m.name.slice(0, 1))}</span>${esc(m.name)}</span>`).join('')}</div></header><div class="chat-scroll" id="expense-scroll"><div class="timeline"><div class="split-note">本事项通过 TokenAI 处理真实请求。已授权财务组织可按日期、业务类型查询 TokenX 工单和审核明细，无需先提供 run_id；企业完整报销台账、付款和到账情况取决于业务系统实际提供的能力。</div>${!state.token ? `<section class="advance"><h3>连接财务工作台</h3><p>使用管理员开通的财务账号登录。页面中的演示角色选择不改变真实账号权限。</p><button type="button" class="btn primary" data-expense-action="login">登录 TokenAI 并连接</button></section>` : ''}${state.status ? `<div class="split-note">Pi ${esc(state.status.piVersion)} · ${esc(state.status.model.name)} · TokenX：${state.status.mcp.connected ? "已连接，" + state.status.mcp.discoveredTools + " 个工具" : esc(state.status.mcp.error || "未连接")}</div>` : ""}${state.error ? `<div class="advance error" role="alert"><h3>请求未完成</h3><p>${esc(state.error)}</p>${state.pendingMessage ? '<button type="button" class="btn" data-expense-action="retry">重试同一条消息</button>' : ''}</div>` : ''}${state.messages.length >= 100 && state.before ? '<button type="button" class="btn tiny" data-expense-action="older">加载更早消息</button>' : ''}${messages}${state.partial ? `<article class="msg"><span class="avatar agent">AI</span><div class="body"><div class="meta"><b>TokenAI 报销费控助手</b><span>正在回复</span></div><div class="bubble"><div class="tokenai-markdown">${renderText(state.partial)}</div></div></div></article>` : ''}${operations}<p class="muted small" role="status">${esc(state.progress)}</p></div></div><footer class="chat-compose"><form data-expense-form="message" class="partner-compose"><input name="text" maxlength="12000" value="${esc(state.draft)}" placeholder="例如：查询今日合同付款审核明细" aria-label="向 TokenAI 提问" ${!state.token || state.busy ? 'disabled' : ''}><button class="btn primary" type="submit" ${!state.token || state.busy ? 'disabled' : ''}>发送</button></form><div class="btn-row"><button class="btn tiny" type="button" data-expense-action="refresh" ${!state.token || state.busy ? 'disabled' : ''}>刷新记录</button><label class="btn tiny">添加附件<input type="file" data-expense-file hidden ${!state.token || state.busy ? 'disabled' : ''}></label>${state.token ? '<button class="btn tiny" type="button" data-expense-action="logout">退出登录</button>' : ''}<a class="btn tiny" href="${base}" target="_blank" rel="noopener noreferrer">服务状态</a></div><small>消息保存在服务端；审核和取消等操作需确认。附件上传到本事项后，是否可提交给 TokenX 以服务能力为准。</small></footer>${workOrderHtml()}</main>`;
   }
   function mount() {
     requestAnimationFrame(() => {
       const scroll = document.querySelector('#expense-scroll');
       if (scroll) { scroll.style.scrollBehavior = 'auto'; scroll.scrollTop = scroll.scrollHeight; }
     });
+    drawCompanion();
   }
   function draw(follow = true) {
+    drawCompanion();
     const root = document.querySelector('#expense-root');
     if (!root) return;
     const old = root.querySelector('[name=text]');
@@ -93,6 +130,7 @@
     state.status = status;
     if (initial) state.cursor = messages.eventCursor;
     draw();
+    updateCompanion();
   }
   async function connect() {
     state.user = await api('/api/v1/me');
@@ -135,9 +173,12 @@
   }
   async function downloadReport(id) {
     if (!state.token) { pendingOrder = id; await login(); return; }
-    const response = await fetch(base + '/api/v1/work-orders/' + encodeURIComponent(id) + '/report', { headers: { Authorization: 'Bearer ' + state.token }, credentials: 'omit' });
+    const requestToken = state.token;
+    const response = await fetch(base + '/api/v1/work-orders/' + encodeURIComponent(id) + '/report', { headers: { Authorization: 'Bearer ' + requestToken }, credentials: 'omit' });
+    if (state.token !== requestToken) return;
     if (!response.ok) { if (response.status === 401) clearSession(); const error = await response.json().catch(() => ({})); throw new Error(error.error || '审核结果下载未完成'); }
     const blob = await response.blob();
+    if (state.token !== requestToken) return;
     const encoded = response.headers.get('content-disposition')?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
     const url = URL.createObjectURL(blob), anchor = document.createElement('a'); anchor.href = url; anchor.download = encoded ? decodeURIComponent(encoded) : 'audit-result.md'; document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 30000);
     state.progress = '审核结果导出已下载';
@@ -155,7 +196,9 @@
   async function stream(controller) {
     while (state.token && !controller.signal.aborted) {
       try {
-        const response = await fetch(base + '/api/v1/matters/' + state.matter.id + '/events?after=' + state.cursor, { headers: { Authorization: 'Bearer ' + state.token }, signal: controller.signal, credentials: 'omit' });
+        const requestToken = state.token;
+        const response = await fetch(base + '/api/v1/matters/' + state.matter.id + '/events?after=' + state.cursor, { headers: { Authorization: 'Bearer ' + requestToken }, signal: controller.signal, credentials: 'omit' });
+        if (controller.signal.aborted || state.token !== requestToken) return;
         if (response.status === 401) { clearSession(); state.error = '登录已过期，请重新登录'; draw(); return; }
         if (!response.ok || !response.body) throw new Error('消息连接未建立（' + response.status + '）');
         const reader = response.body.getReader(), decoder = new TextDecoder(); let buffer = '';
@@ -197,6 +240,7 @@
     const button = event.target.closest('[data-expense-action]'); if (!button || button.disabled) return;
     try {
       const action = button.dataset.expenseAction;
+      if (action === 'companion-refresh') { await updateCompanion(true); return; }
       if (action === 'view-order') { state.busy = true; await openWorkOrder(button.dataset.subject); }
       if (action === 'download-report') { state.busy = true; await downloadReport(button.dataset.subject); }
       if (action === 'close-order') state.workOrder = null;
@@ -216,7 +260,7 @@
         try { await api('/api/v1/auth/logout', {}); } finally { clearSession(); }
       }
     } catch(e) { state.error = e.message; }
-    finally { state.busy = false; draw(button.dataset.expenseAction !== 'older'); }
+    finally { if (button.dataset.expenseAction !== 'companion-refresh') { state.busy = false; draw(button.dataset.expenseAction !== 'older'); } }
   });
   document.addEventListener('change', async event => {
     if (!event.target.matches('[data-expense-file]') || !state.token || state.busy) return;
@@ -230,7 +274,7 @@
     } catch(e) { state.error = e.message; }
     finally { state.busy = false; draw(); }
   });
-  window.TokenAIExpense = { html, packHtml, mount };
+  window.TokenAIExpense = { html, packHtml, partnerHtml, mount };
   window.addEventListener('storage', event => { if (event.key === sessionKey && !event.newValue) { clearSession(); draw(); } });
   if (savedSession()) restoreSession();
 })();

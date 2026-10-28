@@ -22,8 +22,8 @@ try {
   const context = await browser.newContext();
   if (process.env.TOKENAI_SMOKE_SOURCE === '1') await context.route('https://seanzhang9999.github.io/webhome/**', async route => {
     const name = new URL(route.request().url()).pathname.split('/').pop();
-    if (!['awiki-coffee-trusted-space-v55-cfo.html', 'tokenai-expense.js'].includes(name)) return route.abort();
-    await route.fulfill({ status: 200, contentType: name.endsWith('.js') ? 'application/javascript' : 'text/html', body: await readFile(new URL('../../' + name, import.meta.url)) });
+    if (!['awiki-coffee-trusted-space-v55-cfo.html', 'tokenai-expense.js', 'tokenai-markdown.js', 'tokenai-markdown.css'].includes(name)) return route.abort();
+    await route.fulfill({ status: 200, contentType: name.endsWith('.js') ? 'application/javascript' : name.endsWith('.css') ? 'text/css' : 'text/html', body: await readFile(new URL('../../' + name, import.meta.url)) });
   });
   const page = await context.newPage();
   const errors = [];
@@ -53,9 +53,15 @@ try {
     const completed = store.all("SELECT data FROM events WHERE matter_id=? AND type='tool_completed'", matter.id).map(e => JSON.parse(e.data));
     assert.ok(completed.some(e => e.tool === 'tokenx_scenario_list' && !e.isError), 'Pi must actually complete the remote MCP read tool');
   }
+  await page.locator('#expense-companion .companion-status').filter({ hasText: '建议已更新' }).waitFor({ timeout: 90000 });
+  const privateAdvice = store.get('SELECT source_seq,text,status FROM companion_advice WHERE matter_id=? AND user_id=?', matter.id, user.id);
+  assert.equal(privateAdvice.status, 'ready');
+  assert.ok(privateAdvice.text.length > 20);
+  assert.equal(privateAdvice.source_seq, store.get('SELECT MAX(seq) AS seq FROM messages WHERE matter_id=?', matter.id).seq);
+  assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
   await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', mcpScenarioList: checkMcp ? 'passed' : 'not requested', latestMessageVisible: true, persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
+  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', mcpScenarioList: checkMcp ? 'passed' : 'not requested', independentPrivateCompanion: 'passed', latestMessageVisible: true, persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
   await context.close();
 } finally {
   await browser?.close();

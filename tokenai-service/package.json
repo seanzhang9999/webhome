@@ -5,7 +5,9 @@
     "@fastify/multipart": "10.1.6",
     "@modelcontextprotocol/sdk": "1.32.2",
     "ajv": "8.20.0",
+    "dompurify": "3.4.17",
     "fastify": "5.12.7",
+    "marked": "18.1.2",
     "undici": "8.12.3"
   },
   "name": "awiki-tokenai-service",
@@ -18,10 +20,12 @@
   "scripts": {
     "start": "node src/main.mjs",
     "test": "node --test test/*.test.mjs",
-    "admin": "node src/admin.mjs"
+    "admin": "node src/admin.mjs",
+    "build:markdown": "node frontend/build.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.64.1"
+    "@playwright/test": "1.64.1",
+    "esbuild": "0.28.2"
   },
   "overrides": {
     "undici": "8.12.3"

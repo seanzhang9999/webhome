@@ -10,6 +10,7 @@ import { authenticate, issueCode, exchangeCode, hash } from './auth.mjs';
 import { TokenX, resultText } from './tokenx.mjs';
 import { requireWorkOrderAccess, publicWorkOrder, exportWorkOrderMarkdown } from './work-order-view.mjs';
 import { PiAgent } from './agent.mjs';
+import { FinanceCompanion } from './companion.mjs';
 import { redact } from './config.mjs';
 
 const publicDir = fileURLToPath(new URL('../public/', import.meta.url));
@@ -22,7 +23,8 @@ export async function buildApp(config, overrides = {}) {
   const store = overrides.store || new Store(config.stateDir, { recover: true });
   const tokenx = overrides.tokenx || new TokenX(config);
   const agent = overrides.agent || new PiAgent(config, store, tokenx);
-  app.decorate('services', { store, tokenx, agent });
+  const companion = overrides.companion || new FinanceCompanion(config, store, { runtime: () => agent.runtime() });
+  app.decorate('services', { store, tokenx, agent, companion });
   const loginAttempts = new Map();
   await app.register(cors, { origin: (origin, cb) => cb(null, !origin || config.allowedOrigins.includes(origin)),
     methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type'], exposedHeaders: ['Content-Disposition', 'X-TokenAI-Report-Source'], maxAge: 600 });
@@ -56,6 +58,8 @@ export async function buildApp(config, overrides = {}) {
   app.get('/auth.js', async (req, reply) => reply.type('application/javascript').send(await readFile(join(publicDir, 'auth.js'), 'utf8')));
   app.get('/status.js', async (req, reply) => reply.type('application/javascript').send(await readFile(join(publicDir, 'status.js'), 'utf8')));
   app.get('/tokenai-expense.js', async (req, reply) => reply.type('application/javascript').send(await readFile(frontendPath, 'utf8')));
+  app.get('/tokenai-markdown.js', async (req, reply) => reply.type('application/javascript').send(await readFile(fileURLToPath(new URL('../../tokenai-markdown.js', import.meta.url)), 'utf8')));
+  app.get('/tokenai-markdown.css', async (req, reply) => reply.type('text/css').send(await readFile(fileURLToPath(new URL('../../tokenai-markdown.css', import.meta.url)), 'utf8')));
   app.get('/api/v1/me', async req => {
     const u = authenticate(store, req); return { id: u.id, name: u.name, tenant: u.tenant, role: 'finance' };
   });
@@ -122,6 +126,12 @@ export async function buildApp(config, overrides = {}) {
   app.get('/api/v1/matters/:matterId/runs', async req => {
     const { matter } = member(req);
     return { runs: store.all('SELECT * FROM runs WHERE matter_id=? ORDER BY created DESC LIMIT 100', matter.id) };
+  });
+  app.get('/api/v1/matters/:matterId/companion', async req => {
+    const { user, matter } = member(req); return companion.request(matter, user);
+  });
+  app.post('/api/v1/matters/:matterId/companion:refresh', async req => {
+    const { user, matter } = member(req); rate('companion:' + user.id, 6, 60000); return companion.request(matter, user, true);
   });
   app.get('/api/v1/matters/:matterId/operations', async req => {
     const { matter } = member(req);
@@ -195,6 +205,6 @@ export async function buildApp(config, overrides = {}) {
     const timer = setInterval(send, 750);
     reply.raw.on('close', () => { closed = true; clearInterval(timer); });
   });
-  app.addHook('onClose', async () => { await agent.close(); await tokenx.close(); if (!overrides.store) store.close(); });
+  app.addHook('onClose', async () => { await companion.close(); await agent.close(); await tokenx.close(); if (!overrides.store) store.close(); });
   return app;
 }

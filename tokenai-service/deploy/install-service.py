@@ -30,6 +30,8 @@ for name in ['src', 'public', 'node_modules']:
 for name in ['package.json', 'package-lock.json']:
     shutil.copy2(source / name, target / name)
 shutil.copy2(workspace / 'tokenai-expense.js', release / 'tokenai-expense.js')
+shutil.copy2(workspace / 'tokenai-markdown.js', release / 'tokenai-markdown.js')
+shutil.copy2(workspace / 'tokenai-markdown.css', release / 'tokenai-markdown.css')
 # Source checkouts can have private directory modes. Releases contain code only;
 # the dedicated service identity needs read/traverse access, never write access.
 for root, dirs, files in os.walk(release):
