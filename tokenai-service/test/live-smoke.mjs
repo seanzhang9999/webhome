@@ -43,7 +43,7 @@ try {
   await page.locator('#expense-root .pill').filter({ hasText: '已登录 · 上线验收财务' }).waitFor({ timeout: 15000 });
   await page.locator('#expense-root [name=text]').fill(checkMcp ? '这是只读接入验收。请务必调用 tokenx_scenario_list 查询实际可用场景；成功后只回复“TokenX 场景查询已完成”。不要发起审核、上传、取消或分享。' : '这是上线验收。请只回复“TokenAI 上线对话已就绪”。不要调用业务工具。');
   await page.locator('[data-expense-form=message] button[type=submit]').click();
-  await page.locator('.bubble').filter({ hasText: checkMcp ? /TokenX 场景查询已完成/ : /^TokenAI 上线对话已就绪[。！]?$/ }).waitFor({ timeout: 90000 });
+  await page.locator('.msg').filter({ has: page.locator('.avatar.agent') }).filter({ hasNot: page.getByText('正在回复', { exact: true }) }).locator('.bubble').filter({ hasText: checkMcp ? /TokenX 场景查询已完成/ : /^TokenAI 上线对话已就绪[。！]?$/ }).waitFor({ timeout: 90000 });
   const matters = store.all('SELECT * FROM matters WHERE tenant=?', user.tenant);
   assert.equal(matters.length, 1);
   const matter = matters[0];
@@ -59,6 +59,10 @@ try {
   await context.close();
 } finally {
   await browser?.close();
+  // Do not delete the tenant while the real Agent can still append its result.
+  const cleanupDeadline = Date.now() + 190000;
+  while (store.get("SELECT COUNT(*) AS n FROM turns WHERE user_id=? AND status IN ('queued','running','stopping')", user.id).n && Date.now() < cleanupDeadline) await new Promise(resolve => setTimeout(resolve, 250));
+  if (store.get("SELECT COUNT(*) AS n FROM turns WHERE user_id=? AND status IN ('queued','running','stopping')", user.id).n) throw new Error('Acceptance turn remains active; preserve this temporary tenant for exact-scope cleanup');
   for (const matter of store.all('SELECT id FROM matters WHERE tenant=?', user.tenant)) {
     for (const table of ['messages', 'events', 'turns', 'operations', 'runs', 'files', 'members']) store.run('DELETE FROM ' + table + ' WHERE matter_id=?', matter.id);
     store.run('DELETE FROM matters WHERE id=?', matter.id);
