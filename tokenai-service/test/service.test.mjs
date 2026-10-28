@@ -278,5 +278,7 @@ test('work-order pages and report exports use TokenAI authentication and never f
     assert.equal(JSON.stringify(mcp).includes('private-signature'), false);
     assert.equal(publicWorkOrder(rewritten, config.publicOrigin).report.file_name, rewritten.report.file_name);
     assert.ok(exportWorkOrderMarkdown(rewritten).includes('补齐附件'));
+    const mapped = { ...rewritten, rule_results: { A001: data.rule_results[0] }, review_result: { results: data.rule_results } };
+    assert.ok(exportWorkOrderMarkdown(mapped).includes('## 1. 付款节点'));
   } finally { await app.close(); f.cleanup(); }
 });

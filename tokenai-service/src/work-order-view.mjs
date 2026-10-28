@@ -27,12 +27,17 @@ export function rewriteWorkOrderResult(result, origin) {
 }
 
 const display = value => typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+export function workOrderRules(data) {
+  if (Array.isArray(data.rule_results)) return data.rule_results;
+  if (Array.isArray(data.review_result?.results)) return data.review_result.results;
+  return Object.entries(data.rule_results || {}).map(([rule_code, value]) => value && typeof value === 'object' ? { rule_code, ...value } : { rule_code, summary: String(value) });
+}
 export function exportWorkOrderMarkdown(data) {
   const lines = ['# ' + String(data.title || '工单审核结果').replace(/[\r\n]+/g, ' '), '',
     '> 本文件由 TokenX 返回的结构化审核结果导出，包含审核结论和规则明细。它不等同于控制台原报告文件。', '',
     '- 工单 ID：' + data.subject_id, '- 业务类型：' + (data.scenario_type || ''), '- 审核状态：' + (data.status || ''), '- 风险等级：' + (data.risk_level || ''),
     '- 创建时间：' + (data.created_at || ''), '- 更新时间：' + (data.updated_at || ''), '', '## 审核结论', '', data.audit_summary || data.review_result?.audit_summary || '接口未提供摘要', '', '## 规则汇总', '', '```json', JSON.stringify(data.rule_summary || {}, null, 2), '```'];
-  const rules = data.rule_results || data.review_result?.results || [];
+  const rules = workOrderRules(data);
   for (let i = 0; i < rules.length; i++) {
     const rule = rules[i];
     lines.push('', '## ' + (i + 1) + '. ' + String(rule.name || rule.rule_code || '审核规则').replace(/[\r\n]+/g, ' '));

@@ -19,7 +19,7 @@ test('existing page opens a persistent finance matter, authenticates and display
   const historyCount = 35;
   const subjectId = '11111111-1111-4111-8111-111111111111';
   for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
-  const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async () => ({ content: [{ type: 'text', text: JSON.stringify({ subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: [{ name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] }], report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } }) }] }) };
+  const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async () => ({ content: [{ type: 'text', text: JSON.stringify({ subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: { name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] } }, review_result: { results: [{ name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] }] }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } }) }] }) };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
     store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text);
     store.run("UPDATE turns SET status='completed' WHERE id=?", turn.id);
@@ -78,6 +78,7 @@ test('existing page opens a persistent finance matter, authenticates and display
     const download = await downloadPromise;
     const markdown = await readFile(await download.path(), 'utf8');
     assert.ok(markdown.includes('测试证据'));
+    assert.ok(markdown.includes('## 1. 合同附件'));
     assert.ok(download.suggestedFilename().includes('审核结果导出'));
     await dialog.getByRole('button', { name: '关闭', exact: true }).click();
     const firstMatterId = store.get('SELECT id FROM matters').id;
