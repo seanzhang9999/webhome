@@ -77,6 +77,7 @@ export class TokenX {
   }
   validate(name, args) {
     if (!this.allowed(name)) throw new Error('该工具尚未获得授权');
+    if (name === 'scenario_result' && args.include_share === true) throw new Error('生成分享链接需要单独的分享操作确认，请使用 include_share=false 查询结果。');
     const validate = this.validators.get(name);
     if (!validate || !validate(args)) throw new Error('工具参数不符合服务端 inputSchema: ' + JSON.stringify(validate?.errors || []));
   }

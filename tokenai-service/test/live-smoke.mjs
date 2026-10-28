@@ -10,6 +10,7 @@ import { addUser } from '../src/auth.mjs';
 
 const stateDir = process.env.TOKENAI_SMOKE_STATE || '/var/lib/tokenai-agent';
 const pageUrl = process.env.TOKENAI_SMOKE_PAGE || (process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html' : 'https://tokenai.awiki.ai');
+const checkMcp = process.env.TOKENAI_SMOKE_MCP === '1';
 const store = new Store(stateDir);
 const tag = randomUUID(), username = 'acceptance-' + tag;
 const password = randomBytes(24).toString('base64url');
@@ -40,16 +41,21 @@ try {
   await popup.locator('[name=password]').fill(password);
   await popup.getByRole('button', { name: '登录并连接事项' }).click();
   await page.locator('#expense-root .pill').filter({ hasText: '已登录 · 上线验收财务' }).waitFor({ timeout: 15000 });
-  await page.locator('#expense-root [name=text]').fill('这是上线验收。请只回复“TokenAI 上线对话已就绪”。不要调用业务工具。');
+  await page.locator('#expense-root [name=text]').fill(checkMcp ? '这是只读接入验收。请务必调用 tokenx_scenario_list 查询实际可用场景；成功后只回复“TokenX 场景查询已完成”。不要发起审核、上传、取消或分享。' : '这是上线验收。请只回复“TokenAI 上线对话已就绪”。不要调用业务工具。');
   await page.locator('[data-expense-form=message] button[type=submit]').click();
-  await page.locator('.bubble').filter({ hasText: /^TokenAI 上线对话已就绪[。！]?$/ }).waitFor({ timeout: 90000 });
+  await page.locator('.bubble').filter({ hasText: checkMcp ? /TokenX 场景查询已完成/ : /^TokenAI 上线对话已就绪[。！]?$/ }).waitFor({ timeout: 90000 });
   const matters = store.all('SELECT * FROM matters WHERE tenant=?', user.tenant);
   assert.equal(matters.length, 1);
   const matter = matters[0];
   assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
   assert.equal(store.get('SELECT COUNT(*) AS n FROM operations WHERE matter_id=?', matter.id).n, 0);
+  if (checkMcp) {
+    const completed = store.all("SELECT data FROM events WHERE matter_id=? AND type='tool_completed'", matter.id).map(e => JSON.parse(e.data));
+    assert.ok(completed.some(e => e.tool === 'tokenx_scenario_list' && !e.isError), 'Pi must actually complete the remote MCP read tool');
+  }
+  await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
+  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', mcpScenarioList: checkMcp ? 'passed' : 'not requested', latestMessageVisible: true, persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
   await context.close();
 } finally {
   await browser?.close();

@@ -80,6 +80,7 @@ test('server rejects unapproved tools and scopes task reads to authorized runs',
     assert.equal(tx.allowed('scenario_result'), true);
     assert.equal(tx.allowed('finance_expense_reimbursement'), false);
     assert.equal(tx.allowed('new_tool_from_server'), false);
+    assert.throws(() => tx.validate('scenario_result', { run_id: 'known-run', include_share: true }), /单独的分享操作确认/);
     assert.throws(() => pi.scope(matter, 'scenario_result', { run_id: 'foreign-run' }), /未获得授权/);
     assert.throws(() => pi.scope(matter, 'scenario_result', {}), /未获得授权/);
     f.store.run('INSERT INTO runs VALUES(?,?,?,?,?,?,?)', uid(), matter.id, null, 'finance_expense_reimbursement', 'known-run', '{}', now());

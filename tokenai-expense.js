@@ -32,17 +32,22 @@
     const messages = state.messages.map(m => `<article class="msg"><span class="avatar ${m.actor === 'tokenai' ? 'agent' : 'human'}">${m.actor === 'tokenai' ? 'AI' : esc(m.name.slice(0, 1))}</span><div class="body"><div class="meta"><b>${esc(m.name)}</b><span>报销费控事项</span><time>${esc(new Date(m.created).toLocaleString())}</time></div><div class="bubble"><p style="overflow-wrap:anywhere">${esc(m.text)}</p></div></div></article>`).join('');
     return `<main class="center" id="expense-root"><header class="chat-head"><div class="headflex"><div><span class="eyebrow">持续协作事项 · EXPENSE CONTROL</span><h2>报销费控工作台</h2><p>TokenAI · Pi Agent · TokenX Suite</p></div><span class="pill ${state.token ? 'ok' : 'gray'}">${state.token ? '已登录 · ' + esc(state.user?.name || '') : '待登录'}</span></div><div class="members">${members.map(m => `<span class="member"><span class="avatar ${m.kind === 'agent' ? 'agent' : 'human'}">${m.kind === 'agent' ? 'AI' : esc(m.name.slice(0, 1))}</span>${esc(m.name)}</span>`).join('')}</div></header><div class="chat-scroll" id="expense-scroll"><div class="timeline"><div class="split-note">本事项通过 TokenAI 处理真实请求。可查询当前事项已授权关联的审核任务；企业完整报销台账、付款和到账情况取决于业务系统实际提供的能力。</div>${!state.token ? `<section class="advance"><h3>连接财务工作台</h3><p>使用管理员开通的财务账号登录。页面中的演示角色选择不改变真实账号权限。</p><button type="button" class="btn primary" data-expense-action="login">登录 TokenAI 并连接</button></section>` : ''}${state.status ? `<div class="split-note">Pi ${esc(state.status.piVersion)} · ${esc(state.status.model.name)} · TokenX：${state.status.mcp.connected ? "已连接，" + state.status.mcp.discoveredTools + " 个工具" : esc(state.status.mcp.error || "未连接")}</div>` : ""}${state.error ? `<div class="advance error" role="alert"><h3>请求未完成</h3><p>${esc(state.error)}</p>${state.pendingMessage ? '<button type="button" class="btn" data-expense-action="retry">重试同一条消息</button>' : ''}</div>` : ''}${state.messages.length >= 100 && state.before ? '<button type="button" class="btn tiny" data-expense-action="older">加载更早消息</button>' : ''}${messages}${state.partial ? `<article class="msg"><span class="avatar agent">AI</span><div class="body"><div class="meta"><b>TokenAI 报销费控助手</b><span>正在回复</span></div><div class="bubble"><p style="overflow-wrap:anywhere">${esc(state.partial)}</p></div></div></article>` : ''}${operations}<p class="muted small" role="status">${esc(state.progress)}</p></div></div><footer class="chat-compose"><form data-expense-form="message" class="partner-compose"><input name="text" maxlength="12000" value="${esc(state.draft)}" placeholder="询问可用审核场景，或查询已关联任务的进度和结果" aria-label="向 TokenAI 提问" ${!state.token || state.busy ? 'disabled' : ''}><button class="btn primary" type="submit" ${!state.token || state.busy ? 'disabled' : ''}>发送</button></form><div class="btn-row"><button class="btn tiny" type="button" data-expense-action="refresh" ${!state.token || state.busy ? 'disabled' : ''}>刷新记录</button><label class="btn tiny">添加附件<input type="file" data-expense-file hidden ${!state.token || state.busy ? 'disabled' : ''}></label>${state.token ? '<button class="btn tiny" type="button" data-expense-action="logout">退出登录</button>' : ''}<a class="btn tiny" href="${base}" target="_blank" rel="noopener noreferrer">服务状态</a></div><small>消息保存在服务端；审核和取消等操作需确认。附件上传到本事项后，是否可提交给 TokenX 以服务能力为准。</small></footer></main>`;
   }
-  function draw() {
+  function mount() {
+    requestAnimationFrame(() => {
+      const scroll = document.querySelector('#expense-scroll');
+      if (scroll) { scroll.style.scrollBehavior = 'auto'; scroll.scrollTop = scroll.scrollHeight; }
+    });
+  }
+  function draw(follow = true) {
     const root = document.querySelector('#expense-root');
     if (!root) return;
     const old = root.querySelector('[name=text]');
     if (old && !old.disabled && state.token) state.draft = old.value;
     const scroll = root.querySelector('#expense-scroll');
-    const follow = !scroll || scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 100;
     const top = scroll?.scrollTop || 0;
     root.outerHTML = html();
     const next = document.querySelector('#expense-scroll');
-    if (next) next.scrollTop = follow ? next.scrollHeight : top;
+    if (next) { next.style.scrollBehavior = 'auto'; next.scrollTop = follow ? next.scrollHeight : top; }
   }
   async function refresh(initial = false) {
     if (!state.token || !state.matter) return;
@@ -137,7 +142,7 @@
       if (action === 'retry' && state.pendingMessage) await send(state.pendingMessage);
       if (action === 'older') {
         const page = await api('/api/v1/matters/' + state.matter.id + '/messages?before=' + state.before);
-        state.messages = [...page.messages, ...state.messages]; state.before = page.before; draw();
+        state.messages = [...page.messages, ...state.messages]; state.before = page.before; draw(false);
       }
       if (action === 'approve' || action === 'reject') {
         state.busy = true; draw();
@@ -148,7 +153,7 @@
         try { await api('/api/v1/auth/logout', {}); } finally { clearSession(); }
       }
     } catch(e) { state.error = e.message; }
-    finally { state.busy = false; draw(); }
+    finally { state.busy = false; draw(button.dataset.expenseAction !== 'older'); }
   });
   document.addEventListener('change', async event => {
     if (!event.target.matches('[data-expense-file]') || !state.token || state.busy) return;
@@ -162,5 +167,5 @@
     } catch(e) { state.error = e.message; }
     finally { state.busy = false; draw(); }
   });
-  window.TokenAIExpense = { html, packHtml };
+  window.TokenAIExpense = { html, packHtml, mount };
 })();

@@ -14,6 +14,10 @@ test('existing page opens a persistent finance matter, authenticates and display
   const config = configuration({ TOKENAI_STATE_DIR: dir });
   const store = new Store(dir);
   addUser(store, { username: 'browser-finance', name: '测试财务', tenant: 'browser-test', password: 'browser-fixture-password' });
+  const finance = store.get('SELECT * FROM users WHERE username=?', 'browser-finance');
+  const seededMatter = store.ensureMatter(finance);
+  const historyCount = 35;
+  for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5));
   const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {} };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
     store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text);
@@ -59,9 +63,16 @@ test('existing page opens a persistent finance matter, authenticates and display
     await popup.getByRole('button', { name: '登录并连接事项' }).click();
     await page.locator('#expense-root .pill').filter({ hasText: '已登录 · 测试财务' }).waitFor();
     const firstMatterId = store.get('SELECT id FROM matters').id;
+    await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
+    await page.locator('#expense-scroll').evaluate(el => { el.scrollTop = 0; });
     await page.locator('#expense-root [name=text]').fill('查询当前可用场景');
     await page.locator('[data-expense-form=message] button[type=submit]').click();
     await page.locator('.bubble').filter({ hasText: '浏览器接口验收回复：查询当前可用场景' }).waitFor();
+    await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; }, null, { timeout: 5000 });
+    await page.locator('[data-worktab=solutions]').click();
+    await page.locator('[data-object="pack:expense-control"]').click();
+    await page.locator('main [data-object="matter:expense"]').click();
+    await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
     // Switching back to the original pack preserves its deterministic flow.
     await page.locator('#expense-root [name=text]').fill('不应带入其他账号的草稿');
     await page.locator('[data-expense-action=logout]').click();
@@ -77,7 +88,7 @@ test('existing page opens a persistent finance matter, authenticates and display
     await page.locator('[data-action=reset]').click();
     await page.locator('[data-action="reset:confirm"]').click();
     assert.equal(store.get('SELECT id FROM matters').id, firstMatterId);
-    assert.equal(store.get('SELECT COUNT(*) AS n FROM messages').n, 2);
+    assert.equal(store.get('SELECT COUNT(*) AS n FROM messages').n, historyCount + 2);
     assert.deepEqual(errors, []);
   } finally { await context.close(); await browser.close(); await app.close(); store.close(); await rm(dir, { recursive: true, force: true }); }
 });
