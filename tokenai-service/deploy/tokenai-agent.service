@@ -1,0 +1,39 @@
+[Unit]
+Description=TokenAI Pi expense-control agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tokenai
+Group=tokenai
+WorkingDirectory=/opt/tokenai-agent/current
+EnvironmentFile=/etc/tokenai-agent/environment
+Environment=TOKENAI_ENV_FILE=/etc/tokenai-agent/environment
+Environment=TOKENAI_STATE_DIR=/var/lib/tokenai-agent
+Environment=TOKENAI_HOST=127.0.0.1
+Environment=TOKENAI_PORT=19320
+Environment=PI_OFFLINE=1
+Environment=PI_TELEMETRY=0
+Environment=PI_SKIP_VERSION_CHECK=1
+ExecStart=/opt/tokenai-agent/node/bin/node /opt/tokenai-agent/current/src/main.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=25
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/tokenai-agent
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

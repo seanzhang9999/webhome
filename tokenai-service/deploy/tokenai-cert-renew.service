@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew the TokenAI domain certificate
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=ecs-user
+Group=ecs-user
+Environment=PATH=/home/ecs-user/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/home/ecs-user/.local/share/tokenai-agent/certbot-venv/bin/certbot renew --cert-name tokenai.awiki.ai --config-dir /home/ecs-user/.config/tokenai-agent/acme --work-dir /home/ecs-user/.local/state/tokenai-agent/acme-work --logs-dir /home/ecs-user/.local/state/tokenai-agent/acme-logs --deploy-hook "/usr/bin/sudo /usr/bin/python3 /opt/tokenai-agent/ops/install-cert.py"

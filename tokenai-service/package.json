@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "1.4.0",
+    "@fastify/cors": "11.3.1",
+    "@fastify/multipart": "10.1.6",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "ajv": "8.20.0",
+    "fastify": "5.12.7",
+    "undici": "8.12.3"
+  },
+  "name": "awiki-tokenai-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "start": "node src/main.mjs",
+    "test": "node --test test/*.test.mjs",
+    "admin": "node src/admin.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  },
+  "overrides": {
+    "undici": "8.12.3"
+  }
+}
