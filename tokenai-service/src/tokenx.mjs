@@ -6,7 +6,8 @@ import { ProxyAgent, fetch as proxyFetch } from 'undici';
 import { uid, now } from './store.mjs';
 import { redact } from './config.mjs';
 
-export const READ_TOOLS = new Set(['scenario_list', 'scenario_status', 'scenario_result']);
+export const WORK_ORDER_TOOLS = new Set(['scenario_work_orders', 'scenario_work_order']);
+export const READ_TOOLS = new Set(['scenario_list', 'scenario_status', 'scenario_result', ...WORK_ORDER_TOOLS]);
 export const WRITE_TOOLS = new Set(['scenario_upload_file', 'scenario_cancel', 'finance_expense_reimbursement', 'finance_contract_payment', 'finance_enterprise_reimbursement', 'finance_finance_general_audit', 'scenario_share_link']);
 export const resultText = r => (r.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n');
 export function remoteId(result) {
@@ -52,7 +53,10 @@ export class TokenX {
       throw new Error(this.status.error);
     }
   }
-  allowed(name) { return READ_TOOLS.has(name) || (this.config.writeEnabled && WRITE_TOOLS.has(name) && (name !== 'scenario_share_link' || this.config.shareEnabled) && (name !== 'scenario_upload_file' || !!this.config.uploadContentField)); }
+  allowed(name, tenant) {
+    if (WORK_ORDER_TOOLS.has(name)) return !!this.config.workOrderTenant && (!tenant || tenant === this.config.workOrderTenant);
+    return READ_TOOLS.has(name) || (this.config.writeEnabled && WRITE_TOOLS.has(name) && (name !== 'scenario_share_link' || this.config.shareEnabled) && (name !== 'scenario_upload_file' || !!this.config.uploadContentField));
+  }
   attachmentArgs(store, matterId, attachmentId) {
     const file = store.get('SELECT * FROM files WHERE id=? AND matter_id=?', attachmentId, matterId);
     if (!file) throw new Error('附件不存在或不属于当前事项');
@@ -77,7 +81,13 @@ export class TokenX {
   }
   validate(name, args) {
     if (!this.allowed(name)) throw new Error('该工具尚未获得授权');
-    if (name === 'scenario_result' && args.include_share === true) throw new Error('生成分享链接需要单独的分享操作确认，请使用 include_share=false 查询结果。');
+    if (['scenario_result', 'scenario_work_order'].includes(name) && args.include_share === true) throw new Error('生成分享链接需要单独的分享操作确认，请使用 include_share=false 查询结果。');
+    if (name === 'scenario_work_orders') {
+      for (const field of ['date_from', 'date_to']) if (args[field] && (!/^\d{4}-\d{2}-\d{2}$/.test(args[field]) || Number.isNaN(new Date(args[field]).valueOf()) || new Date(args[field]).toISOString().slice(0, 10) !== args[field])) throw new Error('工单日期必须为有效的 YYYY-MM-DD');
+      if (args.date_from && args.date_to && args.date_from > args.date_to) throw new Error('工单查询起始日期不能晚于结束日期');
+      if (args.page !== undefined && (!Number.isInteger(args.page) || args.page < 1)) throw new Error('page 必须为正整数');
+      if (args.page_size !== undefined && (!Number.isInteger(args.page_size) || args.page_size < 1 || args.page_size > 100)) throw new Error('page_size 必须在 1 到 100 之间');
+    }
     const validate = this.validators.get(name);
     if (!validate || !validate(args)) throw new Error('工具参数不符合服务端 inputSchema: ' + JSON.stringify(validate?.errors || []));
   }

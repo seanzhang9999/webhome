@@ -49,6 +49,12 @@ Pi 不加载宿主扩展、技能、上下文文件、shell、文件读写或任
 应用自定义工具桥接，所有入口统一检查权限、schema 和操作确认。
 
 默认开放 scenario_list/status/result。状态及结果工具仅接受本事项登记的远程任务标识。
+配置 `TOKENX_WORK_ORDER_TENANT=<获授权财务组织的 tenant>` 后，为该组织额外开放
+`scenario_work_orders` 与 `scenario_work_order`。前者按日期、业务类型、关键字、状态等
+过滤并分页，后者用 `subject_id` 返回逐规则审核明细；不要求先登记本地 run_id 或附件。
+此绑定对应用户授权使用的 TokenX 凭据数据范围，其他组织不能调用这两个工具。所有
+`include_share=true` 均被拒绝，签发链接须走单独确认。模型每轮取得北京时间日期和
+实际工具清单，已有会话无需重建即可使用新增查询能力。
 通过 `admin.mjs attach-run USERNAME VERIFIED_RUN_ID` 可以关联管理员已独立核验归属的
 现有任务。此操作不能用于猜测归属。已发起的审核任务自动登记。
 

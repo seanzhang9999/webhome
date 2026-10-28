@@ -25,6 +25,7 @@ export function configuration(env = process.env) {
     mcpUrl: 'https://mcp-local.parleyvoice.com/mcp',
     mcpToken: env.TOKENX_MCP_TOKEN || '',
     mcpProxyUrl: env.TOKENAI_MCP_PROXY_URL || '',
+    workOrderTenant: env.TOKENX_WORK_ORDER_TENANT || '',
     deepseekKey: env.DEEPSEEK_API_KEY || '',
     model: env.TOKENAI_MODEL || 'deepseek-v4-flash',
     modelBaseUrl: env.TOKENAI_MODEL_BASE_URL || 'https://api.deepseek.com',

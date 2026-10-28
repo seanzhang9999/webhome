@@ -100,6 +100,34 @@ test('startup marks in-flight work uncertain without replay', () => {
   } finally { f.cleanup(); }
 });
 
+test('work-order reads are enabled for the connector owner without requiring local runs', () => {
+  const f = fixture();
+  try {
+    const config = { ...f.config, workOrderTenant: f.a.tenant };
+    const tx = new TokenX(config), pi = new PiAgent(config, f.store, tx);
+    const owner = f.store.ensureMatter(f.a), foreign = f.store.ensureMatter(f.b);
+    tx.validators.set('scenario_work_orders', () => true);
+    tx.validators.set('scenario_work_order', () => true);
+    assert.equal(tx.allowed('scenario_work_orders', owner.tenant), true);
+    assert.equal(tx.allowed('scenario_work_order', owner.tenant), true);
+    assert.equal(tx.allowed('scenario_work_orders', foreign.tenant), false);
+    assert.equal(new TokenX(f.config).allowed('scenario_work_orders'), false);
+    assert.doesNotThrow(() => pi.scope(owner, 'scenario_work_orders', { date_from: '2026-10-28', date_to: '2026-10-28', scenario_type: 'contract_payment' }));
+    assert.doesNotThrow(() => pi.scope(owner, 'scenario_work_order', { subject_id: 'remote-subject', include_detail: true, include_share: false }));
+    assert.throws(() => pi.scope(foreign, 'scenario_work_orders', {}), /没有此 TokenX/);
+    assert.throws(() => pi.scope(foreign, 'scenario_work_order', { subject_id: 'remote-subject' }), /没有此 TokenX/);
+    assert.throws(() => tx.validate('scenario_work_order', { subject_id: 'remote-subject', include_share: true }), /单独的分享/);
+    assert.doesNotThrow(() => tx.validate('scenario_work_orders', { date_from: '2026-10-28', date_to: '2026-10-28', page: 1, page_size: 20 }));
+    assert.throws(() => tx.validate('scenario_work_orders', { date_from: '2026-02-30' }), /有效的/);
+    assert.throws(() => tx.validate('scenario_work_orders', { date_from: '2026-99-99' }), /有效的/);
+    assert.throws(() => tx.validate('scenario_work_orders', { date_from: '2026-10-29', date_to: '2026-10-28' }), /晚于/);
+    assert.throws(() => tx.validate('scenario_work_orders', { page: 0 }), /正整数/);
+    assert.throws(() => tx.validate('scenario_work_orders', { page_size: 101 }), /1 到 100/);
+    assert.equal(f.store.get('SELECT COUNT(*) AS n FROM runs').n, 0);
+    assert.equal(f.store.get('SELECT COUNT(*) AS n FROM operations').n, 0);
+  } finally { f.cleanup(); }
+});
+
 test('HTTP rejects anonymous and foreign-origin access; retries create only one turn', async () => {
   const f = fixture(); let enqueued = 0;
   const tokenx = { status: { connected: false }, tools: [], allowed: () => false, close: async () => {} };

@@ -54,5 +54,11 @@ tokenai-expense.js?v=2，避免旧缓存继续使用原来的定位逻辑。
 
 未完成项：上传业务、审核业务和分享页面按实际契约逐步验收；写操作及分享目前关闭。
 
+工单能力修正：新增 scenario_work_orders 与 scenario_work_order 接入 Pi 的只读工具集，
+并配置组织绑定；不是仅刷新发现清单。日期按 Asia/Shanghai 解释，列表可用 date_from、
+date_to、scenario_type 直接筛选，详情使用 subject_id。已有会话每轮加载新能力和时间
+上下文，无需用户先提供 run_id。真实 DeepSeek/MCP 组合已完成列表和逐单明细调用，
+只回报脱敏验证元数据，具体业务内容不保存到公开部署记录。
+
 本次修改不涉及 User/Message Service、AWiki Me/DSH 客户端或 ANP/DID，因而未运行这些
 产品的全量系统/E2E。当前验证由新服务的定向 HTTP/浏览器检查负责。

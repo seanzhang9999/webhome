@@ -74,10 +74,10 @@ export async function buildApp(config, overrides = {}) {
     return { ok: true };
   });
   app.get('/api/v1/status', async req => {
-    authenticate(store, req);
+    const user = authenticate(store, req);
     return { application: 'TokenAI', version: '1.0.0', piVersion: '1.4.0', uptime: Math.floor(process.uptime()),
       model: { name: config.model, configured: !!config.deepseekKey, lastCheck: agent.lastModelCheck },
-      mcp: { ...tokenx.status, discoveredTools: tokenx.tools.length, tools: tokenx.tools.map(t => ({ name: t.name, enabled: tokenx.allowed(t.name) })) },
+      mcp: { ...tokenx.status, discoveredTools: tokenx.tools.length, tools: tokenx.tools.map(t => ({ name: t.name, enabled: tokenx.allowed(t.name, user.tenant) })) },
       activeTurns: agent.active?.size || 0 };
   });
   app.get('/api/v1/solutions', async req => {
