@@ -128,3 +128,8 @@ deploy/acme-dns.py 和本机现有 Aliyun CLI 配置；清理只删除本次精�
 `TOKENAI_SMOKE_PAGE` 为正式 GitHub Pages URL 时检查真实跨站入口。该脚本需要访问
 部署数据库以创建及精确清理临时验收租户，使用 `sudo` 执行；不调用 TokenX 写操作。
 `TOKENAI_SMOKE_SOURCE=1` 仅用于发布前的页面源码覆盖，不能据此声称正式页面已验收。
+
+`sudo node test/live-work-orders.mjs` 对线上 HTTPS API 执行日期工单查询回归：在获授权组织
+内创建仅临时账号可见的独立测试事项，保留旧的能力拒绝回复，然后用自然语言询问日期
+范围内合同付款审核明细。检查真实列表/详情工具执行，不修改实际固定事项，最后按精确
+账号和事项 ID 清理。业务内容不输出到日志，也不执行审核或分享。

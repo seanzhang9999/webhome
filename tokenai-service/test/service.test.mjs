@@ -160,6 +160,23 @@ test('known secrets and Authorization values are removed from errors', () => {
   assert.equal(redact('key abc123 Authorization: Bearer sensitive-value', { deepseekKey: 'abc123' }), 'key [REDACTED] Authorization: Bearer [REDACTED]');
 });
 
+test('HTTP status scopes work-order availability to the connector organization', async () => {
+  const f = fixture(), config = { ...f.config, workOrderTenant: f.a.tenant };
+  const tx = new TokenX(config);
+  tx.tools = [{ name: 'scenario_work_orders' }, { name: 'scenario_work_order' }];
+  const agent = { active: new Map(), close: async () => {} };
+  const app = await buildApp(config, { store: f.store, tokenx: tx, agent });
+  const foreignToken = 'B'.repeat(43);
+  f.store.run('INSERT INTO tokens VALUES(?,?,?)', hash(foreignToken), f.b.id, Date.now() + 60000);
+  try {
+    const owner = await app.inject({ url: '/api/v1/status', headers: { authorization: 'Bearer ' + f.token } });
+    const foreign = await app.inject({ url: '/api/v1/status', headers: { authorization: 'Bearer ' + foreignToken } });
+    assert.equal(owner.statusCode, 200); assert.equal(foreign.statusCode, 200);
+    assert.ok(owner.json().mcp.tools.every(t => t.enabled));
+    assert.ok(foreign.json().mcp.tools.every(t => !t.enabled));
+  } finally { await app.close(); f.cleanup(); }
+});
+
 test('remote MCP redirects cannot forward the service Bearer credential to another origin', async () => {
   let destinationRequests = 0;
   const destination = createServer((req, res) => { destinationRequests++; res.end('unexpected'); });

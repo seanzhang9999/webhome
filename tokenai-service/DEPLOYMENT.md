@@ -60,5 +60,10 @@ date_to、scenario_type 直接筛选，详情使用 subject_id。已有会话每
 上下文，无需用户先提供 run_id。真实 DeepSeek/MCP 组合已完成列表和逐单明细调用，
 只回报脱敏验证元数据，具体业务内容不保存到公开部署记录。
 
+线上回归已通过：test/live-work-orders.mjs 对生产 HTTPS API 创建隔离测试事项，并在
+保留旧“需要 run_id”的会话回复时自然询问指定日期合同付款审核。实际完成工单列表与
+逐单详情查询，未要求 run_id，未生成写操作。测试事项和账号已按精确 ID 清理，真实
+固定事项和用户历史保持原有内容。GitHub Pages 的新客户端以 v=3 发布。
+
 本次修改不涉及 User/Message Service、AWiki Me/DSH 客户端或 ANP/DID，因而未运行这些
 产品的全量系统/E2E。当前验证由新服务的定向 HTTP/浏览器检查负责。

@@ -29,9 +29,10 @@
 schema，新增工具为 scenario_work_orders（列表）和 scenario_work_order（单据详情）。
 工单明细 include_share=true 会签发一次性链接，故仍强制拒绝。通过受限环境配置将
 TokenX 工单数据范围绑定到现有获授权财务组织；其他 tenant 既不注册工具，也不能绕过
-scope 调用。列表日期有效性、范围、分页大小校验及跨组织拒绝用例通过。11 项定向
+scope 调用。列表日期有效性、范围、分页大小校验及跨组织拒绝用例通过。12 项定向
 测试通过；真实 DeepSeek 已完成按日期/类型列出工单、再以 subject_id 查询详情，未
 生成写操作。未放宽旧运行工具的 run_id 关联限制，未开启审核、上传或分享。
+生产 HTTPS API 的隔离测试验证旧会话历史不会阻止新能力，且未操作真实固定事项。
 
 2026-10-28 验证记录：10 项定向测试通过，包含浏览器与 HTTP 检查；实际 DeepSeek 文本
 和动态工具调用通过（工具返回 fixture，未声称是公网 TokenX 验收）。官方 npm registry
