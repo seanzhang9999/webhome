@@ -116,3 +116,8 @@ deploy/acme-dns.py 和本机现有 Aliyun CLI 配置；清理只删除本次精�
 隔离；该测试使用业务返回 fixture，不代表 TokenX 公网业务验收。
 实际 DeepSeek 对话和工具调用应单独检查。TokenX 的发现、只读及写业务实调分别记录，
 不能用 fixture 替代。AWiki Me/DSH、ANP/DID 与银行接口不在本次修改范围。
+
+线上定向检查可以运行 `test/live-smoke.mjs`，默认检查独立 TokenAI 页面；设置
+`TOKENAI_SMOKE_PAGE` 为正式 GitHub Pages URL 时检查真实跨站入口。该脚本需要访问
+部署数据库以创建及精确清理临时验收租户，使用 `sudo` 执行；不调用 TokenX 写操作。
+`TOKENAI_SMOKE_SOURCE=1` 仅用于发布前的页面源码覆盖，不能据此声称正式页面已验收。

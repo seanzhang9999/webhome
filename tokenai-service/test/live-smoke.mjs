@@ -9,6 +9,7 @@ import { Store } from '../src/store.mjs';
 import { addUser } from '../src/auth.mjs';
 
 const stateDir = process.env.TOKENAI_SMOKE_STATE || '/var/lib/tokenai-agent';
+const pageUrl = process.env.TOKENAI_SMOKE_PAGE || (process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html' : 'https://tokenai.awiki.ai');
 const store = new Store(stateDir);
 const tag = randomUUID(), username = 'acceptance-' + tag;
 const password = randomBytes(24).toString('base64url');
@@ -26,8 +27,8 @@ try {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto(process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html' : 'https://tokenai.awiki.ai', { waitUntil: 'domcontentloaded' });
-  if (process.env.TOKENAI_SMOKE_SOURCE === '1') {
+  await page.goto(pageUrl, { waitUntil: 'domcontentloaded' });
+  if (new URL(pageUrl).hostname === 'seanzhang9999.github.io') {
     await page.locator('[data-worktab=solutions]').click();
     await page.locator('[data-object="pack:expense-control"]').click();
     await page.locator('main [data-object="matter:expense"]').click();
@@ -48,7 +49,7 @@ try {
   assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
   assert.equal(store.get('SELECT COUNT(*) AS n FROM operations WHERE matter_id=?', matter.id).n, 0);
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : 'TokenAI standalone', ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
+  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
   await context.close();
 } finally {
   await browser?.close();

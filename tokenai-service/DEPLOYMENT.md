@@ -26,11 +26,15 @@
 - 线上 HTTPS/Nginx/systemd/浏览器登录/真实 Pi 消息通过。
 - `TOKENAI_SMOKE_SOURCE=1` 下，以 GitHub Pages 来源运行待发布源码，跨站访问线上
   TokenAI 并收到实际模型回复；未拦截或模拟 TokenAI API。临时租户精确清理。
+- GitHub 写权限开通后，实现提交 `8d0b9e3` 已推送 main；Pages workflow
+  `40705458493` 成功。正式页面与 tokenai-expense.js 均返回 200，包含报销费控入口。
+- 使用 `TOKENAI_SMOKE_PAGE=https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html`
+  对正式页面执行真实浏览器验收：不覆盖源码、不模拟 API，跨站登录、固定事项、Pi/DeepSeek
+  回复和消息持久化通过，浏览器错误 0，TokenX 业务写入 0，临时验收租户已清理。
 - TokenX 通过本机已有出口代理访问，错误测试凭据返回 HTTP 401。没有使用历史聊天凭据，
   尚未完成有效凭据的 initialize、tools/list 和业务调用。
 
-未完成项：GitHub 当前授权只读，页面源码尚未推送，因此现有 GitHub Pages 页面未更新；
-需要具有仓库写权限的网页登录。需要服务方轮换后的 TokenX 凭据写入管理配置源，再部署、
+未完成项：需要服务方轮换后的 TokenX 凭据写入管理配置源，再部署、
 核对实际 schema 并执行只读验收。上传字段映射、审核业务和分享页面按实际契约逐步验收，
 写操作及分享目前关闭。
 
