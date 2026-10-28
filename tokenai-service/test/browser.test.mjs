@@ -22,11 +22,12 @@ test('existing page opens a persistent finance matter, authenticates and display
   for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
   const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async () => ({ content: [{ type: 'text', text: JSON.stringify({ subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: { name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] } }, review_result: { results: [{ name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: ['测试证据'] }] }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } }) }] }) };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
+    for (let i = 0; i < 250; i++) store.event(matter.id, turn.id, 'text_delta', { text: '流式内容' });
     store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text + '\n\n## 审核摘要\n\n| 项目 | 状态 |\n| --- | --- |\n| 合同附件 | 待补充 |\n\n- 第一项\n- 第二项\n\n```json\n{"readOnly":true}\n```\n\n<script>window.__markdownInjected=true</script><img src=x onerror="window.__markdownInjected=true">[危险链接](javascript:alert(1))');
     store.run("UPDATE turns SET status='completed' WHERE id=?", turn.id);
     store.event(matter.id, turn.id, 'turn_completed', { turnId: turn.id });
   } };
-  const companion = new FinanceCompanion(config, store, { generate: async ({ sourceSeq }) => '## 建议行动\n\n- 基于主聊天消息 ' + sourceSeq + ' 核对审核结论。\n- 建议只供财务人员判断。' });
+  const companion = new FinanceCompanion(config, store, { generate: async ({ sourceSeq, mode, question }) => mode === 'question' ? '## 私人回答\n\n应先补齐验收证明。你的问题：' + question : '## 建议行动\n\n- 基于主聊天消息 ' + sourceSeq + ' 核对审核结论。\n- 建议只供财务人员判断。' });
   const app = await buildApp(config, { store, tokenx, agent, companion });
   await app.listen({ host: '127.0.0.1', port: 0 });
   const address = 'http://127.0.0.1:' + app.server.address().port;
@@ -72,6 +73,8 @@ test('existing page opens a persistent finance matter, authenticates and display
     await page.locator('main [data-object="matter:expense"]').click();
     await page.locator('#expense-root .pill').filter({ hasText: '已登录 · 测试财务' }).waitFor();
     assert.equal(context.pages().length, 1, 'Reload restores login without another password popup');
+    const firstMatterId = store.get('SELECT id FROM matters').id;
+    await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
     await page.locator('[data-expense-action=view-order]').last().click();
     const dialog = page.getByRole('dialog', { name: '工单审核明细' });
     await dialog.getByRole('heading', { name: '浏览器测试审核明细' }).waitFor();
@@ -82,10 +85,10 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.ok(markdown.includes('测试证据'));
     assert.ok(markdown.includes('## 1. 合同附件'));
     assert.ok(download.suggestedFilename().includes('审核结果导出'));
+    await dialog.getByRole('link', { name: '保存文件', exact: true }).waitFor();
     await dialog.getByRole('button', { name: '关闭', exact: true }).click();
-    const firstMatterId = store.get('SELECT id FROM matters').id;
-    await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
     await page.locator('#expense-scroll').evaluate(el => { el.scrollTop = 0; });
+    await page.evaluate(() => { const original = window.TokenAIMarkdown.render; window.__markdownRenderCalls = 0; window.TokenAIMarkdown.render = value => { window.__markdownRenderCalls++; return original(value); }; });
     await page.locator('#expense-root [name=text]').fill('查询当前可用场景');
     await page.locator('[data-expense-form=message] button[type=submit]').click();
     await page.locator('.bubble').filter({ hasText: '浏览器接口验收回复：查询当前可用场景' }).waitFor();
@@ -96,6 +99,15 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.equal(await page.evaluate(() => window.__markdownInjected === true), false);
     const latestSeq = store.get('SELECT MAX(seq) AS seq FROM messages WHERE matter_id=?', firstMatterId).seq;
     await page.locator('#expense-companion .tokenai-markdown').filter({ hasText: '基于主聊天消息 ' + latestSeq }).waitFor();
+    assert.ok(await page.evaluate(() => window.__markdownRenderCalls < 40), 'Stream chunks must not reparse and rebuild the full chat history');
+    await page.getByRole('textbox', { name: '向我的 AI 伙伴提问' }).fill('这次应该先补哪些材料？');
+    await page.locator('[data-companion-form=question] [type=submit]').click();
+    await page.locator('#expense-companion .companion-answer').filter({ hasText: '应先补齐验收证明' }).waitFor();
+    assert.equal(await page.getByRole('tab', { name: /私人问答/ }).getAttribute('aria-selected'), 'true');
+    await page.getByRole('tab', { name: '自动分析', exact: true }).click();
+    assert.equal(await page.locator('#expense-companion .companion-answer').count(), 0);
+    await page.getByRole('tab', { name: /私人问答/ }).click();
+    await page.locator('#expense-companion .companion-answer').filter({ hasText: '应先补齐验收证明' }).waitFor();
     assert.equal(store.all('SELECT * FROM messages WHERE matter_id=?', firstMatterId).length, historyCount + 2, 'Private advice must never enter the shared chat');
     await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; }, null, { timeout: 5000 });
     await page.locator('[data-worktab=solutions]').click();

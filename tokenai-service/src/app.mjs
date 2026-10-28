@@ -133,6 +133,13 @@ export async function buildApp(config, overrides = {}) {
   app.post('/api/v1/matters/:matterId/companion:refresh', async req => {
     const { user, matter } = member(req); rate('companion:' + user.id, 6, 60000); return companion.request(matter, user, true);
   });
+  app.get('/api/v1/matters/:matterId/companion/questions', async req => {
+    const { user, matter } = member(req); return { questions: companion.questions(matter, user) };
+  });
+  app.post('/api/v1/matters/:matterId/companion/questions', async (req, reply) => {
+    const { user, matter } = member(req); rate('companion-question:' + user.id, 8, 60000);
+    const result = companion.ask(matter, user, objectBody(req)); reply.code(202); return result;
+  });
   app.get('/api/v1/matters/:matterId/operations', async req => {
     const { matter } = member(req);
     store.run("UPDATE operations SET state='expired' WHERE matter_id=? AND state='pending' AND expires<?", matter.id, Date.now());

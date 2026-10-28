@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createAgentSession, SessionManager, SettingsManager, DefaultResourceLoader } from '@earendil-works/pi-coding-agent';
-import { now } from './store.mjs';
+import { now, uid } from './store.mjs';
 import { redact } from './config.mjs';
 
 const SYSTEM = `你是财务经理的私人 AI 伙伴，使用独立 Pi 会话，不是主聊天里的 TokenAI 业务助手。
@@ -15,7 +15,7 @@ const SYSTEM = `你是财务经理的私人 AI 伙伴，使用独立 Pi 会话�
 export class FinanceCompanion {
   constructor(config, store, { runtime, generate } = {}) {
     this.config = config; this.store = store; this.runtime = runtime; this.generateOverride = generate;
-    this.jobs = new Map(); this.sessions = new Set(); this.closed = false;
+    this.jobs = new Map(); this.questionQueues = new Map(); this.sessions = new Set(); this.closed = false;
   }
   latest(matterId) { return this.store.get('SELECT MAX(seq) AS seq FROM messages WHERE matter_id=?', matterId).seq || 0; }
   result(matter, user) {
@@ -44,6 +44,39 @@ export class FinanceCompanion {
       return { ...message, text };
     }).filter(message => message.text).reverse();
   }
+  questions(matter, user) {
+    if (!this.store.member(matter.id, user)) throw Object.assign(new Error('事项不存在或未授权'), { statusCode: 404 });
+    return this.store.all('SELECT id,question,answer,status,error,source_seq,created,updated FROM companion_questions WHERE matter_id=? AND user_id=? ORDER BY rowid DESC LIMIT 30', matter.id, user.id).reverse();
+  }
+  ask(matter, user, { question, clientMessageId }) {
+    if (!this.store.member(matter.id, user)) throw Object.assign(new Error('事项不存在或未授权'), { statusCode: 404 });
+    if (typeof question !== 'string' || !question.trim() || question.length > 2000 || !/^[A-Za-z0-9_-]{16,80}$/.test(clientMessageId || '')) throw Object.assign(new Error('请输入有效的私人问题'), { statusCode: 400 });
+    const existing = this.store.get('SELECT id,status FROM companion_questions WHERE matter_id=? AND user_id=? AND client_id=?', matter.id, user.id, clientMessageId);
+    if (existing) return existing;
+    if (this.closed || this.jobs.size >= 3) throw Object.assign(new Error('AI 伙伴正在处理请求，请稍后再问'), { statusCode: 429 });
+    const id = uid(), key = matter.id + ':' + user.id;
+    this.store.run("INSERT INTO companion_questions(id,matter_id,user_id,client_id,question,status,created) VALUES(?,?,?,?,?,'queued',?)", id, matter.id, user.id, clientMessageId, question.trim(), now());
+    const previous = this.questionQueues.get(key) || Promise.resolve();
+    const job = previous.catch(() => {}).then(() => this.runQuestion(matter, user, id)).finally(() => { this.jobs.delete('question:' + id); if (this.questionQueues.get(key) === job) this.questionQueues.delete(key); });
+    this.jobs.set('question:' + id, job); this.questionQueues.set(key, job); job.catch(() => {});
+    return { id, status: 'queued' };
+  }
+  async runQuestion(matter, user, id) {
+    try {
+      if (this.closed) throw new Error('Companion interrupted');
+      const row = this.store.get('SELECT * FROM companion_questions WHERE id=? AND user_id=?', id, user.id);
+      if (!row) return;
+      if (!this.store.member(matter.id, user)) { this.store.run("UPDATE companion_questions SET status='interrupted',updated=? WHERE id=?", now(), id); return; }
+      const sourceSeq = this.latest(matter.id), messages = this.snapshot(matter.id, sourceSeq);
+      this.store.run("UPDATE companion_questions SET status='running',source_seq=?,updated=? WHERE id=?", sourceSeq, now(), id);
+      const history = this.store.all("SELECT question,answer FROM companion_questions WHERE matter_id=? AND user_id=? AND status='completed' AND rowid<(SELECT rowid FROM companion_questions WHERE id=?) ORDER BY rowid DESC LIMIT 6", matter.id, user.id, id).reverse().map(item => ({ question: item.question.slice(0, 1000), answer: item.answer.slice(0, 2000) }));
+      const context = { question: row.question, history, automaticAnalysis: this.result(matter, user).text.slice(0, 3000) };
+      const text = this.generateOverride ? await this.generateOverride({ mode: 'question', matter, user, sourceSeq, messages, ...context }) : await this.generate(user, messages, context);
+      if (!text?.trim()) throw new Error('AI 伙伴未返回回答');
+      if (!this.store.member(matter.id, user) || !this.store.get('SELECT id FROM users WHERE id=? AND disabled=0', user.id)) { this.store.run("UPDATE companion_questions SET status='interrupted',updated=? WHERE id=?", now(), id); return; }
+      this.store.run('UPDATE companion_questions SET answer=?,status=?,error=NULL,updated=? WHERE id=? AND user_id=?', redact(text, this.config), this.closed ? 'interrupted' : 'completed', now(), id, user.id);
+    } catch (error) { this.store.run('UPDATE companion_questions SET status=?,error=?,updated=? WHERE id=? AND user_id=?', this.closed ? 'interrupted' : 'failed', redact(error.message, this.config), now(), id, user.id); }
+  }
   async run(matter, user, sourceSeq) {
     try {
       if (this.closed) throw new Error('Companion interrupted');
@@ -56,10 +89,11 @@ export class FinanceCompanion {
       this.store.run('UPDATE companion_advice SET status=?,error=? WHERE matter_id=? AND user_id=?', this.closed ? 'interrupted' : 'error', redact(error.message, this.config), matter.id, user.id);
     }
   }
-  async generate(user, messages) {
+  async generate(user, messages, questionContext = null) {
     const runtime = await this.runtime(), workDir = join(this.config.stateDir, 'companion-workspace');
     const agentDir = join(this.config.stateDir, 'pi'); mkdirSync(workDir, { recursive: true, mode: 0o700 });
-    const loader = new DefaultResourceLoader({ cwd: workDir, agentDir, noExtensions: true, noSkills: true, noPromptTemplates: true, noThemes: true, noContextFiles: true, systemPrompt: SYSTEM });
+    const systemPrompt = SYSTEM + (questionContext ? '\n本次是用户主动发起的私人问答，不是自动分析更新。直接回答当前问题，可以结合主聊天、既有自动分析及本人的历史问答；它们分别标注，不要混同。不要重复通用简报，不声称问题已发送给主聊天。' : '');
+    const loader = new DefaultResourceLoader({ cwd: workDir, agentDir, noExtensions: true, noSkills: true, noPromptTemplates: true, noThemes: true, noContextFiles: true, systemPrompt });
     await loader.reload();
     const { session } = await createAgentSession({ cwd: workDir, agentDir, modelRuntime: runtime, model: runtime.getModel('tokenai-deepseek', this.config.model), thinkingLevel: 'off', noTools: 'all', tools: [], customTools: [], resourceLoader: loader, sessionManager: SessionManager.inMemory(workDir), settingsManager: SettingsManager.inMemory({ retry: { enabled: false, maxRetries: 0 }, compaction: { enabled: false } }) });
     this.sessions.add(session); let answer = '', modelError;
@@ -71,7 +105,9 @@ export class FinanceCompanion {
     const timer = setTimeout(() => session.abort(), 60000);
     try {
       if (this.closed) throw new Error('Companion interrupted');
-      await session.prompt('当前财务人员：' + user.name + '\n以下是该事项最近可见的主聊天消息，请给出私人建议：\n' + JSON.stringify(messages), { expandPromptTemplates: false });
+      const capabilities = user.tenant === this.config.workOrderTenant ? '主助手已支持按日期和业务类型列出工单、按 subject_id 取审核明细，无需先提供 run_id。工单查看和审核结果导出可在 TokenAI 页面完成，不使用 localhost 地址。' : '请仅基于本事项可见内容提供建议，不假定已获其他组织的工单查询权限。';
+      const prompt = '当前财务人员：' + user.name + '\n当前能力说明：' + capabilities + '\n主聊天可见消息（事实来源）：\n' + JSON.stringify(messages) + (questionContext ? '\n既有自动分析（建议，不等于已核实事实）：\n' + questionContext.automaticAnalysis + '\n本人历史私人问答：\n' + JSON.stringify(questionContext.history) + '\n本次私人问题：\n' + questionContext.question : '\n请根据主聊天给出本次自动分析。');
+      await session.prompt(prompt, { expandPromptTemplates: false });
       if (modelError) throw new Error(modelError);
       return answer;
     } finally { clearTimeout(timer); unsubscribe(); this.sessions.delete(session); await session.dispose(); }

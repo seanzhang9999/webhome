@@ -48,6 +48,14 @@ try {
   assert.equal(matters.length, 1);
   const matter = matters[0];
   assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
+  await page.getByRole('textbox', { name: '向我的 AI 伙伴提问' }).fill('这次还没有具体审核结论，接下来应该先确认什么？');
+  await page.locator('[data-companion-form=question] [type=submit]').click();
+  await page.locator('#expense-companion .companion-answer .tokenai-markdown').waitFor({ timeout: 90000 });
+  const privateQuestion = store.get("SELECT question,answer,status FROM companion_questions WHERE matter_id=? AND user_id=? ORDER BY rowid DESC LIMIT 1", matter.id, user.id);
+  assert.equal(privateQuestion.status, 'completed'); assert.ok(privateQuestion.answer.length > 20);
+  assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
+  await page.getByRole('tab', { name: '自动分析', exact: true }).click();
+  assert.equal(await page.locator('#expense-companion .companion-answer').count(), 0);
   assert.equal(store.get('SELECT COUNT(*) AS n FROM operations WHERE matter_id=?', matter.id).n, 0);
   if (checkMcp) {
     const completed = store.all("SELECT data FROM events WHERE matter_id=? AND type='tool_completed'", matter.id).map(e => JSON.parse(e.data));
@@ -61,7 +69,7 @@ try {
   assert.equal(store.get('SELECT COUNT(*) AS n FROM messages WHERE matter_id=?', matter.id).n, 2);
   await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', mcpScenarioList: checkMcp ? 'passed' : 'not requested', independentPrivateCompanion: 'passed', latestMessageVisible: true, persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
+  console.log(JSON.stringify({ page: process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'GitHub Pages origin with unpublished source override' : pageUrl, ingress: 'HTTPS Nginx -> dedicated systemd service', login: 'passed', model: 'DeepSeek via Pi', chat: 'passed', mcpScenarioList: checkMcp ? 'passed' : 'not requested', independentPrivateCompanion: 'passed', privateQuestionAnswer: 'passed', automaticAnalysisSeparate: true, latestMessageVisible: true, persistedMessages: 2, businessWrites: 0, browserErrors: 0 }));
   await context.close();
 } finally {
   await browser?.close();

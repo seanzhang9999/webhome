@@ -54,8 +54,35 @@ test('companion waits for main reply and keeps private advice separate even for 
     assert.equal((await app.inject({ url, headers: { authorization: 'Bearer ' + tokens.get(f.outsider.id) } })).statusCode, 404);
     const own = await app.inject({ url: url + '?user_id=' + f.b.id, headers: { authorization: 'Bearer ' + tokens.get(f.a.id) } });
     assert.equal(own.json().text, 'private-for-' + f.a.id);
+    const questionUrl = url + '/questions';
+    const payload = { question: '这次应先补什么材料？', clientMessageId: uid(), user_id: f.b.id };
+    const posted = await app.inject({ method: 'POST', url: questionUrl, headers: { authorization: 'Bearer ' + tokens.get(f.a.id) }, payload });
+    const duplicate = await app.inject({ method: 'POST', url: questionUrl, headers: { authorization: 'Bearer ' + tokens.get(f.a.id) }, payload });
+    assert.equal(posted.statusCode, 202); assert.equal(posted.json().id, duplicate.json().id);
+    await companion.settled();
+    const privateQuestions = await app.inject({ url: questionUrl + '?user_id=' + f.b.id, headers: { authorization: 'Bearer ' + tokens.get(f.a.id) } });
+    assert.equal(privateQuestions.json().questions.length, 1); assert.equal(privateQuestions.json().questions[0].answer, 'private-for-' + f.a.id);
+    assert.equal((await app.inject({ url: questionUrl, headers: { authorization: 'Bearer ' + tokens.get(f.b.id) } })).json().questions.length, 0);
+    assert.equal((await app.inject({ url: questionUrl, headers: { authorization: 'Bearer ' + tokens.get(f.outsider.id) } })).statusCode, 404);
+    assert.equal((await app.inject(questionUrl)).statusCode, 401);
     assert.equal(f.store.get('SELECT COUNT(*) AS n FROM messages').n, 1);
   } finally { await app.close(); f.cleanup(); }
+});
+
+test('private questions use their own history and never replace the automatic analysis', async () => {
+  const f = fixture(), seen = [];
+  const companion = new FinanceCompanion(f.config, f.store, { generate: async context => { seen.push(context); return context.mode === 'question' ? '回答：' + context.question : '自动分析：先核对验收证明'; } });
+  try {
+    f.store.message(f.matter.id, null, 'tokenai', 'TokenAI', '审核发现缺少验收证明');
+    companion.request(f.matter, f.a); await companion.settled(); const automatic = companion.result(f.matter, f.a).text;
+    companion.ask(f.matter, f.a, { question: '验收证明需要什么？', clientMessageId: uid() }); await companion.settled();
+    companion.ask(f.matter, f.a, { question: '那下一步呢？', clientMessageId: uid() }); await companion.settled();
+    const latest = seen.at(-1); assert.equal(latest.mode, 'question'); assert.equal(latest.history.length, 1);
+    assert.equal(latest.history[0].question, '验收证明需要什么？'); assert.equal(latest.automaticAnalysis, automatic);
+    assert.equal(companion.result(f.matter, f.a).text, automatic);
+    assert.equal(companion.questions(f.matter, f.a).length, 2); assert.equal(companion.questions(f.matter, f.b).length, 0);
+    assert.equal(f.store.get('SELECT COUNT(*) AS n FROM messages').n, 1); assert.equal(f.store.get('SELECT COUNT(*) AS n FROM operations').n, 0);
+  } finally { await companion.close(); f.cleanup(); }
 });
 
 test('new messages are picked up after an active analysis and errors do not cause endless automatic retries', async () => {
