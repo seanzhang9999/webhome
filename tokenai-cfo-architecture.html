@@ -13,13 +13,13 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 @media print{body{background:#fff;color:#111}.hero{background:#fff;color:#111;padding:10px 0}.hero .intro,.hero .intro strong,.eyebrow,.brand,.brand strong{color:#111}.actions,.guide,.skip-link{display:none}.wrap{max-width:none;padding:0}.section{break-inside:avoid;border-radius:0;padding:18px 0}.btn[aria-pressed="true"]{background:#edf3fc;color:#111}footer{padding:15px 0}a{color:#111}}
 </style>
-<link rel="stylesheet" href="tokenai-architecture.css?v=3">
+<link rel="stylesheet" href="tokenai-architecture.css?v=4">
 </head>
 <body>
 <a class="skip-link" href="#main">跳到讲解内容</a>
 <header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理还有一位独立的 AI 伙伴：在事项旁梳理讨论，打开审核明细后，也能一边看规则与证据，一边针对当前工单追问。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
 </div><div class="actions"><a class="cta" href="awiki-coffee-trusted-space-v55-cfo.html">打开报销费控演示</a><a class="cta secondary" href="#section-1">先看协作图 ↓</a><a class="cta secondary" href="procurement-collaboration-architecture.html">多方采购协作架构 ↗</a></div></div></header>
-<div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂整体架构</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂整体架构</h2></div>
+<div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂整体架构</a><a href="#anp-value">ANP 与独立财务 Agent</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂整体架构</h2></div>
 <p>上方是共享业务协作：财务人员和主 Agent 在同一固定事项里对话，主 Agent 在服务端调用 TokenX。下方是经理的私人 AI 伙伴：既能跟随主聊天，也能在审核明细旁结合当前工单提供私人问答。</p>
 <div class="architecture" id="tokenai-architecture" aria-label="事项群与 Agent 及审核系统整体架构">
   <div class="arch-top"><div><div class="arch-kicker">AWIKI × TOKENAI × TOKENX</div><div class="arch-title">从一句提问，到一份有依据的回答</div><div class="arch-subtitle">主 Agent 就在事项群中；中间展示同一个 Agent 的服务端运行。</div></div><button class="arch-control arch-fullscreen" type="button" data-arch-fullscreen>放大架构图</button></div>
@@ -47,7 +47,7 @@
       <button class="arch-node audit-node" type="button" data-node="evidence" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>真实结果来源</span><span class="node-name">工单与审核依据</span><span class="node-copy">工单状态 · 规则结论<br>证据明细 · 审核建议</span><span class="node-tag">可查看明细与导出结果</span></button>
       <div class="arch-spacer" aria-hidden="true"></div>
     </div>
-<div class="arch-private-band"><div class="arch-private-heading"><span>04 / PRIVATE ADVISOR</span><h3>财务经理的私人 AI 伙伴</h3><p>同一私人伙伴，两个使用入口：事项旁看自动分析与私人问答；审核明细旁针对当前工单追问。</p></div><div class="arch-private-grid"><div class="arch-context-sources">
+<div class="arch-private-band"><div class="arch-private-heading"><span>04 / PRIVATE ADVISOR</span><h3>财务经理的私人 AI 伙伴</h3><p>当前 Demo：同一私人伙伴，两个使用入口。进一步的独立运行与跨系统身份架构见下方 ANP 章节。</p></div><div class="arch-private-grid"><div class="arch-context-sources">
 <button class="arch-node private-node" type="button" data-node="context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来源一 · 当前事项</span><span class="node-name">近期可见的主聊天</span><span class="node-copy">自动分析跟随讨论更新<br>普通私人问答结合本人的历史</span><span class="node-tag">事项成员可见的内容</span></button>
 <button class="arch-node audit-node" type="button" data-node="review-context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来源二 · 当前选中的工单</span><span class="node-name">当前工单审核依据</span><span class="node-copy">提问时由服务端校验权限<br>只读获取规则、结论与证据</span><span class="node-tag">服务端 → MCP → 授权工单</span></button>
 </div><button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立 Pi 会话 · 私人建议</span><span class="node-name">财务经理 AI 伙伴</span><span class="node-copy">结合近期讨论或当前工单<br>解释风险、缺失材料与下一步</span><span class="node-tag">按工单保留私人问答 · 无执行工具</span></button>
@@ -59,6 +59,31 @@
   <div class="arch-status">连接关系示意 · 非实时监控</div>
 </div>
 <script src="tokenai-architecture.js?v=3"></script>
+</section>
+<section class="section" id="anp-value" aria-labelledby="anp-value-heading"><div class="section-heading"><span class="section-number">ANP</span><h2 id="anp-value-heading">让财务 Agent 带着自己的身份跨环境工作</h2></div>
+<p><strong>财务伙伴可以拥有独立的运行环境，再进入不同工作界面提供服务。</strong>它由财务个人或企业明确控制，拥有自己的身份、受控签名能力、私人记忆和授权记录。事项侧栏、审核页面、办公系统和移动端，都可以成为它的工作入口。</p>
+<p>这里的“独立盒子”是一个可独立运行与管理的服务单元，可以部署在本机、企业服务器或受托云环境。得到明确委托后，它也可以在后台访问获准的业务系统，按约定频率和范围处理任务。</p>
+<div class="architecture independent-architecture" id="independent-agent-map" aria-label="独立财务 Agent 的目标架构">
+<div class="arch-top"><div><div class="arch-kicker">INDEPENDENT AGENT · MULTIPLE WORKSPACES · SCOPED AUTHORITY</div><div class="arch-title">同一个财务 Agent，进入不同工作环境</div><div class="arch-subtitle">目标架构 · 多环境接入与 ANP 授权互操作需要分别适配和验收</div></div></div>
+<div class="arch-controls" role="group" aria-label="独立智能体架构视角"><button class="arch-control" type="button" data-independent-view="all" aria-pressed="true">整体关系</button><button class="arch-control" type="button" data-independent-view="workspace" aria-pressed="false">进入工作环境</button><button class="arch-control" type="button" data-independent-view="systems" aria-pressed="false">后台连接系统</button><button class="arch-control" type="button" data-independent-view="authority" aria-pressed="false">身份与授权跟踪</button></div>
+<div class="ind-owner"><span>授权与控制主体</span><strong>财务负责人 / 所属企业</strong><p>明确 Agent 代表谁、可以做什么、有效多久，以及何时收回权限。</p><span class="ind-down">↓ 委托与运行控制</span></div>
+<div class="ind-grid">
+<div class="ind-environments" data-independent-part="workspace"><span class="ind-label">工作入口</span><h3>兼容或经适配的工作环境</h3><div class="ind-tile"><b>事项群与协作空间</b><span>以可识别的 Agent 身份参与工作</span></div><div class="ind-tile"><b>审核明细与业务页面</b><span>围绕当前单据解释与追问</span></div><div class="ind-tile"><b>ERP / OA / 移动端</b><span>通过适配入口调用同一伙伴</span></div><p class="ind-note">每个入口提供本次获准使用的上下文。跨环境使用仍遵守各环境的身份与成员规则。</p></div>
+<div class="ind-link" aria-hidden="true">↔<small>入口</small></div>
+<div class="ind-agent" data-independent-part="agent"><span class="ind-label">财务方控制的独立运行单元</span><h3>独立财务 Agent</h3><div class="ind-agent-sub">“盒子”的核心是控制边界</div><ul><li><b>可验证身份</b><span>Agent DID、主体关联与受控签名</span></li><li><b>独立运行</b><span>对话、任务与后台处理能力</span></li><li><b>私人记忆</b><span>按用户、事项与数据范围管理</span></li><li><b>授权管理</b><span>分别保存各系统认可的委托与范围</span></li><li><b>调用与记录</b><span>业务适配器、请求标识与结果回执</span></li></ul><div class="ind-agent-foot">切换入口时，保留自己的身份与治理边界。</div></div>
+<div class="ind-link green" aria-hidden="true">↔<small>调用</small></div>
+<div class="ind-systems" data-independent-part="systems"><span class="ind-label">业务资源与执行方</span><h3>分别授予权限的业务系统</h3><div class="ind-tile"><b>审核 / 报销系统</b><span>读取被授权的工单、规则与证据</span></div><div class="ind-tile"><b>采购 / ERP / 合同系统</b><span>按项目、角色与动作限定访问</span></div><div class="ind-tile"><b>支付等敏感系统</b><span>单独授予权限，执行前核验所需逐笔批准</span></div><p class="ind-note">各系统决定是否接受身份和委托。业务调用通过支持的 MCP、HTTP API 等适配；后台任务也检查权限状态。</p></div>
+</div>
+<div class="ind-authority" data-independent-part="authority"><div><span class="ind-label">跨系统的共同基础与追溯路径</span><h3>ANP 共同基础与跨系统授权跟踪</h3></div><div class="ind-steps"><span>识别 Agent</span><i>→</i><span>验证身份</span><i>→</i><span>核对授权依据</span><i>→</i><span>本系统决定并执行</span><i>→</i><span>记录请求与回执</span><i>→</i><span>跟踪到期与撤销</span></div><p>建议把 Agent 身份、本系统授权记录、事项 / 请求标识和结果回执关联起来，能够回查：谁授权了谁，对哪份数据做了什么，以及结果是什么。</p></div>
+<div class="arch-detail" role="status" aria-live="polite" aria-atomic="true"><div class="arch-detail-title" id="independent-title">身份可复用，授权各自成立</div><div class="arch-detail-copy"><p id="independent-copy">财务 Agent 可以进入多个工作环境，并在明确授权下访问多个业务系统。ANP 提供身份认证与授权互操作的共同基础，业务系统与应用共同落实权限执行和记录关联。</p><span class="arch-detail-meta" id="independent-meta">这张图是目标架构；下方对照表说明当前 Demo 的实际范围。</span></div></div>
+</div>
+<p>“特殊权限”需要具体写成委托范围：允许访问哪些项目或账套、执行哪些动作、有效多久，以及如何撤销。涉及金额的操作，还要由执行系统核验额度与所需逐笔批准。</p>
+<p><strong>对 CFO 的价值：</strong>采购、审核和办公入口变化时，财务伙伴仍有明确归属；每个后台任务都能说明依据哪份委托、使用什么数据、允许什么动作，必要时可以停止后续授权使用并核查已发生的操作。</p>
+<h3>ANP 与业务系统分别承担什么</h3>
+<table><thead><tr><th>需要回答的问题</th><th>共同机制与责任</th></tr></thead><tbody><tr><td>这个请求来自谁</td><td>ANP 的 DID 身份与认证机制支持跨平台验证请求主体；接收方核实身份材料和请求证明。</td></tr><tr><td>它代表谁，可以做什么</td><td>授权机制表达委托或组织角色及范围。资源方确认授权依据、信任关系和本地策略，再决定可访问的资源与动作。</td></tr><tr><td>这次操作能否执行</td><td>具体业务系统检查当前权限及所需批准；敏感动作需要绑定到本次操作的确认，不能仅凭已登录就执行。</td></tr><tr><td>发生了什么，何时停止</td><td>Agent、授权服务与业务系统保留可关联记录，落实到期、撤销及结果核查。完整跨系统追踪需要产品与各系统共同实现。</td></tr></tbody></table>
+<p class="anp-source-note">规范边界：<a href="https://github.com/agent-network-protocol/AgentNetworkProtocol/blob/main/02-anp-did-authentication-protocol-specification.md" target="_blank" rel="noopener noreferrer">ANP-02 身份认证规范</a>已发布，认证不自动授予业务权限。<a href="https://github.com/agent-network-protocol/AgentNetworkProtocol/blob/main/05-anp-did-authorization-protocol-specification.md" target="_blank" rel="noopener noreferrer">ANP-05 授权协议</a>目前为未发布的 v0.7 草案，提出 DID 关联的 OAuth 授权与 VC 委托 / 组织角色凭证路径；各系统分别验证和决定接受范围。草案不代表当前 Demo 已实现这些能力。</p>
+<h3>当前 Demo 与下一步目标</h3>
+<table><thead><tr><th>维度</th><th>当前已实现</th><th>本节说明的目标架构</th></tr></thead><tbody><tr><td>工作入口</td><td>事项侧栏和审核明细侧栏共享 TokenAI 服务，提供私人分析与工单问答</td><td>独立财务 Agent 接入多个兼容或经适配的客户端与工作环境</td></tr><tr><td>运行与身份</td><td>TokenAI 服务管理 Pi 会话，使用本应用财务账号与成员权限</td><td>财务方独立控制运行单元与身份，跨系统可验证它代表的主体</td></tr><tr><td>系统接入</td><td>TokenAI 后端用服务凭据只读连接 TokenX；私人 Pi 会话没有业务执行工具</td><td>各系统分别认可的受限委托与业务适配，支持获准的后台任务</td></tr><tr><td>跟踪记录</td><td>按用户、事项和工单保存私人问答及审核上下文</td><td>身份、授权依据、请求和结果跨系统关联，配套到期、撤销和操作核查</td></tr></tbody></table>
 </section>
 <section class="section" id="section-2" aria-labelledby="section-2-heading"><div class="section-heading"><span class="section-number">02</span><h2 id="section-2-heading">页面上的两个 AI 分别帮什么忙</h2></div><table>
 <thead>
@@ -161,6 +186,7 @@
 </section>
 <section class="section" id="section-6" aria-labelledby="section-6-heading"><div class="section-heading"><span class="section-number">06</span><h2 id="section-6-heading">今天现场怎么讲</h2></div><p>“我们先在共同事项里查出真实工单，再打开审核明细。左边是规则和证据，右边是我的私人 AI 伙伴。看不明白哪条，就针对那条问；它结合这张单的依据解释，我再决定补什么材料、找谁复核。问答会保留，但不会自动发到事项群，最后仍按公司的流程作决定。”</p>
 
+<p>“再往前一步，财务 Agent 可以拥有独立身份和运行环境，进入不同业务界面，在授权范围内后台处理任务。ANP 帮助跨系统认清这个 Agent 及其委托依据，各业务系统仍决定具体权限，并与应用一起关联授权和执行记录。”</p>
 <p><strong>演示入口</strong>：<a href="https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html">AWiki 报销费控协同工作台</a> · <strong>独立入口</strong>：<a href="https://tokenai.awiki.ai">TokenAI 工作台</a></p>
 
 <p>进入“报销费控”方案，打开固定事项并登录。账户与数据权限沿用现有演示配置。</p>
@@ -170,5 +196,6 @@
 document.querySelectorAll('table').forEach(table=>{const container=document.createElement('div');container.className='table-scroll';container.setAttribute('role','region');container.setAttribute('aria-label','功能说明表');container.tabIndex=0;table.before(container);container.append(table)});
 document.querySelectorAll('.section p').forEach(p=>{if(p.children.length===1&&p.firstElementChild.tagName==='STRONG'&&p.textContent.startsWith('第')){const h=document.createElement('h3');h.textContent=p.textContent;p.replaceWith(h)}});
 </script>
+<script src="tokenai-independent-agent.js?v=1"></script>
 </body>
 </html>
