@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; base-uri 'none'; form-action 'none'"><title>多方采购协作架构｜AWiki</title><meta name="description" content="各方独立拥有客户端和智能体，共用方案、加入空间，以事项、控制工件与共同决策看板驱动持续采购协作。"><link rel="stylesheet" href="procurement-architecture.css?v=1"></head><body>
+<header class="intro"><div class="wrap"><div class="eyebrow">AWIKI / COLLABORATIVE PROCUREMENT</div><h1>从各方独立的智能体<br>到持续推进的采购协作</h1><p>同一方案定义怎样合作，同一空间确定谁能参与。人和 Agent 在事项中协作，以工件留下依据，以共同看板形成阶段结论，再启动下一轮事项。</p><div class="intro-links"><a href="#architecture">查看整体架构 ↓</a><a href="awiki-coffee-trusted-space-v55-cfo.html">打开咖啡采购演示 ↗</a><a href="tokenai-cfo-architecture.html#section-1">报销费控架构 ↗</a></div><div class="scope">多方采购协同目标架构 · 咖啡进口案例 · 2026 年 10 月 29 日<br>下图为流程与治理关系示意；现有采购页面使用预置演示数据，新增争议建群及通用循环机制属于架构设计。</div></div></header>
+<main class="wrap"><section id="architecture" class="architecture" aria-label="多方采购协同整体架构">
+<div class="chart-head"><div><div class="eyebrow">FEDERATED ACTORS · SHARED RULES · CONTINUOUS COLLABORATION</div><h2>各自拥有，共同推进</h2><p>上方看主体与边界，中间看方案与空间，下方看协作如何一轮轮发生。</p></div><button id="fullscreen" type="button">放大架构图</button></div>
+<div class="level"><span>01</span><h3>各方独立的工作端与智能体</h3><small>各方独立拥有 · 高亮当前阶段的相关方</small></div>
+<div class="parties">
+<article data-party="buyer"><div class="party-type">采购企业</div><h4>采购方</h4><p>采购负责人 · 财务授权人</p><div class="ownership">自己的客户端<br><b>采购 / 值班 Agent</b><br>私人伙伴 · 内部预算与业务系统</div></article>
+<article data-party="seller"><div class="party-type">供应企业</div><h4>供应方</h4><p>销售负责人 · 合同授权人</p><div class="ownership">自己的客户端<br><b>销售 / 履约 Agent</b><br>私人伙伴 · 库存与报价系统</div></article>
+<article data-party="cfo"><div class="party-type">独立专业机构</div><h4>CFO 与合同顾问</h4><p>风险评议 · 专业复核</p><div class="ownership">自己的客户端<br><b>财务 / 合同分析 Agent</b><br>私人伙伴 · 专业工具与资料</div></article>
+<article data-party="logistics"><div class="party-type">履约服务机构</div><h4>货代与关务</h4><p>运输组织 · 单证复核</p><div class="ownership">各机构自己的客户端<br><b>物流 / 单证 Agent</b><br>私人伙伴 · 各自业务系统</div></article>
+<article data-party="quality"><div class="party-type">验收责任主体</div><h4>品控与仓储</h4><p>样品评估 · 到货验收</p><div class="ownership">所属主体自己的客户端<br><b>质检 / 验收 Agent</b><br>私人伙伴 · 检测与仓储系统</div></article>
+</div>
+<div class="join-arrow">各端加载兼容版本的同一方案 ↓</div>
+<div class="shared pack"><div class="shared-title"><span class="label">02 / PACK</span><h3>共同采购协作方案</h3><p>同一套业务语言与协作规则</p></div><div class="tokens"><span>角色与权限</span><span>事项模板</span><span>工件结构</span><span>看板状态与确认规则</span><span>阶段触发与交接条件</span><span>异常与争议处理</span></div></div>
+<div class="join-arrow">加载方案 → 按空间规则申请或受邀 → 成员准入与具体授权 ↓</div>
+<div class="shared space"><div class="shared-title"><span class="label">03 / SPACE</span><h3>共同采购协作空间</h3><p>以同一笔采购组织跨主体协作</p></div><div class="space-content"><div class="tokens"><span>成员与角色</span><span>启用的方案版本</span><span>事项与资源目录</span><span>数据访问范围</span><span>变更与确认记录</span></div><p>同一方案可用于多个空间；同一空间可运行多个事项。空间成员资格和每份材料的访问权限分别管理。</p></div></div>
+<div class="level cycle-title"><span>04</span><h3>事项 → 工件 → 共同看板 → 新事项</h3><small>共享事实与责任推动下一步</small></div>
+<div class="scenario-toolbar"><div><span class="label">选择一个采购阶段</span><div id="scene-buttons" class="scene-buttons" role="group" aria-label="采购阶段"></div></div><span class="simulation-label">场景切换只演示关系，不执行业务</span></div>
+<div class="cycle-map">
+<div class="cycle-nodes">
+<article class="process matter"><div class="process-head"><span>MATTER</span><b>1</b></div><h3>多人多 Agent 事项群</h3><div class="dynamic-title" id="matter-title"></div><p id="matter-purpose"></p><div class="field-label">本轮参与者</div><div id="participants" class="tokens"></div><p class="rule">按需求邀请相关人和各自 Agent；新成员只取得本事项所需资料。</p></article>
+<div class="edge">形成<br><strong>→</strong></div>
+<article class="process artifact"><div class="process-head"><span>CONTROL ARTIFACTS</span><b>2</b></div><h3>有约束的控制工件</h3><div id="artifact-list"></div><p class="rule">记录来源、版本、允许动作、责任人和有效条件；用于约束执行与交接。</p></article>
+<div class="edge">引用<br><strong>→</strong></div>
+<article class="process board"><div class="process-head"><span>SHARED BOARD</span><b>3</b></div><h3>共同决策看板</h3><div class="dynamic-title" id="board-title"></div><dl><dt>共同事实</dt><dd id="board-facts"></dd><dt>未决问题</dt><dd id="board-issues"></dd><dt>责任与确认</dt><dd id="board-owner"></dd></dl><p class="rule">各方针对同一版本分别确认；保留分歧、待办和来源，持续更新。</p></article>
+</div>
+<div class="down-arrow">看板状态变化 + 方案约定的条件 ↓</div>
+<div class="trigger"><div><span class="label">4 / TRIGGER & HANDOFF</span><h3>检查条件，创建或关联下一事项</h3></div><div class="trigger-main"><div id="trigger-condition"></div><p>携带：来源看板与版本、已确认结论、授权范围、必要材料、责任人和待办。</p><div id="next-actions" class="next-actions"></div></div></div>
+<div class="return-loop"><span>←</span><div><b>下一事项继续产生工件与看板</b><p>需要补充证据就回到原事项；出现分歧就开争议子事项；满足阶段条件才向前交接。原事项保留，父子事项和交接来源可追溯。</p></div><span>↑</span></div>
+</div>
+<div class="scenario-note" role="status" aria-live="polite" aria-atomic="true"><span id="scene-kicker"></span><p id="scene-summary"></p></div>
+<div class="foundation"><span>贯穿全程</span><div>各方授权各自执行</div><div>材料按任务最小共享</div><div>重要动作由具权主体确认</div><div>外部系统结果以回执为据</div></div>
+</section>
+<section class="paper"><div class="section-no">01 / 读图顺序</div><h2>把五种关系分开，复杂协作就容易讲清</h2><div class="reading-grid"><article><h3>主体拥有能力</h3><p>采购方、供应方和服务机构分别拥有自己的端、Agent、数据及业务系统。企业 Agent 代表本方在授权内做事；人的私人伙伴帮助本人判断。</p></article><article><h3>方案定义方法</h3><p>各端加载同一方案，理解相同的角色、事项模板、数据结构和交接规则。加载同一方案不要求共用一个 Agent，也不自动加入任何空间。</p></article><article><h3>空间建立协作范围</h3><p>经空间准入成为参与者，再按角色和任务取得授权。采购需求、合同、风险意见、单证和验收证据分别控制可见范围。</p></article><article><h3>事项组织这一轮工作</h3><p>一个具体目标形成一个事项，相关人和各自 Agent 在其中共同推进。谈判、CFO评议、履约可以关联或并行，争议形成有责任人的子事项。</p></article><article><h3>工件与看板推动交接</h3><p>工件承载证据、授权和版本；看板汇集共同事实、分歧、责任和确认状态。阶段条件满足后，生成带来源的交接包，并触发后续事项。</p></article></div></section>
+<section class="paper"><div class="section-no">02 / 控制工件与看板</div><h2>协作怎样变成可以继续执行的依据</h2><div class="table-wrap"><table><thead><tr><th>对象</th><th>它回答的问题</th><th>采购中的例子</th></tr></thead><tbody><tr><td>需求工件</td><td>本轮需要解决什么</td><td>品类、数量、到货窗口、质量标准</td></tr><tr><td>授权工件</td><td>谁可以做什么，到哪里停止</td><td>可核验与询样；价格承诺、签约和付款另行授权</td></tr><tr><td>版本与证据工件</td><td>当前结论依据哪一版资料</td><td>条款快照、合同版本、样品报告、单据差异及更正回单</td></tr><tr><td>共同决策看板</td><td>各方对哪些事实达成确认，哪些还未解决</td><td>条件共识、未决风险、补件责任、各方确认记录</td></tr><tr><td>交接工件</td><td>下一事项可以接着做什么</td><td>已确认版本、最小资料快照、参与角色、任务与限制</td></tr></tbody></table></div><p class="callout">一段聊天或一句“同意”需要落实到明确对象、版本和授权范围，才能成为下一步的依据。看板确认、合同签署、付款执行与实际到账分别保留各自的记录。</p></section>
+<section class="paper"><div class="section-no">03 / 循环与分支</div><h2>既能向前推进，也能处理分歧后回到主线</h2><div class="branches"><article><span>阶段交接</span><h3>撮合 → 谈判 → 履约</h3><p>准备度确认后启动谈判；谈判中的财务风险可派生 CFO 评议；取得约定的签署回单后，才创建履约事项。</p></article><article><span>异常回路</span><h3>履约 → 争议子事项 → 履约</h3><p>例如提单与装箱单数量不一致，邀请货代、关务和相应责任方核对来源。更正和复核完成后，回到履约看板解除对应阻塞。</p></article><article><span>新一轮业务</span><h3>验收 → 复盘 → 新采购需求</h3><p>复盘沉淀本单证据与经验；再次采购需要新的需求和授权。可复用方案、经授权的经验与结构，重新开始下一轮协作。</p></article></div></section>
+<section class="paper"><div class="section-no">04 / 实现这张图的关键约束</div><h2>循环由明确条件驱动，各方保留决定权</h2><ol><li><b>邀请与数据授权分开。</b>拉人或 Agent 进事项时，指定任务和可用材料；不能因为进入空间就读取全部资料。</li><li><b>看板触发绑定具体版本。</b>规则检查必需的确认、授权有效性和外部回执；缺项时保留待办，不向下一阶段推进。</li><li><b>重复事件关联同一后续事项。</b>每次交接保留唯一标识及来源，避免反复创建事项或重复执行外部动作。</li><li><b>分歧保留责任和依据。</b>争议子事项明确问题、当事方、证据和解决条件；解决后由责任主体确认并回写父事项。</li><li><b>业务执行仍在授权方的系统发生。</b>各方 Agent 通过获准接口连接本方或专业服务，带回可核验的结果；空间提供协作组织与交接关系。</li></ol></section>
+<footer><p>依据现有咖啡采购 V5.5 的主体、方案与四类事项，扩展展示通用的看板触发与争议循环设计。</p><a href="awiki-coffee-trusted-space-v55-cfo.html">采购协作演示</a> · <a href="tokenai-cfo-architecture.html">报销费控架构</a></footer></main><script src="procurement-architecture.js?v=1"></script></body></html>
