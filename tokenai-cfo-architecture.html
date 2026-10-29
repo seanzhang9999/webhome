@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="面向 CFO 的报销费控协作讲解：共同查询真实审核结果，私人 AI 伙伴帮助分析，由财务经理决定下一步。">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <title>CFO 视角下的报销费控与 AI 协作架构｜AWiki TokenAI</title>
 <style>
 :root{color-scheme:light;--foreground:#23334b;--muted-foreground:#607086;--border:#dfe6ef;--background:#f4f6fa;--primary:#315fc0;--primary-foreground:#fff;--accent:#edf3ff;--accent-foreground:#234b99}
@@ -13,73 +13,45 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 @media print{body{background:#fff;color:#111}.hero{background:#fff;color:#111;padding:10px 0}.hero .intro,.hero .intro strong,.eyebrow,.brand,.brand strong{color:#111}.actions,.guide,.skip-link{display:none}.wrap{max-width:none;padding:0}.section{break-inside:avoid;border-radius:0;padding:18px 0}.btn[aria-pressed="true"]{background:#edf3fc;color:#111}footer{padding:15px 0}a{color:#111}}
 </style>
+<link rel="stylesheet" href="tokenai-architecture.css?v=1">
 </head>
 <body>
 <a class="skip-link" href="#main">跳到讲解内容</a>
 <header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理旁边还有一位独立的 AI 伙伴，帮助梳理风险、准备追问和下一步建议。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
 </div><div class="actions"><a class="cta" href="awiki-coffee-trusted-space-v55-cfo.html">打开报销费控演示</a><a class="cta secondary" href="#section-1">先看协作图 ↓</a></div></div></header>
-<div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂协作关系</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂协作关系</h2></div><p>点选图中的角色，查看它负责什么。上方是共同办事的路径，下方是财务经理的私人建议路径。</p>
-
-<style>
-#cfo-expense-map { color: var(--foreground); }
-#cfo-expense-map .flow { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); gap: 12px; align-items: center; margin: 16px 0 24px; }
-#cfo-expense-map .node { display: grid; gap: 8px; text-align: center; min-width: 0; }
-#cfo-expense-map .edge { color: var(--muted-foreground); text-align: center; justify-self: center; width: max-content; pointer-events: none; }
-#cfo-expense-map .lane-label { margin-top: 12px; font-weight: 500; }
-#cfo-expense-map .detail { min-height: 48px; margin: 12px 0 0; }
-@media(max-width: 560px) {
-  #cfo-expense-map .flow { grid-template-columns: minmax(0,1fr); gap: 10px; }
-  #cfo-expense-map .edge { transform: rotate(90deg); }
-}
-</style>
-<div id="cfo-expense-map" aria-label="报销费控协作图">
-  <div class="lane-label">共同办事 · 有权限的事项成员可见</div>
-  <div class="flow" role="group" aria-label="真实审核查询路径">
-    <div class="node"><button class="btn" type="button" data-role="finance" aria-pressed="false">财务人员</button><span class="text-small">提出问题 · 明确范围</span></div>
-    <div class="edge" aria-label="双向交流">↔</div>
-    <div class="node"><button class="btn" type="button" data-role="main" aria-pressed="true">主聊天里的 TokenAI</button><span class="text-small">理解问题 · 带回结果</span></div>
-    <div class="edge" aria-label="查询并返回真实结果">↔</div>
-    <div class="node"><button class="btn" type="button" data-role="tokenx" aria-pressed="false">TokenX 审核服务</button><span class="text-small">授权工单 · 审核依据</span></div>
+<div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂整体架构</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂整体架构</h2></div>
+<p>左边是财务人员工作的事项群，中间是理解问题、组织工具调用的 Agent，右边是提供真实审核依据的 TokenX。点选路径，可以单独看清每一段怎样连接。</p>
+<div class="architecture" id="tokenai-architecture" aria-label="事项群与 Agent 及审核系统整体架构">
+  <div class="arch-top"><div><div class="arch-kicker">AWIKI × TOKENAI × TOKENX</div><div class="arch-title">从一句提问，到一份有依据的回答</div><div class="arch-subtitle">事项群连接人和 Agent，MCP 连接 Agent 和审核能力。</div></div><button class="arch-control arch-fullscreen" type="button" data-arch-fullscreen>放大架构图</button></div>
+  <div class="arch-controls" role="group" aria-label="架构路径"><button class="arch-control" type="button" data-view="all" aria-pressed="true">整体架构</button><button class="arch-control" type="button" data-view="front" aria-pressed="false">事项群接入</button><button class="arch-control" type="button" data-view="audit" aria-pressed="false">审计系统接入</button><button class="arch-control" type="button" data-view="private" aria-pressed="false">私人 AI 伙伴</button><button class="arch-control arch-play" type="button" data-arch-play aria-pressed="false">演示一次提问</button></div>
+  <div class="arch-board">
+    <svg class="arch-wires" aria-hidden="true"></svg>
+    <div class="arch-lane">
+      <div class="arch-lane-header"><span>01 / COLLABORATION</span><h3>前端事项群</h3><div class="arch-host">AWiki · GitHub Pages</div></div>
+      <button class="arch-node" type="button" data-node="matter" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务人员 + 主助手</span><span class="node-name">报销费控固定事项</span><span class="node-copy">成员 · 共同讨论 · 持续记录<br>在这里提问，也在这里接收结果。</span><span class="node-tag">共享主聊天</span></button>
+      <div class="arch-spacer" aria-hidden="true"></div>
+      <button class="arch-node private-node front-partner" type="button" data-node="private" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务经理 / CFO</span><span class="node-name">我的 AI 伙伴侧栏</span><span class="node-copy">自动分析跟随讨论<br>私人问答由我主动发起</span><span class="node-tag">仅本人可见</span></button>
+    </div>
+    <div class="arch-lane core">
+      <div class="arch-lane-header"><span>02 / AGENT SERVICE</span><h3>TokenAI Agent 服务</h3><div class="arch-host">tokenai.awiki.ai</div></div>
+      <button class="arch-node" type="button" data-node="gateway" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>事项与 Agent 的接入口</span><span class="node-name">身份与事项接入</span><span class="node-copy">核实成员 → 分派会话 → 回传回复</span><span class="node-tag">HTTPS API ⇄ SSE 事件流</span></button>
+      <button class="arch-node agent-node" type="button" data-node="agent" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>共享事项的业务助手</span><span class="node-name">Pi 主 Agent</span><span class="node-copy">理解意图 · 选择工具 · 整理结果<br>每个事项独立上下文 · 调用前校验工具与参数</span><span class="node-tag">DeepSeek 提供理解与表达能力</span></button>
+      <button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立会话 · 独立建议</span><span class="node-name">Pi 财务经理 AI 伙伴</span><span class="node-copy">读取近期可见讨论，帮助分析和追问</span><span class="node-tag">自动分析 + 私人问答 · 无业务工具</span></button>
+      <button class="arch-node storage-node" type="button" data-node="store" aria-pressed="false"><span class="node-eyebrow">事项记忆</span><span class="node-name">消息与上下文记录</span><span class="node-copy">共享消息与私人内容分开访问</span></button>
+    </div>
+    <div class="arch-lane">
+      <div class="arch-lane-header"><span>03 / AUDIT SYSTEM</span><h3>TokenX 财务审核系统</h3><div class="arch-host">远程 MCP 服务</div></div>
+      <button class="arch-node audit-node" type="button" data-node="mcp" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>Agent 与业务系统的连接口</span><span class="node-name">MCP 工具接口</span><span class="node-copy">对接工单与审核结果<br>由 TokenAI 服务端发起连接</span><span class="node-tag">Streamable HTTP · Bearer 鉴权</span></button>
+      <button class="arch-node audit-node" type="button" data-node="audit" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>TokenX Suite</span><span class="node-name">现有审核业务能力</span><span class="node-copy">合同付款 · 报销费控<br>企业报账 · 通用文档审核</span><span class="node-tag">当前接入开放只读查询</span></button>
+      <button class="arch-node audit-node" type="button" data-node="evidence" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>真实结果来源</span><span class="node-name">工单与审核依据</span><span class="node-copy">工单状态 · 规则结论<br>证据明细 · 审核建议</span><span class="node-tag">可查看明细与导出结果</span></button>
+      <div class="arch-spacer" aria-hidden="true"></div>
+    </div>
   </div>
-  <hr>
-  <div class="lane-label">私人参谋 · 仅当前登录用户可见</div>
-  <div class="flow" role="group" aria-label="经理私人建议路径">
-    <div class="node"><button class="btn" type="button" data-role="context" aria-pressed="false">主聊天的近期讨论</button><span class="text-small">提供上下文</span></div>
-    <div class="edge" aria-label="根据讨论提供建议">→</div>
-    <div class="node"><button class="btn" type="button" data-role="partner" aria-pressed="false">财务经理 AI 伙伴</button><span class="text-small">自动分析 · 私人问答</span></div>
-    <div class="edge" aria-label="私人提问与建议">↔</div>
-    <div class="node"><button class="btn" type="button" data-role="manager" aria-pressed="false">财务经理或 CFO</button><span class="text-small">核实依据 · 决定下一步</span></div>
-  </div>
-  <p class="detail" aria-live="polite">TokenAI 将问题交给已连接的审核服务查询，并在共同事项中解释真实返回结果。</p>
+  <div class="arch-bridge-note" aria-label="连接图例"><span><i aria-hidden="true"></i>事项问题与回复</span><span class="green"><i aria-hidden="true"></i>工具查询与真实结果</span><span class="purple"><i aria-hidden="true"></i>私人上下文与建议</span></div>
+  <div class="arch-detail" role="status" aria-live="polite" aria-atomic="true"><div class="arch-detail-title">一条办事主线，一条私人建议线</div><div class="arch-detail-copy"><p>事项群把问题交给 Agent，Agent 查询审核系统，再把结果带回事项群。独立伙伴帮助经理分析和追问。</p><span class="arch-detail-meta">点选任意模块查看职责。</span></div></div>
+  <div class="arch-status">连接关系示意 · 非实时监控</div>
 </div>
-<script>
-(() => {
-  const root = document.getElementById('cfo-expense-map');
-  const descriptions = {
-    finance: '财务人员在固定事项提问，也可以查看明细和下载审核结果。',
-    main: 'TokenAI 将问题交给已连接的审核服务查询，并在共同事项中解释真实返回结果。',
-    tokenx: 'TokenX 提供获授权工单的审核状态、规则结论和证据，当前接入开放查询。',
-    context: '私人伙伴根据当前用户可见的近期讨论分析，不会因此看到更多业务数据。',
-    partner: 'AI 伙伴提供自动分析和私人问答，私人回答不发到主聊天，也不覆盖自动分析。',
-    manager: '经理结合真实依据与 AI 建议，按企业现有流程决定补充材料、复核或后续审批。'
-  };
-  const select = (key) => {
-    const role = Object.hasOwn(descriptions, key) ? key : 'main';
-    root.querySelectorAll('[data-role]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.role === role)));
-    root.querySelector('.detail').textContent = descriptions[role];
-    return role;
-  };
-  const restore = state => select(state?.modelContent?.selectedRole);
-  restore(window.openai?.widgetState);
-  root.querySelectorAll('[data-role]').forEach(button => button.addEventListener('click', () => {
-    const role = select(button.dataset.role);
-    window.openai?.setWidgetState?.({modelContent: {selectedRole: role}, privateContent: null})?.catch(() => {});
-  }));
-  window.addEventListener('openai:set_globals', event => {
-    if (event.detail?.globals && Object.hasOwn(event.detail.globals, 'widgetState')) restore(event.detail.globals.widgetState);
-  });
-})();
-</script>
+<script src="tokenai-architecture.js?v=1"></script>
 </section>
 <section class="section" id="section-2" aria-labelledby="section-2-heading"><div class="section-heading"><span class="section-number">02</span><h2 id="section-2-heading">页面上的两个 AI 分别帮什么忙</h2></div><table>
 <thead>
