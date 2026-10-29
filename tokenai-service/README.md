@@ -119,11 +119,21 @@ TOKENX_UPLOAD_DEFAULTS={}
 链接也会转换成可操作的查看/下载按钮。`/api/v1/work-orders/<subject_id>` 与其 `/report`
 子路径验证登录和连接所属组织；地址中不携带令牌，也不代理任意上游 URL。
 
-当前上游公网仅开放 MCP，原 `/files/.../file-preview` 报告路径实测返回 404。因此提供
-“审核结果导出（Markdown）”，从真实 MCP 结果生成摘要、逐规则结论、证据、建议和
-完整结构化数据，文件名标为“审核结果导出”，不冒充控制台原报告文件。
+上游升级后已提供公网 console_url 和报告链接。明细主按钮为“打开审核结果”，由当前
+用户主动点击后，新窗口打开 TokenX 原生只读工作台；本页的审核摘要和私人 AI 伙伴保留。
+原站仍禁止跨站 iframe，本版不嵌入、不代理改写原页，也不修改其响应头。
+
+POST /api/v1/work-orders/:subjectId/native-view 校验当前财务身份与连接组织，并重新读取
+工单；仅此显式查看动作调用 include_detail=false/include_share=true 创建一次性查看链接。
+链接必须匹配当前 subject_id、固定 HTTPS 来源与 /share/audit/ 路径，并具有不超过一小时
+的剩余有效期及 one-time 标记（当前上游默认约 30 分钟）。上游无时区后缀的过期时间按其
+UTC 契约解析。相同用户/请求标识短期去重，链接仅返回本次界面，不写入共享消息或数据库；
+普通工单结果剔除分享凭据。Pi 的普通工具调用仍拒绝 include_share=true，通用分享及业务
+写工具保持关闭。原站查看会话由 TokenX 管理，重新查看可再次点击按钮取得新链接。
+
+“下载整理版（Markdown）”作为次要按钮保留，从真实 MCP 结果生成摘要、逐规则结论、
+证据、建议和结构化数据，文件名标为“审核结果导出”，不冒充控制台原报告文件。
 导出强制 attachment、MIME text/markdown、nosniff，聊天/明细页面均转义业务数据。
-所有查询固定 include_share=false，不签发免登录链接。
 
 审核明细以中文状态、总体结论和规则卡片展示。规则展开后分别显示结论、证据原文、
 引用/文件/页码与处理建议；支持字符串及对象证据、数组与映射规则，并保留未知状态原值。
@@ -195,3 +205,7 @@ awiki.info 通配符证书，部署前核对 SAN 覆盖 tokenai.awiki.info 及�
 `sudo env TOKENAI_REPORT_SUBJECT_ID=<已授权工单UUID> TOKENAI_BROWSER_PATH=<已有Chromium路径> node test/live-audit-companion.mjs`
 定向验证线上明细内的真实 MCP 上下文与 DeepSeek 私人问答。创建仅用于验收的财务账号，
 不发送共享消息、不执行 TokenX 写操作，完成后精确删除该账号的成员关联、令牌及私人记录。
+
+原生结果入口可用 `TOKENAI_REPORT_SUBJECT_ID=<已授权工单UUID> TOKENAI_BROWSER_PATH=<Chromium路径> node test/live-native-result.mjs`
+做定向检查：只打开原站只读结果窗口，核对本页 AI 和草稿保留；不输出一次性 URL 或业务正文。
+输出分别报告“新窗口已打开”和“原站审核内容是否完成加载”，两者不混同。

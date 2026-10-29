@@ -26,7 +26,7 @@ export async function buildApp(config, overrides = {}) {
   const companion = overrides.companion || new FinanceCompanion(config, store, { runtime: () => agent.runtime(), readWorkOrder });
   if (!companion.readWorkOrder) companion.readWorkOrder = readWorkOrder;
   app.decorate('services', { store, tokenx, agent, companion });
-  const loginAttempts = new Map();
+  const loginAttempts = new Map(), nativeRequests = new Map();
   await app.register(cors, { origin: (origin, cb) => cb(null, !origin || config.allowedOrigins.includes(origin)),
     methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type'], exposedHeaders: ['Content-Disposition', 'X-TokenAI-Report-Source'], maxAge: 600 });
   await app.register(multipart, { limits: { fileSize: config.fileLimit, files: 1, fields: 0, parts: 1 } });
@@ -108,6 +108,29 @@ export async function buildApp(config, overrides = {}) {
     reply.header('Content-Disposition', "attachment; filename=\"audit-result.md\"; filename*=UTF-8''" + encoded);
     reply.header('X-TokenAI-Report-Source', 'structured-export');
     return reply.type('text/markdown; charset=utf-8').send(exportWorkOrderMarkdown(data));
+  });
+  app.post('/api/v1/work-orders/:subjectId/native-view', async req => {
+    const user = authenticate(store, req), id = req.params.subjectId, body = objectBody(req);
+    requireWorkOrderAccess(config, user, id);
+    if (typeof body.requestId !== 'string' || !/^[A-Za-z0-9_-]{16,80}$/.test(body.requestId)) throw bad(400, '查看请求格式不正确');
+    const key = user.id + ':' + body.requestId;
+    const existing = nativeRequests.get(key);
+    if (existing && existing.until > Date.now()) {
+      if (existing.subjectId !== id) throw bad(409, '同一查看请求不能更换工单');
+      return existing.promise;
+    }
+    rate('native-view:' + user.id, 8, 60000);
+    for (const [k,v] of nativeRequests) if (v.until <= Date.now()) nativeRequests.delete(k);
+    if (nativeRequests.size >= 200) throw bad(429, '原生查看请求较多，请稍后再试');
+    const promise = (async () => {
+      const data = await readWorkOrder(user, id);
+      if (!data.native_view_available) return { status: 'unavailable', subjectId: id };
+      try { return await tokenx.nativeView(id); }
+      catch { throw bad(502, '原生工作台暂时无法打开，请稍后重试'); }
+    })();
+    nativeRequests.set(key, { until: Date.now() + 60000, subjectId: id, promise });
+    promise.catch(() => {});
+    return promise;
   });
   app.post('/api/v1/solutions/expense-control/matter:ensure', async req => {
     const user = authenticate(store, req); return store.ensureMatter(user);
@@ -213,6 +236,6 @@ export async function buildApp(config, overrides = {}) {
     const timer = setInterval(send, 750);
     reply.raw.on('close', () => { closed = true; clearInterval(timer); });
   });
-  app.addHook('onClose', async () => { await companion.close(); await agent.close(); await tokenx.close(); if (!overrides.store) store.close(); });
+  app.addHook('onClose', async () => { nativeRequests.clear(); await companion.close(); await agent.close(); await tokenx.close(); if (!overrides.store) store.close(); });
   return app;
 }

@@ -12,7 +12,7 @@ def replace(old, new):
         raise SystemExit(f'Expected exactly one integration point: {old[:100]}')
     text = text.replace(old, new, 1)
 
-replace('<body><div id="root"></div><script>', '<body><div id="root"></div><link rel="stylesheet" href="./tokenai-markdown.css?v=4"><script src="./tokenai-markdown.js?v=1"></script><script src="./tokenai-expense.js?v=10"></script><script>/* tokenai-expense-integration: 1 */')
+replace('<body><div id="root"></div><script>', '<body><div id="root"></div><link rel="stylesheet" href="./tokenai-markdown.css?v=5"><script src="./tokenai-markdown.js?v=1"></script><script src="./tokenai-expense.js?v=11"></script><script>/* tokenai-expense-integration: 1 */')
 replace("let view='work',workTab='matters'", "let selectedPack='coffee',expenseSelected=false;\nlet view='work',workTab='matters'")
 replace("if(workTab==='matters')return s.created.filter(id=>allowedGroup(id)).map(id=>({key:'group:'+id,title:GROUPS[id].name,sub:GROUPS[id].short,mark:GROUPS[id].tag[0],state:id===active().g?'当前事项':'已接续'}));", "if(workTab==='matters')return [{key:'matter:expense',title:'报销费控工作台',sub:'财务人员 · TokenAI / Pi Agent',mark:'费',state:'固定事项'},...s.created.filter(id=>allowedGroup(id)).map(id=>({key:'group:'+id,title:GROUPS[id].name,sub:GROUPS[id].short,mark:GROUPS[id].tag[0],state:id===active().g?'当前事项':'已接续'}))];")
 replace("return [{key:'pack:main',title:PACK.name,sub:PACK.id+'@'+PACK.version,mark:'方'}];", "return [{key:'pack:main',title:PACK.name,sub:PACK.id+'@'+PACK.version,mark:'方'},{key:'pack:expense-control',title:'报销费控协同方案',sub:'固定财务事项 · TokenAI / Pi Agent',mark:'费'}];")

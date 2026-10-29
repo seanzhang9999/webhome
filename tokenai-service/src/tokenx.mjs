@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { ProxyAgent, fetch as proxyFetch } from 'undici';
 import { uid, now } from './store.mjs';
 import { redact } from './config.mjs';
+import { nativeTicket } from './native-view.mjs';
 import { rewriteWorkOrderResult } from './work-order-view.mjs';
 
 export const WORK_ORDER_TOOLS = new Set(['scenario_work_orders', 'scenario_work_order']);
@@ -104,6 +105,16 @@ export class TokenX {
       if (!e.toolError) { await this.client?.close().catch(() => {}); this.client = null; this.status = { connected: false, checkedAt: now(), error: redact(e.message, this.config) }; }
       throw Object.assign(new Error(redact(e.message, this.config)), { toolError: !!e.toolError });
     }
+  }
+  async nativeView(subjectId) {
+    await this.connect();
+    this.validate('scenario_work_order', { subject_id: subjectId, include_detail: false, include_share: false });
+    // Only the authenticated viewer route invokes this narrowly scoped action.
+    // General model tool calls still reject include_share=true and sharing stays off.
+    const result = await this.client.callTool({ name: 'scenario_work_order', arguments: { subject_id: subjectId, include_detail: false, include_share: true } }, undefined, { timeout: 60000 });
+    if (result.isError) throw new Error('原生查看会话暂时无法创建');
+    let data; try { data = result.structuredContent || JSON.parse(resultText(result)); } catch { throw new Error('原生查看会话返回格式不正确'); }
+    return nativeTicket(data, subjectId);
   }
   propose(store, matterId, user, name, args) {
     this.validate(name, args);

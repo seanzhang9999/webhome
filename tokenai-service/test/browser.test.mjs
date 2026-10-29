@@ -21,6 +21,7 @@ test('existing page opens a persistent finance matter, authenticates and display
   const subjectId = '11111111-1111-4111-8111-111111111111';
   const secondSubjectId = '22222222-2222-4222-8222-222222222222';
   const reviewContexts = [];
+  let nativeOpens = 0;
   for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '另一工单：https://tokenai.awiki.info/work-orders/' + secondSubjectId + '\n旧域名工单：https://tokenai.awiki.ai/work-orders/' + subjectId + '\n控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
   const reviewRules = [
     { rule_code: 'A001', name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: [{ ref_id: 18, text: '测试证据：合同缺少附件。<img src=x onerror="window.__auditInjected=true">', file_id: 'private-file-reference', file_name: '合同样例.pdf', page_number: 2 }], suggestion: ['补齐验收证明', '由经办人核实材料版本'] },
@@ -28,8 +29,8 @@ test('existing page opens a persistent finance matter, authenticates and display
     { rule_code: 'A003', name: '合同主体', status: 'passed', summary: '主体信息一致', evidence: { text: '合同主体测试证据', ref_id: 0 } },
     { rule_code: 'A004', name: '人工复核项', status: 'needs_human_check', summary: '等待人工复核', evidence: null }
   ];
-  const detailPayload = { subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: reviewRules[0] }, review_result: { results: reviewRules }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } };
-  const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async (name, args) => ({ content: [{ type: 'text', text: JSON.stringify({ ...detailPayload, subject_id: args.subject_id }) }] }) };
+  const detailPayload = { subject_id: subjectId, console_url: 'https://mcp-local.parleyvoice.com/doc?subjectId=' + subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: reviewRules[0] }, review_result: { results: reviewRules }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } };
+  const tokenx = { nativeView: async id => { nativeOpens++; return { status: 'ready', subjectId: id, url: 'https://mcp-local.parleyvoice.com/share/audit/fixture_native_view_ticket_1234567890', oneTime: true, expiresAt: Date.now() + 30 * 60000 }; }, status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async (name, args) => ({ content: [{ type: 'text', text: JSON.stringify({ ...detailPayload, subject_id: args.subject_id }) }] }) };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
     for (let i = 0; i < 250; i++) store.event(matter.id, turn.id, 'text_delta', { text: '流式内容' });
     store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text + '\n\n## 审核摘要\n\n| 项目 | 状态 |\n| --- | --- |\n| 合同附件 | 待补充 |\n\n- 第一项\n- 第二项\n\n```json\n{"readOnly":true}\n```\n\n<script>window.__markdownInjected=true</script><img src=x onerror="window.__markdownInjected=true">[危险链接](javascript:alert(1))');
@@ -50,6 +51,10 @@ test('existing page opens a persistent finance matter, authenticates and display
       if (!['awiki-coffee-trusted-space-v55-cfo.html', 'tokenai-expense.js', 'tokenai-markdown.js', 'tokenai-markdown.css'].includes(name)) return route.abort();
       const body = await readFile(new URL('../../' + name, import.meta.url));
       await route.fulfill({ status: 200, body, contentType: name.endsWith('.js') ? 'application/javascript' : name.endsWith('.css') ? 'text/css' : 'text/html' });
+    });
+    await context.route('https://mcp-local.parleyvoice.com/share/audit/**', async route => {
+      assert.equal(route.request().headers()['authorization'], undefined, 'Application and MCP credentials must not be sent to the viewer');
+      await route.fulfill({ status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'x-frame-options': 'DENY', 'content-security-policy': "frame-ancestors 'self'" }, body: '<!doctype html><html lang="zh-CN"><title>原生工作台测试</title><body><h1>原生工作台测试页</h1></body></html>' });
     });
     await context.route('https://tokenai.awiki.info/**', async route => {
       const request = route.request(), url = new URL(request.url());
@@ -132,8 +137,19 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.equal(await firstRule.getAttribute('open'), '');
     assert.equal(store.get('SELECT COUNT(*) AS n FROM messages').n, historyCount);
     await reviewer.locator('textarea').fill('尚未发送的工单问题');
+    const originalPromise = page.waitForEvent('popup');
+    await dialog.getByRole('button', { name: '打开审核结果', exact: true }).click();
+    const originalWindow = await originalPromise;
+    await originalWindow.getByRole('heading', { name: '原生工作台测试页' }).waitFor();
+    assert.equal(await originalWindow.evaluate(() => window.opener === null), true);
+    assert.equal(await dialog.isVisible(), true);
+    assert.equal(await reviewer.isVisible(), true);
+    assert.equal(await reviewer.locator('textarea').inputValue(), '尚未发送的工单问题');
+    assert.equal(nativeOpens, 1);
+    assert.equal(await dialog.locator('iframe').count(), 0, 'Original results open as a top-level page, not an iframe');
+    await originalWindow.close();
     const downloadPromise = page.waitForEvent('download');
-    await dialog.getByRole('button', { name: '下载审核结果（Markdown）' }).click();
+    await dialog.getByRole('button', { name: '下载整理版（Markdown）' }).click();
     const download = await downloadPromise;
     const markdown = await readFile(await download.path(), 'utf8');
     assert.ok(markdown.includes('测试证据'));

@@ -59,7 +59,7 @@ try {
   assert.deepEqual(Object.keys(JSON.parse(storage['tokenai.session.v1'])).sort(), ['accessToken', 'expiresAt']);
   if (credentials.password.length >= 12) assert.equal(JSON.stringify(storage).includes(credentials.password), false);
   const downloadPromise = page.waitForEvent('download');
-  await dialog.getByRole('button', { name: '下载审核结果（Markdown）' }).click();
+  await dialog.getByRole('button', { name: '下载整理版（Markdown）' }).click();
   const download = await downloadPromise;
   const markdown = await readFile(await download.path(), 'utf8');
   assert.ok(markdown.includes(subjectId));

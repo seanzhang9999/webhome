@@ -1,3 +1,4 @@
+import { isNativeConsole, isNativeReport } from './native-view.mjs';
 export const SUBJECT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export function requireWorkOrderAccess(config, user, subjectId) {
@@ -10,7 +11,12 @@ export function publicWorkOrder(data, origin) {
   const url = origin + '/work-orders/' + encodeURIComponent(data.subject_id);
   const originalName = String(data.report?.original_file_name || data.report?.file_name || 'audit-report.md').replace(/[\x00-\x1f\\/]/g, '_').slice(0, 180);
   const filename = originalName.replace(/(?:_审核报告)?\.md$/i, '') + '_审核结果导出.md';
-  return { ...data, console_url: url, report: { file_name: filename, report_url: url + '/report', source: 'TokenX 结构化审核结果导出', original_file_name: originalName, original_file_available: false } };
+  const rewritten = data.console_url === url;
+  const nativeAvailable = isNativeConsole(data.console_url, data.subject_id) || (rewritten && data.native_view_available === true);
+  const originalAvailable = isNativeReport(data.report?.report_url) || (rewritten && data.report?.original_file_available === true);
+  const businessData = { ...data };
+  for (const key of ['share_url','share_expires_at','share_one_time']) delete businessData[key];
+  return { ...businessData, console_url: url, native_view_available: nativeAvailable, report: { file_name: filename, report_url: url + '/report', source: 'TokenX 结构化审核结果导出', original_file_name: originalName, original_file_available: originalAvailable } };
 }
 
 export function rewriteWorkOrderResult(result, origin) {

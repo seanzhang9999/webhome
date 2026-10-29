@@ -168,6 +168,34 @@
     const reason = [rule.reason, rule.explanation, rule.analysis].find(auditPresent);
     return `<details class="audit-rule"${open ? ' open' : ''}><summary><span class="audit-rule-number">${index + 1}</span><span class="audit-rule-heading"><b>${esc(rule.name || rule.rule_name || rule.rule_code || '审核规则')}</b>${rule.rule_code ? `<small>${esc(rule.rule_code)}</small>` : ''}</span><span class="audit-badge ${auditTone(rule.status)}">${esc(auditLabel(rule.status, auditStatusLabels, '状态待明确'))}</span></summary><div class="audit-rule-body"><section class="audit-section"><h4>审核结论</h4>${auditPresent(rule.summary) ? auditValue(rule.summary) : '<p class="audit-empty">该规则未返回结论摘要。</p>'}</section>${reason ? `<section class="audit-section"><h4>原因说明</h4>${auditValue(reason)}</section>` : ''}<section class="audit-section"><h4>证据原文</h4>${auditEvidence(rule.evidence ?? rule.evidences)}</section><section class="audit-section audit-suggestion"><h4>处理建议</h4>${suggestion ? auditValue(suggestion) : '<p class="audit-empty">该规则未单独提供处理建议，请结合审核结论与证据核实。</p>'}</section><button type="button" class="btn tiny audit-ask-rule" data-expense-action="review-rule" data-rule="${index}">请 AI 解释这条规则</button><details class="audit-technical"><summary>技术详情（本条规则原始数据）</summary><pre>${esc(JSON.stringify(raw, null, 2))}</pre></details></div></details>`;
   }
+  function nativeOpenNotice() {
+    const node = document.querySelector('#work-order-panel .audit-open-notice');
+    if (node && review) node.textContent = review.nativeNotice || '';
+  }
+  async function openNativeResult() {
+    if (!review || !state.token || review.nativeOpening || !state.workOrder?.native_view_available) return;
+    const current = review, token = state.token;
+    const popup = window.open('about:blank', '_blank');
+    if (!popup) { current.nativeNotice = '请允许打开新窗口，再点击“打开审核结果”。'; nativeOpenNotice(); return; }
+    popup.opener = null;
+    popup.document.title = '正在打开审核结果'; popup.document.body.textContent = '正在打开 TokenX 原生审核结果，请稍候…';
+    current.nativeOpening = true; current.nativeNotice = '正在打开 TokenX 原生审核结果…'; nativeOpenNotice();
+    const button = document.querySelector('[data-expense-action=native-open]'); if (button) button.disabled = true;
+    const requestId = current.nativePending || crypto.randomUUID(); current.nativePending = requestId;
+    try {
+      const result = await api('/api/v1/work-orders/' + encodeURIComponent(current.subjectId) + '/native-view', { requestId });
+      if (review !== current || state.token !== token || popup.closed) { if (!popup.closed) popup.close(); if (review === current && state.token === token) current.nativeNotice = '查看窗口已关闭，可以重新打开。'; return; }
+      const url = new URL(result.url);
+      if (result.status !== 'ready' || result.subjectId !== current.subjectId || result.oneTime !== true || !Number.isFinite(result.expiresAt) || result.expiresAt <= Date.now() || url.origin !== 'https://mcp-local.parleyvoice.com' || !/^\/share\/audit\/[A-Za-z0-9._~-]{16,4096}$/.test(url.pathname) || url.username || url.password || url.search || url.hash) throw new Error('原生查看入口暂时不可用');
+      popup.location.replace(url.href);
+      current.nativePending = null; current.nativeNotice = '已打开原生查看窗口。AI 伙伴仍在本页，可以继续问这张工单。';
+    } catch (error) {
+      if (!popup.closed) popup.close();
+      if (review === current && state.token === token) { current.nativePending = null; current.nativeNotice = '未能打开原生审核结果，请重试。'; }
+    } finally {
+      if (review === current && state.token === token) { current.nativeOpening = false; nativeOpenNotice(); const next = document.querySelector('[data-expense-action=native-open]'); if (next) next.disabled = !state.workOrder?.native_view_available; } else if (!state.token) draw(false);
+    }
+  }
   function workOrderHtml() {
     const data = state.workOrder; if (!data) return '';
     const rules = Array.isArray(data.rule_results) ? data.rule_results : Array.isArray(data.review_result?.results) ? data.review_result.results : Object.entries(data.rule_results || {}).map(([rule_code, value]) => value && typeof value === 'object' ? { rule_code, ...value } : { rule_code, summary: value });
@@ -177,7 +205,7 @@
     const riskTone = ({ high: 'danger', critical: 'danger', medium: 'warning', low: 'success' })[String(data.risk_level || '').toLowerCase()] || 'neutral';
     const count = tone => rules.filter(r => auditTone(r?.status) === tone).length;
     const firstAttention = rules.findIndex(r => ['danger','warning'].includes(auditTone(r?.status)));
-    return `<div class="audit-backdrop"><section id="work-order-panel" data-order="${esc(data.subject_id)}" role="dialog" aria-modal="true" aria-label="工单审核明细"><header class="audit-header"><div><span class="audit-eyebrow">审核结果 · ${esc(business)}</span><h2>${esc(title)}</h2></div><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></header><div class="audit-layout"><div class="audit-content"><div class="audit-overview"><span class="audit-badge neutral">${esc(auditLabel(data.status, { ...auditStatusLabels, failed: '审核失败', error: '审核异常' }))}</span><span class="audit-badge ${riskTone}">${esc(risk)}</span><span class="audit-order-id">工单编号 ${esc(data.subject_id || '未提供')}</span></div><section class="audit-summary"><h3>整体审核结论</h3><div class="tokenai-markdown">${renderText(data.audit_summary || data.review_result?.audit_summary || '接口未提供整体结论，请查看下方规则明细。')}</div></section><div class="audit-actions"><button class="btn primary" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载审核结果（Markdown）</button><span>由本次审核数据整理导出，包含规则结论与证据。</span></div>${downloadNoticeHtml()}<div class="audit-rule-title"><h3>规则明细 · ${rules.length} 项</h3><div class="audit-counts"><span>未通过 / 异常 ${count('danger')}</span><span>需关注 ${count('warning')}</span><span>通过 ${count('success')}</span><span>其他 ${count('neutral')}</span></div></div><p class="audit-help">展开规则查看证据与建议。审核完成表示流程已结束，是否通过请看具体结论。</p>${rules.length ? rules.map((r, i) => auditRuleHtml(r, i, i === (firstAttention < 0 ? 0 : firstAttention))).join('') : '<p class="audit-empty">该工单暂未返回逐条规则明细。</p>'}<details class="audit-technical audit-full-data"><summary>技术详情（完整审核数据）</summary><pre>${esc(JSON.stringify(data, null, 2))}</pre></details></div>${reviewPartnerHtml()}</div></section></div>`;
+    return `<div class="audit-backdrop"><section id="work-order-panel" data-order="${esc(data.subject_id)}" role="dialog" aria-modal="true" aria-label="工单审核明细"><header class="audit-header"><div><span class="audit-eyebrow">审核结果 · ${esc(business)}</span><h2>${esc(title)}</h2></div><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></header><div class="audit-layout"><div class="audit-content"><div class="audit-overview"><span class="audit-badge neutral">${esc(auditLabel(data.status, { ...auditStatusLabels, failed: '审核失败', error: '审核异常' }))}</span><span class="audit-badge ${riskTone}">${esc(risk)}</span><span class="audit-order-id">工单编号 ${esc(data.subject_id || '未提供')}</span></div><section class="audit-summary"><h3>整体审核结论</h3><div class="tokenai-markdown">${renderText(data.audit_summary || data.review_result?.audit_summary || '接口未提供整体结论，请查看下方规则明细。')}</div></section><div class="audit-actions"><button class="btn primary" type="button" data-expense-action="native-open" ${!data.native_view_available || review?.nativeOpening ? 'disabled' : ''}>打开审核结果</button><button class="btn tiny" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载整理版（Markdown）</button><span>${data.native_view_available ? '在新窗口查看 TokenX 原生审核结果，AI 伙伴保留在本页。' : '此工单暂未提供原生查看入口，可下载整理版。'}</span></div><p class="audit-open-notice" role="status">${esc(review?.nativeNotice || '')}</p>${downloadNoticeHtml()}<div class="audit-rule-title"><h3>规则明细 · ${rules.length} 项</h3><div class="audit-counts"><span>未通过 / 异常 ${count('danger')}</span><span>需关注 ${count('warning')}</span><span>通过 ${count('success')}</span><span>其他 ${count('neutral')}</span></div></div><p class="audit-help">展开规则查看证据与建议。审核完成表示流程已结束，是否通过请看具体结论。</p>${rules.length ? rules.map((r, i) => auditRuleHtml(r, i, i === (firstAttention < 0 ? 0 : firstAttention))).join('') : '<p class="audit-empty">该工单暂未返回逐条规则明细。</p>'}<details class="audit-technical audit-full-data"><summary>技术详情（完整审核数据）</summary><pre>${esc(JSON.stringify(data, null, 2))}</pre></details></div>${reviewPartnerHtml()}</div></section></div>`;
   }
   async function api(path, body, method) {
     const requestToken = state.token;
@@ -404,6 +432,7 @@
     const button = event.target.closest('[data-expense-action]'); if (!button || button.disabled) return;
     try {
       const action = button.dataset.expenseAction;
+      if (action === 'native-open') { await openNativeResult(); return; }
       if (action === 'review-refresh') { await loadReviewQuestions(); return; }
       if (action === 'review-retry') { if (review?.pending) await askReviewQuestion(review.pending); return; }
       if (action === 'review-reask') { const q = review?.questions.find(q => q.id === button.dataset.id); if (q) setReviewDraft(q.question); return; }
@@ -433,7 +462,7 @@
         try { await api('/api/v1/auth/logout', {}); } finally { clearSession(); }
       }
     } catch(e) { if (button.dataset.expenseAction === 'copy-report') state.downloadNotice = { status: 'error', subjectId: button.dataset.subject, text: '复制未完成，请使用保存文件：' + e.message }; else { state.error = e.message; state.progress = e.message; } }
-    finally { if (!button.dataset.expenseAction.startsWith('companion-') && !button.dataset.expenseAction.startsWith('review-')) { state.busy = false; draw(!['older','download-report','copy-report','view-order','close-order'].includes(button.dataset.expenseAction)); } }
+    finally { if (!button.dataset.expenseAction.startsWith('companion-') && !button.dataset.expenseAction.startsWith('review-') && button.dataset.expenseAction !== 'native-open') { state.busy = false; draw(!['older','download-report','copy-report','view-order','close-order'].includes(button.dataset.expenseAction)); } }
   });
   document.addEventListener('change', async event => {
     if (!event.target.matches('[data-expense-file]') || !state.token || state.busy) return;
