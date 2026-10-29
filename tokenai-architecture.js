@@ -6,17 +6,20 @@
   const svg = root.querySelector('.arch-wires');
   const nodes = Object.fromEntries([...root.querySelectorAll('[data-node]')].map(el => [el.dataset.node, el]));
   const wires = [
-    ['matter', 'gateway', 'request', 'right', 'left'],
-    ['gateway', 'agent', 'request', 'bottom', 'top'],
+    ['matter', 'presence', 'request', 'bottom', 'top'],
+    ['presence', 'agent', 'request', 'right', 'left'],
     ['agent', 'mcp', 'audit', 'right', 'left'],
     ['mcp', 'audit', 'audit', 'bottom', 'top'],
     ['audit', 'evidence', 'audit', 'bottom', 'top'],
-    ['agent', 'store', 'store', 'left', 'left'],
-    ['matter', 'partner', 'private', 'right', 'left'],
-    ['partner', 'private', 'private', 'left', 'right']
+    ['agent', 'gateway', 'store', 'bottom', 'top'],
+    ['gateway', 'store', 'store', 'bottom', 'top'],
+    ['context', 'partner', 'private', 'right', 'left'],
+    ['partner', 'private', 'private', 'right', 'left']
   ];
   const descriptions = {
     matter: ['前端事项群', '财务人员在固定事项提问，页面把问题和事项标识一起交给 TokenAI 服务。主助手的回复回到同一条共享讨论中。', '前端 → HTTPS API → 已登录用户所在的事项'],
+    presence: ['主 Agent 已在固定事项里', '左边的 TokenAI 报销费控助手，就是中间 Pi 主 Agent 在事项中的身份。财务人员直接与它在同一事项对话，中间展示它实际运行和调用工具的位置。', '同一个主 Agent · 群内参与者与服务端运行的两种视角'],
+    context: ['私人伙伴的上下文来源', '下方的分析依据来自上方同一事项中当前用户可见的近期讨论。它不是另一份业务台账，也不会自动扩大数据访问范围。', '主聊天上下文 → 独立私人分析'],
     private: ['经理的私人侧栏', '同一个界面上的独立区域：自动分析跟随近期主聊天更新，私人问答由经理主动发起。私人回答不进入事项群。', '用户本人 × 当前事项 · 独立建议与问答记录'],
     gateway: ['Agent 怎样接入事项群', 'TokenAI 的事项接入服务先核实登录和成员资格，再把消息交给该事项的 Agent 会话。处理进度和回复通过事件流返回前端。', 'HTTPS API 收问题 · SSE 事件流回传 · 服务端保存消息'],
     agent: ['Pi 主 Agent', 'DeepSeek 帮助理解问题、选择工具并组织回答；真正的工单状态、规则和审核依据由 TokenX 查询返回。每个事项保留自己的主助手上下文。', '理解问题 → 调用获准工具 → 依据真实结果回答'],
@@ -27,18 +30,18 @@
     store: ['事项与消息记录', '服务端保存成员关联、共享消息、处理事件和事项上下文。私人建议与私人问答按用户和事项分别保存。', '刷新可继续 · 共享内容与私人内容分开访问']
   };
   const views = {
-    all: {nodes: Object.keys(nodes), routes: ['request', 'audit', 'private', 'store'], title: '一条办事主线，一条私人建议线', text: '从左到右看：事项群把问题交给 Agent，Agent 查询审核系统，再把结果带回事项群。下方的独立伙伴帮助经理分析和追问。', meta: '点选任意模块查看职责，或选择上方路径高亮连接。'},
-    front: {nodes: ['matter','gateway','agent','store'], routes:['request','store'], title:'事项群如何接入 Agent', text:'前端发送问题 → 服务端核实事项成员 → Pi 处理本轮对话 → 进度和回复回到原事项群。成员与消息关系由 TokenAI 事项服务维护。', meta:'HTTPS API 接入 · SSE 回传 · 当前不是浏览器直接调用模型或审核系统'},
+    all: {nodes: Object.keys(nodes), routes: ['request', 'audit', 'private', 'store'], title: '一条办事主线，一条私人建议线', text: '上方：财务人员与主 Agent 同在固定事项，主 Agent 在服务端调用审核系统。下方：私人伙伴独立分析和问答，不穿插在业务主线中。', meta: '点选任意模块查看职责，或选择上方路径高亮连接。'},
+    front: {nodes: ['matter','presence','gateway','agent','store'], routes:['request','store'], title:'事项群如何接入 Agent', text:'主 Agent 已作为 TokenAI 报销费控助手出现在固定事项里，财务人员直接与它对话。中间的 Pi 是同一助手的服务端运行，登录校验与消息回传为这段对话提供支撑。', meta:'群内身份 ⇄ 同一 Agent 的服务端运行 · HTTPS 收问题 · SSE 回回复'},
     audit: {nodes:['agent','mcp','audit','evidence'], routes:['audit'], title:'Agent 如何接入审核系统', text:'Pi 选择获准工具 → MCP 接口检查权限和参数 → TokenX 查询授权工单 → 返回审核依据 → Pi 整理为可阅读的回答。', meta:'MCP 是工具连接通道 · DeepSeek 负责理解与表达 · TokenX 提供业务事实'},
-    private: {nodes:['matter','partner','private'],routes:['private'],title:'私人伙伴如何跟上主聊天',text:'主聊天处理完成后，独立 Pi 伙伴根据近期可见讨论生成建议。经理可以继续私人提问，回答只返回自己的侧栏。',meta:'独立上下文 · 自动分析与私人问答分开 · 无业务工具'}
+    private: {nodes:['context','partner','private'],routes:['private'],title:'私人伙伴如何跟上主聊天',text:'主聊天处理完成后，独立 Pi 伙伴根据近期可见讨论生成建议。经理可以继续私人提问，回答只返回自己的侧栏。',meta:'独立上下文 · 自动分析与私人问答分开 · 无业务工具'}
   };
   const steps = [
-    {nodes:['matter'],routes:[],title:'1 / 6  财务人员在事项群提问',text:'“查询今天的合同付款审核明细。”问题从当前事项发出。',meta:'流程示意 · 不会提交真实查询'},
-    {nodes:['matter','gateway','agent'],routes:['request'],title:'2 / 6  服务端把问题交给 Pi',text:'校验登录与事项成员资格，进入该事项的 Agent 会话。',meta:'HTTPS 请求 → TokenAI 事项接入服务 → Pi 主 Agent'},
+    {nodes:['matter','presence'],routes:['request'],title:'1 / 6  财务人员在事项群提问',text:'“查询今天的合同付款审核明细。”问题从当前事项发出。',meta:'流程示意 · 不会提交真实查询'},
+    {nodes:['matter','presence','gateway','agent'],routes:['request'],title:'2 / 6  群内主助手开始处理',text:'事项里的 TokenAI 就是这个 Pi 主 Agent；服务端校验成员并在对应事项会话中处理问题。',meta:'HTTPS 请求 → TokenAI 事项接入服务 → Pi 主 Agent'},
     {nodes:['agent','mcp','audit'],routes:['audit'],title:'3 / 6  Agent 调用审核工具',text:'Pi 选择工单查询工具，服务端通过 MCP 向 TokenX 发出获准的查询。',meta:'问题理解与工具选择由 Agent 完成 · TokenX 凭据保留在服务端'},
     {nodes:['audit','evidence','mcp','agent'],routes:['audit'],title:'4 / 6  审核系统返回真实依据',text:'TokenX 返回授权工单和规则结果，Pi 据此组织答复。',meta:'返回的是当前授权范围内的结果'},
-    {nodes:['agent','gateway','matter','store'],routes:['request','store'],title:'5 / 6  结果回到原事项群',text:'页面逐步显示回复，成员可以继续追问、打开明细或下载审核结果。',meta:'SSE 事件流回传 · 消息与事项记录保存在服务端'},
-    {nodes:['matter','partner','private'],routes:['private'],title:'6 / 6  私人伙伴给出经理建议',text:'独立伙伴读取近期讨论，更新自动分析；经理也可在私人问答中继续追问。',meta:'经理核实依据，再按企业现有流程决定下一步'}
+    {nodes:['agent','gateway','presence','matter','store'],routes:['request','store'],title:'5 / 6  结果回到原事项群',text:'页面逐步显示回复，成员可以继续追问、打开明细或下载审核结果。',meta:'SSE 事件流回传 · 消息与事项记录保存在服务端'},
+    {nodes:['context','partner','private'],routes:['private'],title:'6 / 6  私人伙伴给出经理建议',text:'独立伙伴读取近期讨论，更新自动分析；经理也可在私人问答中继续追问。',meta:'经理核实依据，再按企业现有流程决定下一步'}
   ];
   let selectedView='all';
   let timer;

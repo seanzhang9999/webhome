@@ -13,30 +13,31 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 @media print{body{background:#fff;color:#111}.hero{background:#fff;color:#111;padding:10px 0}.hero .intro,.hero .intro strong,.eyebrow,.brand,.brand strong{color:#111}.actions,.guide,.skip-link{display:none}.wrap{max-width:none;padding:0}.section{break-inside:avoid;border-radius:0;padding:18px 0}.btn[aria-pressed="true"]{background:#edf3fc;color:#111}footer{padding:15px 0}a{color:#111}}
 </style>
-<link rel="stylesheet" href="tokenai-architecture.css?v=1">
+<link rel="stylesheet" href="tokenai-architecture.css?v=2">
 </head>
 <body>
 <a class="skip-link" href="#main">跳到讲解内容</a>
 <header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理旁边还有一位独立的 AI 伙伴，帮助梳理风险、准备追问和下一步建议。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
 </div><div class="actions"><a class="cta" href="awiki-coffee-trusted-space-v55-cfo.html">打开报销费控演示</a><a class="cta secondary" href="#section-1">先看协作图 ↓</a></div></div></header>
 <div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂整体架构</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂整体架构</h2></div>
-<p>左边是财务人员工作的事项群，中间是理解问题、组织工具调用的 Agent，右边是提供真实审核依据的 TokenX。点选路径，可以单独看清每一段怎样连接。</p>
+<p>上方是共享业务协作：财务人员和主 Agent 在同一固定事项里对话，主 Agent 在服务端调用 TokenX。下方是经理的私人 AI 伙伴，独立分析、独立问答。</p>
 <div class="architecture" id="tokenai-architecture" aria-label="事项群与 Agent 及审核系统整体架构">
-  <div class="arch-top"><div><div class="arch-kicker">AWIKI × TOKENAI × TOKENX</div><div class="arch-title">从一句提问，到一份有依据的回答</div><div class="arch-subtitle">事项群连接人和 Agent，MCP 连接 Agent 和审核能力。</div></div><button class="arch-control arch-fullscreen" type="button" data-arch-fullscreen>放大架构图</button></div>
+  <div class="arch-top"><div><div class="arch-kicker">AWIKI × TOKENAI × TOKENX</div><div class="arch-title">从一句提问，到一份有依据的回答</div><div class="arch-subtitle">主 Agent 就在事项群中；中间展示同一个 Agent 的服务端运行。</div></div><button class="arch-control arch-fullscreen" type="button" data-arch-fullscreen>放大架构图</button></div>
   <div class="arch-controls" role="group" aria-label="架构路径"><button class="arch-control" type="button" data-view="all" aria-pressed="true">整体架构</button><button class="arch-control" type="button" data-view="front" aria-pressed="false">事项群接入</button><button class="arch-control" type="button" data-view="audit" aria-pressed="false">审计系统接入</button><button class="arch-control" type="button" data-view="private" aria-pressed="false">私人 AI 伙伴</button><button class="arch-control arch-play" type="button" data-arch-play aria-pressed="false">演示一次提问</button></div>
   <div class="arch-board">
     <svg class="arch-wires" aria-hidden="true"></svg>
     <div class="arch-lane">
       <div class="arch-lane-header"><span>01 / COLLABORATION</span><h3>前端事项群</h3><div class="arch-host">AWiki · GitHub Pages</div></div>
-      <button class="arch-node" type="button" data-node="matter" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务人员 + 主助手</span><span class="node-name">报销费控固定事项</span><span class="node-copy">成员 · 共同讨论 · 持续记录<br>在这里提问，也在这里接收结果。</span><span class="node-tag">共享主聊天</span></button>
+<div class="matter-room"><div class="matter-room-title">报销费控固定事项</div>
+      <button class="arch-node" type="button" data-node="matter" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>事项里的财务成员</span><span class="node-name">财务人员 / CFO</span><span class="node-copy">提出问题 · 查看依据<br>与主 Agent 在同一事项持续对话</span><span class="node-tag">共享主聊天</span></button>
+      <button class="arch-node presence-node" type="button" data-node="presence" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>本事项的 AI 成员</span><span class="node-name">TokenAI 报销费控助手</span><span class="node-copy">主 Agent 的群内身份<br>直接参与讨论，在原事项回复</span><span class="node-tag">与中间 Pi 主 Agent 是同一个助手</span></button>
+</div>
       <div class="arch-spacer" aria-hidden="true"></div>
-      <button class="arch-node private-node front-partner" type="button" data-node="private" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务经理 / CFO</span><span class="node-name">我的 AI 伙伴侧栏</span><span class="node-copy">自动分析跟随讨论<br>私人问答由我主动发起</span><span class="node-tag">仅本人可见</span></button>
     </div>
     <div class="arch-lane core">
       <div class="arch-lane-header"><span>02 / AGENT SERVICE</span><h3>TokenAI Agent 服务</h3><div class="arch-host">tokenai.awiki.ai</div></div>
-      <button class="arch-node" type="button" data-node="gateway" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>事项与 Agent 的接入口</span><span class="node-name">身份与事项接入</span><span class="node-copy">核实成员 → 分派会话 → 回传回复</span><span class="node-tag">HTTPS API ⇄ SSE 事件流</span></button>
-      <button class="arch-node agent-node" type="button" data-node="agent" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>共享事项的业务助手</span><span class="node-name">Pi 主 Agent</span><span class="node-copy">理解意图 · 选择工具 · 整理结果<br>每个事项独立上下文 · 调用前校验工具与参数</span><span class="node-tag">DeepSeek 提供理解与表达能力</span></button>
-      <button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立会话 · 独立建议</span><span class="node-name">Pi 财务经理 AI 伙伴</span><span class="node-copy">读取近期可见讨论，帮助分析和追问</span><span class="node-tag">自动分析 + 私人问答 · 无业务工具</span></button>
+      <button class="arch-node agent-node" type="button" data-node="agent" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>同一主助手的服务端运行</span><span class="node-name">Pi 主 Agent</span><span class="node-copy">理解意图 · 选择工具 · 整理结果<br>每个事项独立上下文 · 调用前校验工具与参数</span><span class="node-tag">DeepSeek 提供理解与表达能力</span></button>
+      <button class="arch-node" type="button" data-node="gateway" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>支撑群内对话的消息服务</span><span class="node-name">登录校验与消息回传</span><span class="node-copy">核实成员 → 分派会话 → 回传回复</span><span class="node-tag">HTTPS API ⇄ SSE 事件流</span></button>
       <button class="arch-node storage-node" type="button" data-node="store" aria-pressed="false"><span class="node-eyebrow">事项记忆</span><span class="node-name">消息与上下文记录</span><span class="node-copy">共享消息与私人内容分开访问</span></button>
     </div>
     <div class="arch-lane">
@@ -46,12 +47,15 @@
       <button class="arch-node audit-node" type="button" data-node="evidence" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>真实结果来源</span><span class="node-name">工单与审核依据</span><span class="node-copy">工单状态 · 规则结论<br>证据明细 · 审核建议</span><span class="node-tag">可查看明细与导出结果</span></button>
       <div class="arch-spacer" aria-hidden="true"></div>
     </div>
+<div class="arch-private-band"><div class="arch-private-heading"><span>04 / PRIVATE ADVISOR</span><h3>财务经理的私人 AI 伙伴</h3><p>在共享办事主线之外，单独帮助经理分析和追问；不作为主 Agent 到审核系统的中转。</p></div><div class="arch-private-grid"><button class="arch-node private-node" type="button" data-node="context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来自上方同一固定事项</span><span class="node-name">近期可见的主聊天</span><span class="node-copy">提供本轮讨论的事实与上下文<br>不额外取得其他业务数据</span><span class="node-tag">私人分析的上下文来源</span></button>      <button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立会话 · 独立建议</span><span class="node-name">Pi 财务经理 AI 伙伴</span><span class="node-copy">读取近期可见讨论，帮助分析和追问</span><span class="node-tag">自动分析 + 私人问答 · 无业务工具</span></button>
+      <button class="arch-node private-node front-partner" type="button" data-node="private" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务经理 / CFO</span><span class="node-name">我的 AI 伙伴侧栏</span><span class="node-copy">自动分析跟随讨论<br>私人问答由我主动发起</span><span class="node-tag">仅本人可见</span></button>
+</div></div>
   </div>
   <div class="arch-bridge-note" aria-label="连接图例"><span><i aria-hidden="true"></i>事项问题与回复</span><span class="green"><i aria-hidden="true"></i>工具查询与真实结果</span><span class="purple"><i aria-hidden="true"></i>私人上下文与建议</span></div>
   <div class="arch-detail" role="status" aria-live="polite" aria-atomic="true"><div class="arch-detail-title">一条办事主线，一条私人建议线</div><div class="arch-detail-copy"><p>事项群把问题交给 Agent，Agent 查询审核系统，再把结果带回事项群。独立伙伴帮助经理分析和追问。</p><span class="arch-detail-meta">点选任意模块查看职责。</span></div></div>
   <div class="arch-status">连接关系示意 · 非实时监控</div>
 </div>
-<script src="tokenai-architecture.js?v=1"></script>
+<script src="tokenai-architecture.js?v=2"></script>
 </section>
 <section class="section" id="section-2" aria-labelledby="section-2-heading"><div class="section-heading"><span class="section-number">02</span><h2 id="section-2-heading">页面上的两个 AI 分别帮什么忙</h2></div><table>
 <thead>
