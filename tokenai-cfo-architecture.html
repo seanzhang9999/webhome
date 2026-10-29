@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="面向 CFO 的报销费控协作讲解：共同查询真实审核结果，私人 AI 伙伴帮助分析，由财务经理决定下一步。">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<title>CFO 视角下的报销费控与 AI 协作架构｜AWiki TokenAI</title>
+<style>
+:root{color-scheme:light;--foreground:#23334b;--muted-foreground:#607086;--border:#dfe6ef;--background:#f4f6fa;--primary:#315fc0;--primary-foreground:#fff;--accent:#edf3ff;--accent-foreground:#234b99}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}a{color:#315fc0;text-underline-offset:4px}a:hover{text-decoration:underline}button{font:inherit}a:focus-visible,button:focus-visible{outline:3px solid #d08c22;outline-offset:4px}.skip-link{position:absolute;left:20px;top:-80px;background:#fff;padding:8px 16px}.skip-link:focus{top:10px;z-index:10}.wrap{max-width:1120px;margin:auto;padding:0 32px}.hero{background:#172d4b;color:#fff;padding:50px 0 40px}.brand{display:flex;gap:12px;align-items:center;font-size:14px;letter-spacing:.06em;color:#c8d8ef}.brand strong{color:#fff;letter-spacing:.01em}.eyebrow{font-size:14px;color:#c8d8ef;margin:28px 0 12px}.hero h1{font-size:clamp(29px,4vw,44px);line-height:1.4;letter-spacing:-.02em;margin:0 0 18px;max-width:900px}.hero .intro{font-size:18px;max-width:900px;color:#e0e8f4}.hero .intro strong{color:#fff;font-weight:600}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.cta{display:inline-block;padding:10px 20px;border-radius:9px;text-decoration:none;background:#fff;color:#234b99;font-weight:600}.cta.secondary{background:#294462;color:#fff}.guide{padding:24px 0 0}.guide-label{margin:0 0 10px;font-size:14px;color:var(--muted-foreground)}nav{display:flex;flex-wrap:wrap;gap:8px 20px}nav a{text-decoration:none;font-size:14px}main{padding-bottom:36px}.section{margin:24px 0;padding:30px 34px;background:#fff;border:1px solid var(--border);border-radius:16px;scroll-margin-top:24px}.section-heading{display:flex;gap:14px;align-items:baseline;margin-bottom:20px}.section-number{font-size:14px;font-weight:600;color:#607ba3;font-variant-numeric:tabular-nums}.section h2{font-size:25px;line-height:1.5;margin:0}.section p{margin:16px 0}.section h3{font-size:18px;color:#234b99;margin:24px 0 6px}.section p>strong:only-child{font-size:18px}.section ol{padding-left:25px}.section li{padding-left:4px;margin:14px 0}table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}th,td{padding:14px 16px;vertical-align:top;text-align:left;border-bottom:1px solid var(--border)}th{background:#edf3fc;color:#254d85;font-weight:600}th:first-child{width:22%}tbody tr:nth-child(even){background:#f9fbfe}.table-scroll{overflow-x:auto}hr{border:0;border-top:1px solid var(--border);margin:22px 0}.btn{display:inline-block;max-width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:#f7f9fd;color:var(--foreground);cursor:pointer;line-height:1.55;transition:background .15s}.btn:hover{background:var(--accent)}.btn[aria-pressed="true"]{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary)}.text-small{font-size:14px;color:var(--muted-foreground)}footer{border-top:1px solid var(--border);padding:24px 0 36px;color:var(--muted-foreground);font-size:14px}footer p{margin:0}
+@media(max-width:600px){.wrap{padding:0 18px}.hero{padding:30px 0}.hero .intro{font-size:16px}.section{padding:22px 18px;border-radius:12px}.section h2{font-size:22px}.section-heading{gap:10px}th,td{padding:10px;font-size:14px}table{min-width:540px}.actions .cta{flex:1;text-align:center}.guide nav{gap:8px 14px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+@media print{body{background:#fff;color:#111}.hero{background:#fff;color:#111;padding:10px 0}.hero .intro,.hero .intro strong,.eyebrow,.brand,.brand strong{color:#111}.actions,.guide,.skip-link{display:none}.wrap{max-width:none;padding:0}.section{break-inside:avoid;border-radius:0;padding:18px 0}.btn[aria-pressed="true"]{background:#edf3fc;color:#111}footer{padding:15px 0}a{color:#111}}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">跳到讲解内容</a>
+<header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理旁边还有一位独立的 AI 伙伴，帮助梳理风险、准备追问和下一步建议。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
+</div><div class="actions"><a class="cta" href="awiki-coffee-trusted-space-v55-cfo.html">打开报销费控演示</a><a class="cta secondary" href="#section-1">先看协作图 ↓</a></div></div></header>
+<div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂协作关系</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂协作关系</h2></div><p>点选图中的角色，查看它负责什么。上方是共同办事的路径，下方是财务经理的私人建议路径。</p>
+
+<style>
+#cfo-expense-map { color: var(--foreground); }
+#cfo-expense-map .flow { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); gap: 12px; align-items: center; margin: 16px 0 24px; }
+#cfo-expense-map .node { display: grid; gap: 8px; text-align: center; min-width: 0; }
+#cfo-expense-map .edge { color: var(--muted-foreground); text-align: center; justify-self: center; width: max-content; pointer-events: none; }
+#cfo-expense-map .lane-label { margin-top: 12px; font-weight: 500; }
+#cfo-expense-map .detail { min-height: 48px; margin: 12px 0 0; }
+@media(max-width: 560px) {
+  #cfo-expense-map .flow { grid-template-columns: minmax(0,1fr); gap: 10px; }
+  #cfo-expense-map .edge { transform: rotate(90deg); }
+}
+</style>
+<div id="cfo-expense-map" aria-label="报销费控协作图">
+  <div class="lane-label">共同办事 · 有权限的事项成员可见</div>
+  <div class="flow" role="group" aria-label="真实审核查询路径">
+    <div class="node"><button class="btn" type="button" data-role="finance" aria-pressed="false">财务人员</button><span class="text-small">提出问题 · 明确范围</span></div>
+    <div class="edge" aria-label="双向交流">↔</div>
+    <div class="node"><button class="btn" type="button" data-role="main" aria-pressed="true">主聊天里的 TokenAI</button><span class="text-small">理解问题 · 带回结果</span></div>
+    <div class="edge" aria-label="查询并返回真实结果">↔</div>
+    <div class="node"><button class="btn" type="button" data-role="tokenx" aria-pressed="false">TokenX 审核服务</button><span class="text-small">授权工单 · 审核依据</span></div>
+  </div>
+  <hr>
+  <div class="lane-label">私人参谋 · 仅当前登录用户可见</div>
+  <div class="flow" role="group" aria-label="经理私人建议路径">
+    <div class="node"><button class="btn" type="button" data-role="context" aria-pressed="false">主聊天的近期讨论</button><span class="text-small">提供上下文</span></div>
+    <div class="edge" aria-label="根据讨论提供建议">→</div>
+    <div class="node"><button class="btn" type="button" data-role="partner" aria-pressed="false">财务经理 AI 伙伴</button><span class="text-small">自动分析 · 私人问答</span></div>
+    <div class="edge" aria-label="私人提问与建议">↔</div>
+    <div class="node"><button class="btn" type="button" data-role="manager" aria-pressed="false">财务经理或 CFO</button><span class="text-small">核实依据 · 决定下一步</span></div>
+  </div>
+  <p class="detail" aria-live="polite">TokenAI 将问题交给已连接的审核服务查询，并在共同事项中解释真实返回结果。</p>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('cfo-expense-map');
+  const descriptions = {
+    finance: '财务人员在固定事项提问，也可以查看明细和下载审核结果。',
+    main: 'TokenAI 将问题交给已连接的审核服务查询，并在共同事项中解释真实返回结果。',
+    tokenx: 'TokenX 提供获授权工单的审核状态、规则结论和证据，当前接入开放查询。',
+    context: '私人伙伴根据当前用户可见的近期讨论分析，不会因此看到更多业务数据。',
+    partner: 'AI 伙伴提供自动分析和私人问答，私人回答不发到主聊天，也不覆盖自动分析。',
+    manager: '经理结合真实依据与 AI 建议，按企业现有流程决定补充材料、复核或后续审批。'
+  };
+  const select = (key) => {
+    const role = Object.hasOwn(descriptions, key) ? key : 'main';
+    root.querySelectorAll('[data-role]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.role === role)));
+    root.querySelector('.detail').textContent = descriptions[role];
+    return role;
+  };
+  const restore = state => select(state?.modelContent?.selectedRole);
+  restore(window.openai?.widgetState);
+  root.querySelectorAll('[data-role]').forEach(button => button.addEventListener('click', () => {
+    const role = select(button.dataset.role);
+    window.openai?.setWidgetState?.({modelContent: {selectedRole: role}, privateContent: null})?.catch(() => {});
+  }));
+  window.addEventListener('openai:set_globals', event => {
+    if (event.detail?.globals && Object.hasOwn(event.detail.globals, 'widgetState')) restore(event.detail.globals.widgetState);
+  });
+})();
+</script>
+</section>
+<section class="section" id="section-2" aria-labelledby="section-2-heading"><div class="section-heading"><span class="section-number">02</span><h2 id="section-2-heading">页面上的两个 AI 分别帮什么忙</h2></div><table>
+<thead>
+<tr>
+<th>CFO 关心的问题</th>
+<th>主聊天里的 TokenAI</th>
+<th>右侧的财务经理 AI 伙伴</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>它在做什么</td>
+<td>按日期、业务类型等查询授权工单，解释审核状态与明细</td>
+<td>阅读当前事项的近期讨论，帮助梳理风险和追问</td>
+</tr>
+<tr>
+<td>它依据什么</td>
+<td>TokenX 返回的真实审核数据，加上事项里的对话</td>
+<td>当前用户可见的近期主聊天、自己的自动分析和私人问答</td>
+</tr>
+<tr>
+<td>谁能看到</td>
+<td>有权限进入同一事项的成员</td>
+<td>当前登录用户本人</td>
+</tr>
+<tr>
+<td>怎么使用</td>
+<td>在主输入框提出业务查询</td>
+<td>在“自动分析”看建议，在“私人问答”继续提问</td>
+</tr>
+<tr>
+<td>能否处理业务</td>
+<td>当前开放查询和查看结果</td>
+<td>提供建议，不调用业务工具，不执行审批或付款</td>
+</tr>
+</tbody></table>
+
+<p>右侧的<strong>自动分析</strong>会在主聊天处理完成后随讨论更新；<strong>私人问答</strong>保留自己的提问和回答。私人问题不会发到主聊天，也不会覆盖自动分析。AI 伙伴没有额外的数据通道，重要判断应回到工单明细核实。</p>
+</section>
+<section class="section" id="section-3" aria-labelledby="section-3-heading"><div class="section-heading"><span class="section-number">03</span><h2 id="section-3-heading">用一次合同付款查询走完整个过程</h2></div><p><strong>第一步 在共同事项里问事实</strong></p>
+
+<p>财务人员输入：“查询今天的合同付款审核明细。”主助手按当前授权范围查询，返回工单及可查看的审核结果。若需要跨日比较，可以明确指定日期范围。</p>
+
+<p><strong>第二步 打开依据</strong></p>
+
+<p>选择“查看审核明细”，检查规则结论、证据和建议。需要带到会议或留存时，选择“下载审核结果”。当前下载的是由真实审核数据整理的 Markdown 导出件；浏览器没有自动保存时，可点“保存文件”，也可复制 Markdown。</p>
+
+<p><strong>第三步 让私人伙伴帮助准备判断</strong></p>
+
+<p>在右侧“自动分析”看本轮讨论的建议；切到“私人问答”，问：“根据刚才的结果，我应该先追问哪些问题？”或“帮我整理一份给经办人的补充材料清单。”</p>
+
+<p>这是使用方式示例，具体风险和材料要求取决于实际返回的工单。</p>
+
+<p><strong>第四步 由财务经理决定下一步</strong></p>
+
+<p>经理核实依据后，决定需要补充材料、继续复核，还是转入企业已有审批流程。<strong>审核完成只说明审核流程到达相应状态，付款和到账还需要对应业务记录证明。</strong></p>
+</section>
+<section class="section" id="section-4" aria-labelledby="section-4-heading"><div class="section-heading"><span class="section-number">04</span><h2 id="section-4-heading">今天可以展示到哪里</h2></div><table>
+<thead>
+<tr>
+<th>现在可以演示</th>
+<th>如何理解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>固定事项和持续聊天</td>
+<td>财务人员和主助手围绕同一事项协作，消息保存在服务端</td>
+</tr>
+<tr>
+<td>真实审核查询</td>
+<td>查询获授权范围内的工单列表、状态及逐项审核明细</td>
+</tr>
+<tr>
+<td>私人 AI 伙伴</td>
+<td>自动给建议，也支持本人继续提问，两类内容分开显示</td>
+</tr>
+<tr>
+<td>明细查看和结果导出</td>
+<td>登录 TokenAI 后查看授权内容，下载整理后的审核结果</td>
+</tr>
+<tr>
+<td>记住登录</td>
+<td>勾选后可保持登录七天，减少演示时重复输入</td>
+</tr>
+</tbody></table>
+
+<p><strong>当前演示以查询和分析为主。</strong>发起新审核、向 TokenX 上传材料、取消任务及生成免登录分享链接尚未开放。付款执行、银行到账核验和覆盖全部企业单据的统一台账，需要另接相应业务系统。</p>
+</section>
+<section class="section" id="section-5" aria-labelledby="section-5-heading"><div class="section-heading"><span class="section-number">05</span><h2 id="section-5-heading">CFO 需要把握的三个控制点</h2></div><ol>
+<li><strong>看得清范围</strong>：查询结果以当前账号和已连接数据的授权范围为准；结果为空时，先确认日期、业务类型和覆盖范围。</li>
+</ol>
+
+<ol start="2">
+<li><strong>追得回依据</strong>：AI 的概括帮助快速阅读，重要结论回到工单明细、规则证据和审核结果确认。</li>
+</ol>
+
+<ol start="3">
+<li><strong>留得住决定权</strong>：AI 可以整理事实与建议，财务经理及既有审批流程承担业务决定。后续开放修改类操作时，应逐项明确权限和确认机制。</li>
+</ol>
+</section>
+<section class="section" id="section-6" aria-labelledby="section-6-heading"><div class="section-heading"><span class="section-number">06</span><h2 id="section-6-heading">今天现场怎么讲</h2></div><p>“中间是我们共同办事的地方，TokenAI 负责把真实审核结果找回来；右边是我自己的 AI 伙伴，帮我想清楚应该问什么、先处理什么。我先看事实，再看建议，最后按公司的流程作决定。”</p>
+
+<p><strong>演示入口</strong>：<a href="https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html">AWiki 报销费控协同工作台</a> · <strong>独立入口</strong>：<a href="https://tokenai.awiki.ai">TokenAI 工作台</a></p>
+
+<p>进入“报销费控”方案，打开固定事项并登录。账户与数据权限沿用现有演示配置。</p>
+</section></main></div>
+<footer><div class="wrap"><p>AWiki · TokenAI　｜　共同查事实 · 私人想对策 · 经理作决定</p><p>功能范围以 2026 年 10 月 29 日演示配置为准。</p></div></footer>
+<script>
+document.querySelectorAll('table').forEach(table=>{const container=document.createElement('div');container.className='table-scroll';container.setAttribute('role','region');container.setAttribute('aria-label','功能说明表');container.tabIndex=0;table.before(container);container.append(table)});
+document.querySelectorAll('.section p').forEach(p=>{if(p.children.length===1&&p.firstElementChild.tagName==='STRONG'&&p.textContent.startsWith('第')){const h=document.createElement('h3');h.textContent=p.textContent;p.replaceWith(h)}});
+</script>
+</body>
+</html>
