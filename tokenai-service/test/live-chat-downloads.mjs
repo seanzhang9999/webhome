@@ -31,6 +31,6 @@ try {
   console.log(JSON.stringify({ uiError, failures })); throw error;
 } finally {
   if (!session) session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1'))).catch(() => null);
-  if (session?.accessToken) await fetch('https://tokenai.awiki.ai/api/v1/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + session.accessToken, 'Content-Type': 'application/json', Origin: 'https://tokenai.awiki.ai' }, body: '{}' }).catch(() => {});
+  if (session?.accessToken) await fetch('https://tokenai.awiki.info/api/v1/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + session.accessToken, 'Content-Type': 'application/json', Origin: 'https://tokenai.awiki.info' }, body: '{}' }).catch(() => {});
   await context.close(); await browser.close();
 }

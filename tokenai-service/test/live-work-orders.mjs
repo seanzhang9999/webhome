@@ -31,7 +31,7 @@ const serviceGid = Number(execFileSync('id', ['-g', 'tokenai'], { encoding: 'utf
 for (const dir of [workDir, sessionsDir]) { chownSync(dir, serviceUid, serviceGid); for (const name of readdirSync(dir)) chownSync(join(dir, name), serviceUid, serviceGid); }
 let token;
 const api = async (path, body) => {
-  const r = await fetch('https://tokenai.awiki.ai' + path, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', Origin: config.publicOrigin, ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: body ? JSON.stringify(body) : undefined });
+  const r = await fetch('https://tokenai.awiki.info' + path, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json', Origin: config.publicOrigin, ...(token ? { Authorization: 'Bearer ' + token } : {}) }, body: body ? JSON.stringify(body) : undefined });
   if (!r.ok) throw new Error('Production API returned HTTP ' + r.status);
   return r.json();
 };

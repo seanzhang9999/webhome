@@ -1,8 +1,31 @@
-# 本机部署记录
+# 当前上海部署
+
+更新日期：2026-10-29，时区 Asia/Shanghai。
+
+当前入口：https://tokenai.awiki.info/ 。本机实例元数据 region-id 为 cn-shanghai；
+专用 A 记录指向 47.101.44.101，awiki.info 下记录 ID 为 2115672473147661312。
+新建的精确 Nginx 虚拟主机为 /etc/nginx/conf.d/tokenai.awiki.info.conf，复用上海现有的
+awiki.info 通配符证书（SAN 覆盖 *.awiki.info，当前到期 2027-01-06）。未更改证书续期配置。
+
+服务仍为 tokenai-agent.service，监听 127.0.0.1:19320。账号、固定事项、消息与私人问答
+继续使用 /var/lib/tokenai-agent 的既有数据。受限配置只变更 TOKENAI_PUBLIC_ORIGIN；
+模型与 MCP 凭据、代理、权限开关均保留。前端 API、登录窗口和原生工单入口切到 .info，
+CORS 允许 .info 与 https://seanzhang9999.github.io，旧 .ai Origin 不再取得 API 跨域许可。
+聊天中的旧 .ai 工单链接只转换为当前域名的查看/下载动作，不向旧域名发请求。
+
+未修改 awiki.ai DNS、原 .ai 虚拟主机、其证书/续期任务或任何硅谷服务器配置。既有证书
+与 DNS01 文件保留为历史配置；当前 .info 部署不运行其中针对 awiki.ai 的操作。
+本次新增配置仅用于 awiki.info 下 tokenai 子域名，主站配置保持原有内容。
+
+20 项本仓库检查通过，含新域名跨站登录、来源校验及旧工单链接兼容。当前 HTTPS 主机
+验证成功，/healthz 返回 200，匿名 /api/v1/me 返回 401，GitHub 来源有正确 CORS 响应，
+旧 .ai 来源返回 403。后续上线验证记录见对应任务结果。
+
+# 历史部署记录
 
 日期：2026-10-28，时区 Asia/Shanghai。
 
-已部署入口：https://tokenai.awiki.ai/ 。公网 HTTPS `/healthz` 返回 200；匿名访问
+初次部署入口（历史）：https://tokenai.awiki.ai/ 。公网 HTTPS `/healthz` 返回 200；匿名访问
 `/api/v1/me` 返回 401。域名新增专用 A 记录指向 47.101.44.101，记录 ID
 2115440866734247936。原 `*.awiki.ai` 记录保留，不修改 awiki.ai 主站。
 

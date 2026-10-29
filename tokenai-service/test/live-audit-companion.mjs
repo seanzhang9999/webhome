@@ -18,7 +18,7 @@ try {
   browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--no-proxy-server','--disable-features=NetworkServiceSandbox'], ...(process.env.TOKENAI_BROWSER_PATH ? { executablePath: process.env.TOKENAI_BROWSER_PATH } : {}) });
   context = await browser.newContext();
   const page = await context.newPage(), errors = []; page.on('pageerror', error => errors.push(error.message));
-  await page.goto('https://tokenai.awiki.ai/work-orders/' + subjectId);
+  await page.goto('https://tokenai.awiki.info/work-orders/' + subjectId);
   const popupPromise = page.waitForEvent('popup'); await page.locator('[data-expense-action=login]').click();
   const popup = await popupPromise; await popup.locator('[name=username]').fill(username); await popup.locator('[name=password]').fill(password); await popup.getByRole('button', { name: '登录并连接事项' }).click();
   const dialog = page.getByRole('dialog', { name: '工单审核明细' }); await dialog.waitFor({ timeout: 45000 });

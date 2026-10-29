@@ -9,7 +9,7 @@ import { Store } from '../src/store.mjs';
 import { addUser } from '../src/auth.mjs';
 
 const stateDir = process.env.TOKENAI_SMOKE_STATE || '/var/lib/tokenai-agent';
-const pageUrl = process.env.TOKENAI_SMOKE_PAGE || (process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html' : 'https://tokenai.awiki.ai');
+const pageUrl = process.env.TOKENAI_SMOKE_PAGE || (process.env.TOKENAI_SMOKE_SOURCE === '1' ? 'https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html' : 'https://tokenai.awiki.info');
 const checkMcp = process.env.TOKENAI_SMOKE_MCP === '1';
 const store = new Store(stateDir);
 const tag = randomUUID(), username = 'acceptance-' + tag;

@@ -1,7 +1,7 @@
 /* TokenAI expense client. Remembered sessions store a revocable token, never a password. */
 (() => {
   'use strict';
-  const base = 'https://tokenai.awiki.ai';
+  const base = 'https://tokenai.awiki.info';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const state = { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', busy: false, cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null, downloadNotice: null, companion: { status: 'idle', text: '' }, companionTab: 'auto', companionQuestions: [], companionDraft: '', companionSending: false, companionQuestionError: '', pendingPrivateQuestion: null };
   let review = null, reviewTimer, orderRequest = 0;
@@ -38,7 +38,7 @@
       let action = null, id = null, legacy = false;
       try {
         const url = new URL(text);
-        if (url.origin === base) {
+        if ([base, 'https://tokenai.awiki.ai'].includes(url.origin)) {
           const path = url.pathname.match(/^\/work-orders\/([0-9a-f-]{36})(\/report)?$/i);
           if (path) { id = path[1]; action = path[2] ? 'download-report' : 'view-order'; }
         } else if (['localhost', '127.0.0.1'].includes(url.hostname) && url.pathname === '/doc') { id = url.searchParams.get('subjectId'); if (/^[0-9a-f-]{36}$/i.test(id || '')) { action = 'view-order'; legacy = true; } }

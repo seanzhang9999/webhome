@@ -15,7 +15,7 @@ export function loadEnvironment(path, env = process.env) {
 }
 
 export function configuration(env = process.env) {
-  const publicOrigin = new URL(env.TOKENAI_PUBLIC_ORIGIN || 'https://tokenai.awiki.ai').origin;
+  const publicOrigin = new URL(env.TOKENAI_PUBLIC_ORIGIN || 'https://tokenai.awiki.info').origin;
   return {
     host: env.TOKENAI_HOST || '127.0.0.1',
     port: Number(env.TOKENAI_PORT || 19320),

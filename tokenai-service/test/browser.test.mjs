@@ -21,7 +21,7 @@ test('existing page opens a persistent finance matter, authenticates and display
   const subjectId = '11111111-1111-4111-8111-111111111111';
   const secondSubjectId = '22222222-2222-4222-8222-222222222222';
   const reviewContexts = [];
-  for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '另一工单：https://tokenai.awiki.ai/work-orders/' + secondSubjectId + '\n控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
+  for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '另一工单：https://tokenai.awiki.info/work-orders/' + secondSubjectId + '\n旧域名工单：https://tokenai.awiki.ai/work-orders/' + subjectId + '\n控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
   const reviewRules = [
     { rule_code: 'A001', name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: [{ ref_id: 18, text: '测试证据：合同缺少附件。<img src=x onerror="window.__auditInjected=true">', file_id: 'private-file-reference', file_name: '合同样例.pdf', page_number: 2 }], suggestion: ['补齐验收证明', '由经办人核实材料版本'] },
     { rule_code: 'A002', name: '预算材料', status: 'warning', summary: '预算资料待补充', evidence: ['字符串证据'], recommendation: '请提供预算审批材料' },
@@ -51,7 +51,7 @@ test('existing page opens a persistent finance matter, authenticates and display
       const body = await readFile(new URL('../../' + name, import.meta.url));
       await route.fulfill({ status: 200, body, contentType: name.endsWith('.js') ? 'application/javascript' : name.endsWith('.css') ? 'text/css' : 'text/html' });
     });
-    await context.route('https://tokenai.awiki.ai/**', async route => {
+    await context.route('https://tokenai.awiki.info/**', async route => {
       const request = route.request(), url = new URL(request.url());
       if (url.pathname.endsWith('/events')) {
         const matterId = url.pathname.split('/')[4];
@@ -82,6 +82,8 @@ test('existing page opens a persistent finance matter, authenticates and display
     await page.locator('main [data-object="matter:expense"]').click();
     await page.locator('#expense-root .pill').filter({ hasText: '已登录 · 测试财务' }).waitFor();
     assert.equal(context.pages().length, 1, 'Reload restores login without another password popup');
+    assert.equal(await page.locator('#expense-root a[href^="https://tokenai.awiki.ai"]').count(), 0, 'Legacy work-order links must become current-domain actions');
+    assert.ok(await page.locator('[data-expense-action=view-order][data-subject="' + subjectId + '"]').count() >= 2);
     const firstMatterId = store.get('SELECT id FROM matters').id;
     await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
     await page.locator('[data-expense-action=view-order]').last().click();

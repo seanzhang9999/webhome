@@ -8,7 +8,7 @@ import { SUBJECT_ID } from '../src/work-order-view.mjs';
 const subjectId = process.env.TOKENAI_REPORT_SUBJECT_ID;
 assert.ok(SUBJECT_ID.test(subjectId || ''), 'Provide an authorized subject ID');
 const credentials = JSON.parse(await readFile('/home/ecs-user/.config/tokenai-agent/bootstrap.json', 'utf8'));
-const pageUrl = process.env.TOKENAI_REPORT_PAGE || 'https://tokenai.awiki.ai/work-orders/' + subjectId;
+const pageUrl = process.env.TOKENAI_REPORT_PAGE || 'https://tokenai.awiki.info/work-orders/' + subjectId;
 const githubPage = new URL(pageUrl).hostname === 'seanzhang9999.github.io';
 const browser = await chromium.launch({ headless: true, ...(process.env.TOKENAI_BROWSER_PATH ? { executablePath: process.env.TOKENAI_BROWSER_PATH } : {}) });
 const context = await browser.newContext();
@@ -85,6 +85,6 @@ try {
   throw error;
 } finally {
   if (!session) session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1'))).catch(() => null);
-  if (session?.accessToken) await fetch('https://tokenai.awiki.ai/api/v1/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + session.accessToken, 'Content-Type': 'application/json', Origin: 'https://tokenai.awiki.ai' }, body: '{}' }).catch(() => {});
+  if (session?.accessToken) await fetch('https://tokenai.awiki.info/api/v1/auth/logout', { method: 'POST', headers: { Authorization: 'Bearer ' + session.accessToken, 'Content-Type': 'application/json', Origin: 'https://tokenai.awiki.info' }, body: '{}' }).catch(() => {});
   await context.close(); await browser.close();
 }

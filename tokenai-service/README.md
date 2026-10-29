@@ -58,7 +58,7 @@ DEEPSEEK_API_KEY=<由安全配置注入>
 TOKENX_MCP_TOKEN=<由安全配置注入的当前有效凭据>
 TOKENAI_MODEL=deepseek-v4-flash
 TOKENAI_MODEL_BASE_URL=https://api.deepseek.com
-TOKENAI_PUBLIC_ORIGIN=https://tokenai.awiki.ai
+TOKENAI_PUBLIC_ORIGIN=https://tokenai.awiki.info
 TOKENAI_PORT=19320
 TOKENAI_ENABLE_WRITES=0
 TOKENAI_ENABLE_SHARE=0
@@ -162,11 +162,13 @@ sudo python3 deploy/install-service.py
 /etc/tokenai-agent/environment，systemd 注入后由主进程读取。主配置变更应在源受限文件
 修改后通过部署脚本应用，避免误以为修改源文件会自动影响运行服务。
 
-使用 deploy/tokenai.awiki.ai.conf 新增独立 Nginx 虚拟主机，检查 `nginx -t` 后平滑加载。
-DNS 仅新增 tokenai 的专用记录，保留已有泛域名和其他服务。DNS01 证书签发使用
-deploy/acme-dns.py 和本机现有 Aliyun CLI 配置；清理只删除本次精确 TXT 记录。
+使用 deploy/tokenai.awiki.info.conf 新增独立 Nginx 虚拟主机，检查 `nginx -t` 后平滑加载。
+DNS 仅新增 awiki.info 下 tokenai 的专用 A 记录，指向上海本机。Nginx 使用本机既有
+awiki.info 通配符证书，部署前核对 SAN 覆盖 tokenai.awiki.info 及有效期，不改动证书续期
+配置。旧 .ai 域名的 Nginx、证书和 DNS01 脚本作为历史配置保留；当前 .info 部署不调用
+这些脚本，不修改 awiki.ai 或硅谷配置。
 
-检查：`systemctl status tokenai-agent`、`curl https://tokenai.awiki.ai/healthz`。
+检查：`systemctl status tokenai-agent`、`curl https://tokenai.awiki.info/healthz`。
 回滚：把 /opt/tokenai-agent/current 指回 previous，重启 tokenai-agent；需要时恢复对应
 环境备份。回滚不删除数据库、附件和 Pi 会话。DNS/Nginx 回退只处理本任务专用记录。
 完整恢复需保留 /var/lib/tokenai-agent、受限环境和部署版本；勿将数据备份放进 GitHub。
