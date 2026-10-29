@@ -13,17 +13,17 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 @media print{body{background:#fff;color:#111}.hero{background:#fff;color:#111;padding:10px 0}.hero .intro,.hero .intro strong,.eyebrow,.brand,.brand strong{color:#111}.actions,.guide,.skip-link{display:none}.wrap{max-width:none;padding:0}.section{break-inside:avoid;border-radius:0;padding:18px 0}.btn[aria-pressed="true"]{background:#edf3fc;color:#111}footer{padding:15px 0}a{color:#111}}
 </style>
-<link rel="stylesheet" href="tokenai-architecture.css?v=2">
+<link rel="stylesheet" href="tokenai-architecture.css?v=3">
 </head>
 <body>
 <a class="skip-link" href="#main">跳到讲解内容</a>
-<header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理旁边还有一位独立的 AI 伙伴，帮助梳理风险、准备追问和下一步建议。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
+<header class="hero"><div class="wrap"><div class="brand"><strong>AWiki · TokenAI</strong><span>报销费控协同</span></div><p class="eyebrow">2026 年 10 月 29 日演示版 · 面向 CFO 与财务经理</p><h1>CFO 视角下的报销费控与 AI 协作架构</h1><div class="intro"><p>财务人员在一个固定的报销事项里提出问题，TokenAI 去查询获授权的真实审核记录，再把结果带回同一处。财务经理还有一位独立的 AI 伙伴：在事项旁梳理讨论，打开审核明细后，也能一边看规则与证据，一边针对当前工单追问。<strong>团队获得共同的事实，经理保留独立的思考空间，审批和付款仍由人及企业现有流程掌握。</strong></p>
 </div><div class="actions"><a class="cta" href="awiki-coffee-trusted-space-v55-cfo.html">打开报销费控演示</a><a class="cta secondary" href="#section-1">先看协作图 ↓</a><a class="cta secondary" href="procurement-collaboration-architecture.html">多方采购协作架构 ↗</a></div></div></header>
 <div class="wrap"><div class="guide"><p class="guide-label">讲解导航</p><nav aria-label="讲解章节"><a href="#section-1">一张图看懂整体架构</a><a href="#section-2">页面上的两个 AI 分别帮什么忙</a><a href="#section-3">用一次合同付款查询走完整个过程</a><a href="#section-4">今天可以展示到哪里</a><a href="#section-5">CFO 需要把握的三个控制点</a><a href="#section-6">今天现场怎么讲</a></nav></div><main id="main"><section class="section" id="section-1" aria-labelledby="section-1-heading"><div class="section-heading"><span class="section-number">01</span><h2 id="section-1-heading">一张图看懂整体架构</h2></div>
-<p>上方是共享业务协作：财务人员和主 Agent 在同一固定事项里对话，主 Agent 在服务端调用 TokenX。下方是经理的私人 AI 伙伴，独立分析、独立问答。</p>
+<p>上方是共享业务协作：财务人员和主 Agent 在同一固定事项里对话，主 Agent 在服务端调用 TokenX。下方是经理的私人 AI 伙伴：既能跟随主聊天，也能在审核明细旁结合当前工单提供私人问答。</p>
 <div class="architecture" id="tokenai-architecture" aria-label="事项群与 Agent 及审核系统整体架构">
   <div class="arch-top"><div><div class="arch-kicker">AWIKI × TOKENAI × TOKENX</div><div class="arch-title">从一句提问，到一份有依据的回答</div><div class="arch-subtitle">主 Agent 就在事项群中；中间展示同一个 Agent 的服务端运行。</div></div><button class="arch-control arch-fullscreen" type="button" data-arch-fullscreen>放大架构图</button></div>
-  <div class="arch-controls" role="group" aria-label="架构路径"><button class="arch-control" type="button" data-view="all" aria-pressed="true">整体架构</button><button class="arch-control" type="button" data-view="front" aria-pressed="false">事项群接入</button><button class="arch-control" type="button" data-view="audit" aria-pressed="false">审计系统接入</button><button class="arch-control" type="button" data-view="private" aria-pressed="false">私人 AI 伙伴</button><button class="arch-control arch-play" type="button" data-arch-play aria-pressed="false">演示一次提问</button></div>
+  <div class="arch-controls" role="group" aria-label="架构路径"><button class="arch-control" type="button" data-view="all" aria-pressed="true">整体架构</button><button class="arch-control" type="button" data-view="front" aria-pressed="false">事项群接入</button><button class="arch-control" type="button" data-view="audit" aria-pressed="false">审计系统接入</button><button class="arch-control" type="button" data-view="private" aria-pressed="false">私人 AI 伙伴</button><button class="arch-control" type="button" data-view="review" aria-pressed="false">明细旁问 AI</button><button class="arch-control arch-play" type="button" data-arch-play aria-pressed="false">演示一次提问</button></div>
   <div class="arch-board">
     <svg class="arch-wires" aria-hidden="true"></svg>
     <div class="arch-lane">
@@ -47,15 +47,18 @@
       <button class="arch-node audit-node" type="button" data-node="evidence" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>真实结果来源</span><span class="node-name">工单与审核依据</span><span class="node-copy">工单状态 · 规则结论<br>证据明细 · 审核建议</span><span class="node-tag">可查看明细与导出结果</span></button>
       <div class="arch-spacer" aria-hidden="true"></div>
     </div>
-<div class="arch-private-band"><div class="arch-private-heading"><span>04 / PRIVATE ADVISOR</span><h3>财务经理的私人 AI 伙伴</h3><p>在共享办事主线之外，单独帮助经理分析和追问；不作为主 Agent 到审核系统的中转。</p></div><div class="arch-private-grid"><button class="arch-node private-node" type="button" data-node="context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来自上方同一固定事项</span><span class="node-name">近期可见的主聊天</span><span class="node-copy">提供本轮讨论的事实与上下文<br>不额外取得其他业务数据</span><span class="node-tag">私人分析的上下文来源</span></button>      <button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立会话 · 独立建议</span><span class="node-name">Pi 财务经理 AI 伙伴</span><span class="node-copy">读取近期可见讨论，帮助分析和追问</span><span class="node-tag">自动分析 + 私人问答 · 无业务工具</span></button>
-      <button class="arch-node private-node front-partner" type="button" data-node="private" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务经理 / CFO</span><span class="node-name">我的 AI 伙伴侧栏</span><span class="node-copy">自动分析跟随讨论<br>私人问答由我主动发起</span><span class="node-tag">仅本人可见</span></button>
+<div class="arch-private-band"><div class="arch-private-heading"><span>04 / PRIVATE ADVISOR</span><h3>财务经理的私人 AI 伙伴</h3><p>同一私人伙伴，两个使用入口：事项旁看自动分析与私人问答；审核明细旁针对当前工单追问。</p></div><div class="arch-private-grid"><div class="arch-context-sources">
+<button class="arch-node private-node" type="button" data-node="context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来源一 · 当前事项</span><span class="node-name">近期可见的主聊天</span><span class="node-copy">自动分析跟随讨论更新<br>普通私人问答结合本人的历史</span><span class="node-tag">事项成员可见的内容</span></button>
+<button class="arch-node audit-node" type="button" data-node="review-context" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>来源二 · 当前选中的工单</span><span class="node-name">当前工单审核依据</span><span class="node-copy">提问时由服务端校验权限<br>只读获取规则、结论与证据</span><span class="node-tag">服务端 → MCP → 授权工单</span></button>
+</div><button class="arch-node private-node partner-node" type="button" data-node="partner" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>独立 Pi 会话 · 私人建议</span><span class="node-name">财务经理 AI 伙伴</span><span class="node-copy">结合近期讨论或当前工单<br>解释风险、缺失材料与下一步</span><span class="node-tag">按工单保留私人问答 · 无执行工具</span></button>
+<button class="arch-node private-node front-partner" type="button" data-node="private" aria-pressed="false"><span class="node-eyebrow"><i class="node-dot" aria-hidden="true"></i>财务经理 / CFO</span><span class="node-name">两个私人问答入口</span><span class="node-copy">事项右侧：分析与私人问答<br>审核明细右侧：针对这张单提问</span><span class="node-tag">仅本人可见 · 不发送到事项群</span></button>
 </div></div>
   </div>
   <div class="arch-bridge-note" aria-label="连接图例"><span><i aria-hidden="true"></i>事项问题与回复</span><span class="green"><i aria-hidden="true"></i>工具查询与真实结果</span><span class="purple"><i aria-hidden="true"></i>私人上下文与建议</span></div>
   <div class="arch-detail" role="status" aria-live="polite" aria-atomic="true"><div class="arch-detail-title">一条办事主线，一条私人建议线</div><div class="arch-detail-copy"><p>事项群把问题交给 Agent，Agent 查询审核系统，再把结果带回事项群。独立伙伴帮助经理分析和追问。</p><span class="arch-detail-meta">点选任意模块查看职责。</span></div></div>
   <div class="arch-status">连接关系示意 · 非实时监控</div>
 </div>
-<script src="tokenai-architecture.js?v=2"></script>
+<script src="tokenai-architecture.js?v=3"></script>
 </section>
 <section class="section" id="section-2" aria-labelledby="section-2-heading"><div class="section-heading"><span class="section-number">02</span><h2 id="section-2-heading">页面上的两个 AI 分别帮什么忙</h2></div><table>
 <thead>
@@ -68,12 +71,12 @@
 <tbody><tr>
 <td>它在做什么</td>
 <td>按日期、业务类型等查询授权工单，解释审核状态与明细</td>
-<td>阅读当前事项的近期讨论，帮助梳理风险和追问</td>
+<td>跟随事项讨论提供建议，也能在审核明细旁解释当前工单的规则、证据与风险</td>
 </tr>
 <tr>
 <td>它依据什么</td>
 <td>TokenX 返回的真实审核数据，加上事项里的对话</td>
-<td>当前用户可见的近期主聊天、自己的自动分析和私人问答</td>
+<td>近期可见主聊天；针对工单提问时，加入服务端鉴权读取的审核数据和本工单私人问答</td>
 </tr>
 <tr>
 <td>谁能看到</td>
@@ -83,30 +86,31 @@
 <tr>
 <td>怎么使用</td>
 <td>在主输入框提出业务查询</td>
-<td>在“自动分析”看建议，在“私人问答”继续提问</td>
+<td>事项旁看分析、继续问答；审核明细旁可点“请 AI 解释这条规则”</td>
 </tr>
 <tr>
 <td>能否处理业务</td>
 <td>当前开放查询和查看结果</td>
-<td>提供建议，不调用业务工具，不执行审批或付款</td>
+<td>分析获准提供的工单数据、给出建议；审批与付款由具权人员按既有流程决定</td>
 </tr>
 </tbody></table>
 
-<p>右侧的<strong>自动分析</strong>会在主聊天处理完成后随讨论更新；<strong>私人问答</strong>保留自己的提问和回答。私人问题不会发到主聊天，也不会覆盖自动分析。AI 伙伴没有额外的数据通道，重要判断应回到工单明细核实。</p>
+<p>右侧的<strong>自动分析</strong>会在主聊天处理完成后随讨论更新；<strong>私人问答</strong>保留自己的提问和回答。私人问题不会发到主聊天，也不会覆盖自动分析。在审核明细里提问时，服务端按当前权限读取所选工单，向伙伴提供审核上下文。不同工单的私人历史分别保存，刷新后可继续；重要判断仍应回到证据核实。</p>
 </section>
 <section class="section" id="section-3" aria-labelledby="section-3-heading"><div class="section-heading"><span class="section-number">03</span><h2 id="section-3-heading">用一次合同付款查询走完整个过程</h2></div><p><strong>第一步 在共同事项里问事实</strong></p>
 
 <p>财务人员输入：“查询今天的合同付款审核明细。”主助手按当前授权范围查询，返回工单及可查看的审核结果。若需要跨日比较，可以明确指定日期范围。</p>
 
-<p><strong>第二步 打开依据</strong></p>
+<p><strong>第二步 看清规则和证据</strong></p>
 
-<p>选择“查看审核明细”，检查规则结论、证据和建议。需要带到会议或留存时，选择“下载审核结果”。当前下载的是由真实审核数据整理的 Markdown 导出件；浏览器没有自动保存时，可点“保存文件”，也可复制 Markdown。</p>
+<p>选择“查看审核明细”，左侧先看整体结论、中文风险标签，再展开规则查看证据原文、引用、页码和处理建议。原始 JSON 收在默认折叠的技术详情里。需要留存时，可下载由真实审核数据整理的 Markdown 导出件；浏览器没有自动保存时，可点“保存文件”。</p>
 
-<p><strong>第三步 让私人伙伴帮助准备判断</strong></p>
+<p><strong>第三步 在明细旁问这张单</strong></p>
 
-<p>在右侧“自动分析”看本轮讨论的建议；切到“私人问答”，问：“根据刚才的结果，我应该先追问哪些问题？”或“帮我整理一份给经办人的补充材料清单。”</p>
+<p>直接在明细右侧问：“这张单最需要关注什么？”也可以点击某条规则下的“请 AI 解释这条规则”，准备好问题后发送。伙伴会结合当前工单的真实依据回答，并显示本次工单读取时间。回答到达时，左侧已展开的规则与阅读位置保持不变。</p>
 
-<p>这是使用方式示例，具体风险和材料要求取决于实际返回的工单。</p>
+<div class="review-explainer" aria-label="审核明细与私人问答使用方式示意"><div><span>左侧 · 审核明细</span><h3>看结论，也看证据</h3><p>中文状态 → 规则摘要 → 证据原文 → 处理建议</p><b>选择「请 AI 解释这条规则」</b></div><div><span>右侧 · 当前工单私人伙伴</span><h3>围绕正在看的规则追问</h3><p>“为什么需要关注？”<br>“还缺哪些材料？”<br>“下一步该怎么核实？”</p><b>私人回答与当前工单一起保留</b></div></div>
+<p>同一伙伴在事项右侧仍提供自动分析和普通私人问答；明细右侧聚焦当前工单。以上是使用方式示例，具体风险和材料要求以实际审核结果为准。</p>
 
 <p><strong>第四步 由财务经理决定下一步</strong></p>
 
@@ -129,11 +133,11 @@
 </tr>
 <tr>
 <td>私人 AI 伙伴</td>
-<td>自动给建议，也支持本人继续提问，两类内容分开显示</td>
+<td>自动分析与私人问答分开；审核明细内嵌当前工单问答，支持针对规则追问</td>
 </tr>
 <tr>
 <td>明细查看和结果导出</td>
-<td>登录 TokenAI 后查看授权内容，下载整理后的审核结果</td>
+<td>以规则卡片呈现结论与证据，可下载审核结果；查看过程中直接向旁边的 AI 提问</td>
 </tr>
 <tr>
 <td>记住登录</td>
@@ -155,7 +159,7 @@
 <li><strong>留得住决定权</strong>：AI 可以整理事实与建议，财务经理及既有审批流程承担业务决定。后续开放修改类操作时，应逐项明确权限和确认机制。</li>
 </ol>
 </section>
-<section class="section" id="section-6" aria-labelledby="section-6-heading"><div class="section-heading"><span class="section-number">06</span><h2 id="section-6-heading">今天现场怎么讲</h2></div><p>“中间是我们共同办事的地方，TokenAI 负责把真实审核结果找回来；右边是我自己的 AI 伙伴，帮我想清楚应该问什么、先处理什么。我先看事实，再看建议，最后按公司的流程作决定。”</p>
+<section class="section" id="section-6" aria-labelledby="section-6-heading"><div class="section-heading"><span class="section-number">06</span><h2 id="section-6-heading">今天现场怎么讲</h2></div><p>“我们先在共同事项里查出真实工单，再打开审核明细。左边是规则和证据，右边是我的私人 AI 伙伴。看不明白哪条，就针对那条问；它结合这张单的依据解释，我再决定补什么材料、找谁复核。问答会保留，但不会自动发到事项群，最后仍按公司的流程作决定。”</p>
 
 <p><strong>演示入口</strong>：<a href="https://seanzhang9999.github.io/webhome/awiki-coffee-trusted-space-v55-cfo.html">AWiki 报销费控协同工作台</a> · <strong>独立入口</strong>：<a href="https://tokenai.awiki.ai">TokenAI 工作台</a></p>
 
