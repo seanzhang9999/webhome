@@ -9,28 +9,38 @@ const config = configuration(), id = process.env.TOKENAI_REPORT_SUBJECT_ID;
 assert.ok(SUBJECT_ID.test(id || ''), 'Use a user-authorized work-order ID');
 const credentials = JSON.parse(await readFile('/home/ecs-user/.config/tokenai-agent/bootstrap.json', 'utf8'));
 const proxy = config.mcpProxyUrl ? new URL(config.mcpProxyUrl) : null;
-const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'], ...(process.env.TOKENAI_BROWSER_PATH ? { executablePath: process.env.TOKENAI_BROWSER_PATH } : {}), ...(proxy ? { proxy: { server: proxy.origin, ...(proxy.username ? { username: decodeURIComponent(proxy.username), password: decodeURIComponent(proxy.password) } : {}) } } : {}) });
-const context = await browser.newContext(), page = await context.newPage(); let session;
+const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'], ...(process.env.TOKENAI_BROWSER_PATH ? { executablePath: process.env.TOKENAI_BROWSER_PATH } : {}), ...(proxy ? { proxy: { server: proxy.origin, bypass: '*.awiki.info,*.github.io', ...(proxy.username ? { username: decodeURIComponent(proxy.username), password: decodeURIComponent(proxy.password) } : {}) } } : {}) });
+const context = await browser.newContext(), page = await context.newPage(); let session, stage = 'open-work-order';
 try {
   await page.goto('https://tokenai.awiki.info/work-orders/' + id);
+  stage = 'login';
   const authPromise = page.waitForEvent('popup'); await page.locator('[data-expense-action=login]').click(); const auth = await authPromise;
   await auth.locator('[name=username]').fill(credentials.username); await auth.locator('[name=password]').fill(credentials.password); await auth.getByRole('button', { name: '登录并连接事项' }).click();
+  stage = 'read-audit';
   const dialog = page.getByRole('dialog', { name: '工单审核明细' }); await dialog.waitFor({ timeout: 45000 });
   session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1')));
+  const expectedRules = await dialog.locator('.audit-rule-heading b, .audit-rule-heading small').allTextContents();
   const companion = dialog.locator('#audit-companion'); await companion.locator('textarea').fill('未发送的原生查看验证问题');
+  stage = 'open-original';
   const popupPromise = page.waitForEvent('popup'); await dialog.getByRole('button', { name: '打开审核结果', exact: true }).click(); const original = await popupPromise;
   await original.waitForURL(u => u.origin === 'https://mcp-local.parleyvoice.com', { timeout: 45000, waitUntil: 'commit' });
+  stage = 'original-navigation';
+  await original.waitForLoadState('domcontentloaded', { timeout: 45000 });
   assert.equal(await original.evaluate(() => window.opener === null), true);
   assert.equal(await dialog.isVisible(), true); assert.equal(await companion.isVisible(), true); assert.equal(await companion.locator('textarea').inputValue(), '未发送的原生查看验证问题');
+  stage = 'original-content';
   let nativeReady = false;
   for (let i = 0; i < 9; i++) {
     await original.waitForTimeout(5000);
     const text = await original.locator('body').innerText({ timeout: 5000 });
-    nativeReady = text.length > 150 && /审核|证据|规则/.test(text);
+    const currentUrl = new URL(original.url());
+    const sameWorkOrder = currentUrl.pathname.startsWith('/share/audit/') || (currentUrl.pathname === '/doc' && currentUrl.searchParams.get('subjectId') === id);
+    nativeReady = sameWorkOrder && expectedRules.some(rule => rule.length >= 4 && text.replace(/\s/g, '').includes(rule.replace(/\s/g, ''))) && await original.locator('input[type=password]').count() === 0;
     if (nativeReady || /链接无效|链接已失效|已过期/.test(text)) break;
   }
-  console.log(JSON.stringify({ newWindow: 'opened at TokenX', openerDetached: true, originalAuditDataVisible: nativeReady, mainAuditAndCompanionPreserved: true, privateDraftPreserved: true, noIframe: true }));
-} catch {
+  console.log(JSON.stringify({ newWindow: 'opened at TokenX', openerDetached: true, originalAuditDataVisible: nativeReady, actualRuleMatched: nativeReady, mainAuditAndCompanionPreserved: true, privateDraftPreserved: true, noIframe: true }));
+} catch (error) {
+  console.log(JSON.stringify({ stage, errorType: error.name, navigationContextChanged: /Execution context was destroyed/.test(error.message) }));
   throw new Error('Original-result browser check incomplete; signed viewer URL withheld');
 } finally {
   if (!session) session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1'))).catch(() => null);
