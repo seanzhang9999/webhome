@@ -137,9 +137,12 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.equal(await firstRule.getAttribute('open'), '');
     assert.equal(store.get('SELECT COUNT(*) AS n FROM messages').n, historyCount);
     await reviewer.locator('textarea').fill('尚未发送的工单问题');
+    await page.evaluate(() => { const open = window.open; window.open = function (...args) { window.__nativeWindowFeatures = args[2] || ''; return open.apply(this, args); }; });
     const originalPromise = page.waitForEvent('popup');
     await dialog.getByRole('button', { name: '打开审核结果', exact: true }).click();
     const originalWindow = await originalPromise;
+    const popupFeatures = await page.evaluate(() => window.__nativeWindowFeatures);
+    assert.match(popupFeatures, /popup=yes/); assert.match(popupFeatures, /width=\d+/); assert.match(popupFeatures, /height=\d+/); assert.match(popupFeatures, /resizable=yes/);
     await originalWindow.getByRole('heading', { name: '原生工作台测试页' }).waitFor();
     assert.equal(await originalWindow.evaluate(() => window.opener === null), true);
     assert.equal(await dialog.isVisible(), true);
