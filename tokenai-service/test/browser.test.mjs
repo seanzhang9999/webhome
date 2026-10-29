@@ -19,7 +19,9 @@ test('existing page opens a persistent finance matter, authenticates and display
   const seededMatter = store.ensureMatter(finance);
   const historyCount = 35;
   const subjectId = '11111111-1111-4111-8111-111111111111';
-  for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
+  const secondSubjectId = '22222222-2222-4222-8222-222222222222';
+  const reviewContexts = [];
+  for (let i = 0; i < historyCount; i++) store.message(seededMatter.id, null, 'tokenai', 'TokenAI 报销费控助手', '历史消息 ' + i + '\n' + '历史审核说明，仅用于界面回归。\n'.repeat(5) + (i === historyCount - 1 ? '另一工单：https://tokenai.awiki.ai/work-orders/' + secondSubjectId + '\n控制台：http://localhost:8089/doc?subjectId=' + subjectId + '&scenario_type=contract_payment' : ''));
   const reviewRules = [
     { rule_code: 'A001', name: '合同附件', status: 'failed', summary: '请补齐附件', evidence: [{ ref_id: 18, text: '测试证据：合同缺少附件。<img src=x onerror="window.__auditInjected=true">', file_id: 'private-file-reference', file_name: '合同样例.pdf', page_number: 2 }], suggestion: ['补齐验收证明', '由经办人核实材料版本'] },
     { rule_code: 'A002', name: '预算材料', status: 'warning', summary: '预算资料待补充', evidence: ['字符串证据'], recommendation: '请提供预算审批材料' },
@@ -27,14 +29,14 @@ test('existing page opens a persistent finance matter, authenticates and display
     { rule_code: 'A004', name: '人工复核项', status: 'needs_human_check', summary: '等待人工复核', evidence: null }
   ];
   const detailPayload = { subject_id: subjectId, title: '浏览器测试审核明细', status: 'reviewed', risk_level: 'high', scenario_type: 'contract_payment', audit_summary: '审核结果来自测试接口', rule_results: { A001: reviewRules[0] }, review_result: { results: reviewRules }, report: { file_name: 'test.pdf_审核报告.md', report_url: 'http://localhost:8089/files/private/file-preview' } };
-  const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async () => ({ content: [{ type: 'text', text: JSON.stringify(detailPayload) }] }) };
+  const tokenx = { status: { connected: true }, tools: [{ name: 'scenario_list' }], allowed: () => true, close: async () => {}, call: async (name, args) => ({ content: [{ type: 'text', text: JSON.stringify({ ...detailPayload, subject_id: args.subject_id }) }] }) };
   const agent = { active: new Map(), close: async () => {}, enqueue(matter, user, turn) {
     for (let i = 0; i < 250; i++) store.event(matter.id, turn.id, 'text_delta', { text: '流式内容' });
     store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', '浏览器接口验收回复：' + turn.text + '\n\n## 审核摘要\n\n| 项目 | 状态 |\n| --- | --- |\n| 合同附件 | 待补充 |\n\n- 第一项\n- 第二项\n\n```json\n{"readOnly":true}\n```\n\n<script>window.__markdownInjected=true</script><img src=x onerror="window.__markdownInjected=true">[危险链接](javascript:alert(1))');
     store.run("UPDATE turns SET status='completed' WHERE id=?", turn.id);
     store.event(matter.id, turn.id, 'turn_completed', { turnId: turn.id });
   } };
-  const companion = new FinanceCompanion(config, store, { generate: async ({ sourceSeq, mode, question }) => mode === 'question' ? '## 私人回答\n\n应先补齐验收证明。你的问题：' + question : '## 建议行动\n\n- 基于主聊天消息 ' + sourceSeq + ' 核对审核结论。\n- 建议只供财务人员判断。' });
+  const companion = new FinanceCompanion(config, store, { generate: async ({ sourceSeq, mode, question, workOrder }) => { if (workOrder) reviewContexts.push(workOrder); return mode === 'question' ? workOrder ? '## 当前工单建议\n\n针对规则 A001，请补充本工单的验收附件。' : '## 私人回答\n\n应先补齐验收证明。你的问题：' + question : '## 建议行动\n\n- 基于主聊天消息 ' + sourceSeq + ' 核对审核结论。\n- 建议只供财务人员判断。'; } });
   const app = await buildApp(config, { store, tokenx, agent, companion });
   await app.listen({ host: '127.0.0.1', port: 0 });
   const address = 'http://127.0.0.1:' + app.server.address().port;
@@ -114,6 +116,20 @@ test('existing page opens a persistent finance matter, authenticates and display
     await page.setViewportSize({ width: 390, height: 844 });
     assert.ok(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth), 'Audit details must fit a mobile screen');
     await page.setViewportSize({ width: 1280, height: 900 });
+    const reviewer = dialog.getByRole('complementary', { name: '当前工单的私人 AI 伙伴' });
+    await reviewer.getByRole('heading', { name: '财务经理的 AI 伙伴', exact: true }).waitFor();
+    await firstRule.getByRole('button', { name: '请 AI 解释这条规则', exact: true }).click();
+    assert.match(await reviewer.locator('textarea').inputValue(), /A001/);
+    await dialog.locator('.audit-content').evaluate(el => { el.scrollTop = 120; });
+    const readPosition = await dialog.locator('.audit-content').evaluate(el => el.scrollTop);
+    await reviewer.locator('form [type=submit]').click();
+    await reviewer.locator('.audit-private-answer').filter({ hasText: '针对规则 A001' }).waitFor();
+    assert.equal(reviewContexts.length, 1); assert.equal(reviewContexts[0].subjectId, subjectId);
+    assert.ok(reviewContexts[0].rules[0].evidence.includes('测试证据'));
+    assert.equal(await dialog.locator('.audit-content').evaluate(el => el.scrollTop), readPosition, 'Private answer must preserve the report reading position');
+    assert.equal(await firstRule.getAttribute('open'), '');
+    assert.equal(store.get('SELECT COUNT(*) AS n FROM messages').n, historyCount);
+    await reviewer.locator('textarea').fill('尚未发送的工单问题');
     const downloadPromise = page.waitForEvent('download');
     await dialog.getByRole('button', { name: '下载审核结果（Markdown）' }).click();
     const download = await downloadPromise;
@@ -122,12 +138,24 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.ok(markdown.includes('## 1. 合同附件'));
     assert.ok(download.suggestedFilename().includes('审核结果导出'));
     await dialog.getByRole('link', { name: '保存文件', exact: true }).waitFor();
+    assert.equal(await reviewer.locator('textarea').inputValue(), '尚未发送的工单问题', 'Download rerender preserves the private draft');
+    assert.equal(await firstRule.getAttribute('open'), '');
+
+    await dialog.getByRole('button', { name: '关闭', exact: true }).click();
+
+    await page.locator('[data-expense-action=view-order][data-subject="' + secondSubjectId + '"]').first().click();
+    await dialog.locator('.audit-review-welcome').waitFor();
+    assert.equal(await dialog.locator('.audit-private-qa').count(), 0, 'Another work order must not show the first report history');
+    assert.equal(await dialog.locator('#audit-companion textarea').inputValue(), '');
     await dialog.getByRole('button', { name: '关闭', exact: true }).click();
     detailPayload.title = 'auto_run??';
     delete detailPayload.review_result;
     detailPayload.rule_results = { 'MAP-001': { name: '映射规则', status: 'warning', summary: '映射格式摘要', evidence: { source: { name: '来源样例' }, text: '映射格式证据' }, suggestions: { action: '补充证明' } } };
     await page.locator('[data-expense-action=view-order]').last().click();
     await dialog.getByRole('heading', { name: '合同付款审核明细', exact: true }).waitFor();
+    await dialog.locator('.audit-private-answer').filter({ hasText: '针对规则 A001' }).waitFor();
+    assert.equal(await dialog.locator('.audit-private-qa').count(), 1, 'Reopening the work order restores its private conversation');
+
     assert.match(await dialog.locator('.audit-rule-heading').innerText(), /MAP-001/);
     assert.match(await dialog.locator('.audit-evidence').innerText(), /映射格式证据/);
     assert.match(await dialog.locator('.audit-suggestion').innerText(), /补充证明/);

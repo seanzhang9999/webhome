@@ -103,3 +103,38 @@ test('new messages are picked up after an active analysis and errors do not caus
     const before = calls; companion.request(f.matter, f.a); await companion.settled(); assert.equal(calls, before);
   } finally { await companion.close(); f.cleanup(); }
 });
+
+test('audit questions use authorized server evidence and isolate work-order history', async () => {
+  const f = fixture(); f.config.workOrderTenant = 'company-a';
+  const a = '11111111-1111-4111-8111-111111111111', b = '22222222-2222-4222-8222-222222222222';
+  const seen = [], calls = [];
+  const companion = new FinanceCompanion(f.config, f.store, { generate: async context => { seen.push(context); return '回答：' + (context.workOrder?.subjectId || '主聊天'); } });
+  const tokenx = { status: {}, tools: [], close: async () => {}, call: async (name, args) => {
+    calls.push({ name, args }); if (![a,b].includes(args.subject_id)) throw new Error('missing');
+    return { content: [{ type: 'text', text: JSON.stringify({ subject_id: args.subject_id, title: '服务端工单', audit_summary: '服务端确认的证据摘要', rule_results: { EXP01: { name: '核对附件', status: 'warning', evidence: [{ ref_id: 18, text: '材料待补充' }] } } }) }] };
+  } };
+  const app = await buildApp(f.config, { store: f.store, companion, tokenx, agent: { active: new Map(), close: async () => {} } });
+  const tokens = new Map(); for (const [i,user] of [f.a,f.b,f.outsider].entries()) { const token = String.fromCharCode(65+i).repeat(43); tokens.set(user.id,token); f.store.run('INSERT INTO tokens VALUES(?,?,?)',hash(token),user.id,Date.now()+60000); }
+  const url='/api/v1/matters/'+f.matter.id+'/companion/questions', headers={authorization:'Bearer '+tokens.get(f.a.id)};
+  try {
+    f.store.message(f.matter.id,null,'tokenai','TokenAI','主聊天记录');
+    const payload={question:'为什么需要补材料？',clientMessageId:uid(),subjectId:a,workOrder:{summary:'伪造浏览器结论'},user_id:f.b.id};
+    const response=await app.inject({method:'POST',url,headers,payload});assert.equal(response.statusCode,202);
+    const duplicate=await app.inject({method:'POST',url,headers,payload});assert.equal(duplicate.json().id,response.json().id);
+    await companion.settled();assert.equal(calls.length,1);assert.equal(seen.length,1);assert.equal(calls[0].name,'scenario_work_order');assert.equal(calls[0].args.include_share,false);
+    assert.equal(seen[0].workOrder.summary,'服务端确认的证据摘要');assert.equal(seen[0].workOrder.subjectId,a);assert.ok(seen[0].workOrder.rules[0].evidence.includes('材料待补充'));assert.equal(JSON.stringify(seen[0]).includes('伪造浏览器结论'),false);
+    assert.equal((await app.inject({method:'POST',url,headers,payload:{...payload,subjectId:b}})).statusCode,409);
+    companion.ask(f.matter,f.a,{question:'另一工单',clientMessageId:uid(),subjectId:b});await companion.settled();assert.equal(seen.at(-1).history.length,0);
+    companion.ask(f.matter,f.a,{question:'继续问这张单',clientMessageId:uid(),subjectId:a});await companion.settled();assert.equal(seen.at(-1).history.length,1);
+    companion.ask(f.matter,f.a,{question:'只问主聊天',clientMessageId:uid()});await companion.settled();assert.equal(seen.at(-1).workOrder,null);assert.equal(seen.at(-1).history.length,0);
+    const own=await app.inject({url:url+'?subjectId='+a,headers});assert.equal(own.json().questions.length,2);assert.ok(own.json().questions.every(q=>q.subject_id===a));assert.equal(own.json().questions[0].work_order_title,'服务端工单');
+    const other=await app.inject({url:url+'?subjectId='+a,headers:{authorization:'Bearer '+tokens.get(f.b.id)}});assert.equal(other.json().questions.length,0);
+    const outsiderMatter=f.store.ensureMatter(f.outsider);assert.equal((await app.inject({method:'POST',url:'/api/v1/matters/'+outsiderMatter.id+'/companion/questions',headers:{authorization:'Bearer '+tokens.get(f.outsider.id)},payload})).statusCode,403);
+    assert.equal((await app.inject({url:url+'?subjectId='+a,headers:{authorization:'Bearer '+tokens.get(f.outsider.id)}})).statusCode,404);
+    assert.equal((await app.inject({method:'POST',url,headers,payload:{...payload,clientMessageId:uid(),subjectId:[a]}})).statusCode,400);
+    const before=seen.length;const failed=companion.ask(f.matter,f.a,{question:'失效工单',clientMessageId:uid(),subjectId:'33333333-3333-4333-8333-333333333333'});await companion.settled();assert.equal(f.store.get('SELECT status FROM companion_questions WHERE id=?',failed.id).status,'failed');assert.equal(seen.length,before);
+    assert.equal(f.store.get('SELECT COUNT(*) AS n FROM messages').n,1);assert.equal(f.store.get('SELECT COUNT(*) AS n FROM operations').n,0);assert.equal(f.store.get('SELECT COUNT(*) AS n FROM companion_advice').n,0);
+    const snapshot=companion.auditSnapshot({subject_id:a,rule_results:Array.from({length:200},()=>({summary:'长'.repeat(6000),evidence:'证据'.repeat(3000)}))});assert.equal(snapshot.truncated,true);assert.ok(snapshot.rules.length<=40);assert.ok(JSON.stringify(snapshot).length<30000);
+    f.store.run('DELETE FROM companion_questions WHERE id=?',response.json().id);assert.equal(f.store.get('SELECT COUNT(*) AS n FROM companion_question_contexts WHERE question_id=?',response.json().id).n,0);
+  } finally { await app.close(); f.cleanup(); }
+});

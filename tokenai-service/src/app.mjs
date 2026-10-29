@@ -23,7 +23,8 @@ export async function buildApp(config, overrides = {}) {
   const store = overrides.store || new Store(config.stateDir, { recover: true });
   const tokenx = overrides.tokenx || new TokenX(config);
   const agent = overrides.agent || new PiAgent(config, store, tokenx);
-  const companion = overrides.companion || new FinanceCompanion(config, store, { runtime: () => agent.runtime() });
+  const companion = overrides.companion || new FinanceCompanion(config, store, { runtime: () => agent.runtime(), readWorkOrder });
+  if (!companion.readWorkOrder) companion.readWorkOrder = readWorkOrder;
   app.decorate('services', { store, tokenx, agent, companion });
   const loginAttempts = new Map();
   await app.register(cors, { origin: (origin, cb) => cb(null, !origin || config.allowedOrigins.includes(origin)),
@@ -90,8 +91,8 @@ export async function buildApp(config, overrides = {}) {
   app.get('/api/v1/solutions', async req => {
     authenticate(store, req); return [{ id: 'expense-control', name: '报销费控协同方案', agent: 'tokenai', connected: tokenx.status.connected }];
   });
-  async function workOrder(req) {
-    const user = authenticate(store, req), id = req.params.subjectId;
+  async function workOrder(req) { return readWorkOrder(authenticate(store, req), req.params.subjectId); }
+  async function readWorkOrder(user, id) {
     requireWorkOrderAccess(config, user, id);
     try {
       const result = await tokenx.call('scenario_work_order', { subject_id: id, include_detail: true, include_share: false });
@@ -134,7 +135,7 @@ export async function buildApp(config, overrides = {}) {
     const { user, matter } = member(req); rate('companion:' + user.id, 6, 60000); return companion.request(matter, user, true);
   });
   app.get('/api/v1/matters/:matterId/companion/questions', async req => {
-    const { user, matter } = member(req); return { questions: companion.questions(matter, user) };
+    const { user, matter } = member(req); return { questions: companion.questions(matter, user, req.query.subjectId) };
   });
   app.post('/api/v1/matters/:matterId/companion/questions', async (req, reply) => {
     const { user, matter } = member(req); rate('companion-question:' + user.id, 8, 60000);

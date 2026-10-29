@@ -4,6 +4,7 @@
   const base = 'https://tokenai.awiki.ai';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   const state = { token: '', user: null, matter: null, messages: [], operations: [], status: null, error: '', progress: '', partial: '', busy: false, cursor: 0, draft: '', pendingMessage: null, before: null, workOrder: null, downloadNotice: null, companion: { status: 'idle', text: '' }, companionTab: 'auto', companionQuestions: [], companionDraft: '', companionSending: false, companionQuestionError: '', pendingPrivateQuestion: null };
+  let review = null, reviewTimer, orderRequest = 0;
   let streamController, loginWindow, loginRequest, companionTimer, liveTimer;
   const markdownCache = new Map(), preparedDownloads = new Map(), activeDownloads = new Set();
   const sessionKey = 'tokenai.session.v1';
@@ -18,7 +19,7 @@
   }
   function clearSession(forget = true) {
     streamController?.abort();
-    clearTimeout(companionTimer);
+    clearTimeout(companionTimer); clearTimeout(reviewTimer); review = null; orderRequest++;
     clearTimeout(liveTimer); markdownCache.clear();
     for (const item of preparedDownloads.values()) URL.revokeObjectURL(item.url); preparedDownloads.clear(); activeDownloads.clear();
     if (forget) { try { localStorage.removeItem(sessionKey); } catch {} }
@@ -59,7 +60,7 @@
     const advice = state.companion, status = !state.token ? '待登录' : ({ waiting: '等待主聊天结果', generating: '正在分析', ready: '建议已更新', error: '暂时无法更新', interrupted: '等待更新', idle: '等待主聊天' }[advice.status] || '等待更新');
     const body = !state.token ? '<p class="companion-note">登录后，AI 伙伴会根据主聊天中的新结果，为财务经理提供私人建议。</p>' : advice.text ? `<div class="tokenai-markdown">${renderText(advice.text)}</div>` : '<p class="companion-note">主聊天产生新内容后，我会自动整理需要关注的风险、待补材料和下一步建议。</p>';
     const updated = advice.updatedAt ? new Date(advice.updatedAt).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' }) : '';
-    const questions = state.companionQuestions.map(q => `<article class="companion-qa" data-question-id="${esc(q.id)}"><div class="companion-question"><small>我的提问 · ${esc(new Date(q.created).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }))}</small><p>${esc(q.question)}</p></div><div class="companion-answer"><small>AI 伙伴回答</small>${q.status === 'completed' ? `<div class="tokenai-markdown">${renderText(q.answer)}</div>` : ['queued','running'].includes(q.status) ? '<p class="companion-note" role="status">正在结合主聊天回答…</p>' : `<p class="companion-note">本次回答未完成，可重新提问。</p><button type="button" class="btn tiny" data-expense-action="companion-reask" data-id="${esc(q.id)}">再问一次</button>`}</div></article>`).join('');
+    const questions = state.companionQuestions.map(q => `<article class="companion-qa" data-question-id="${esc(q.id)}"><div class="companion-question"><small>${q.subject_id ? '工单 ' + esc(q.subject_id.slice(0, 8)) + ' · ' : ''}我的提问 · ${esc(new Date(q.created).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }))}</small><p>${esc(q.question)}</p></div><div class="companion-answer"><small>AI 伙伴回答</small>${q.status === 'completed' ? `<div class="tokenai-markdown">${renderText(q.answer)}</div>` : ['queued','running'].includes(q.status) ? '<p class="companion-note" role="status">正在结合主聊天回答…</p>' : `<p class="companion-note">本次回答未完成，可重新提问。</p><button type="button" class="btn tiny" data-expense-action="companion-reask" data-id="${esc(q.id)}">再问一次</button>`}</div></article>`).join('');
     const qa = `<p class="companion-note">这里是你主动发起的私人问答，与自动分析分开保存，不会发送到主聊天。</p>${questions || '<section class="p-card"><p class="companion-note">可以问：这次审核最需要关注什么？下一步应补哪些材料？</p></section>'}${state.companionQuestionError ? `<p class="companion-question-error" role="alert">${esc(state.companionQuestionError)}</p>${state.pendingPrivateQuestion ? '<button type="button" class="btn tiny" data-expense-action="companion-question-retry">重试提交</button>' : ''}` : ''}`;
     const automatic = `<section class="p-card"><div class="companion-note">基于主聊天的自动分析</div>${body}</section>${advice.error ? '<p class="companion-note">建议暂时未能更新，可以稍后点击“更新建议”。主聊天仍可继续使用。</p>' : ''}<p class="companion-note">${updated ? '最近建议更新于北京时间 ' + esc(updated) + '。' : ''}主聊天回复完成后自动更新。</p>`;
     return `<aside class="partner tokenai-companion" id="expense-companion"><header class="partner-head"><span class="companion-icon">✦</span><div><b>财务经理的 AI 伙伴</b><small>独立 Pi · DeepSeek · 私人交流</small></div><span class="companion-status" role="status">${esc(status)}</span></header><div class="companion-tabs" role="tablist" aria-label="AI 伙伴内容类型"><button type="button" role="tab" aria-selected="${state.companionTab === 'auto'}" data-expense-action="companion-tab" data-tab="auto">自动分析</button><button type="button" role="tab" aria-selected="${state.companionTab === 'qa'}" data-expense-action="companion-tab" data-tab="qa">私人问答${state.companionQuestions.length ? ' · ' + state.companionQuestions.length : ''}</button></div><div class="partner-scroll" data-companion-panel="${state.companionTab}">${state.companionTab === 'qa' ? qa : automatic}</div><footer class="partner-foot"><form data-companion-form="question"><textarea name="question" rows="2" maxlength="2000" placeholder="只问我的 AI 伙伴，不发送主聊天" aria-label="向我的 AI 伙伴提问" ${!state.token || !state.matter || state.companionSending ? 'disabled' : ''}>${esc(state.companionDraft)}</textarea><button type="submit" class="btn primary tiny" ${!state.token || !state.matter || state.companionSending ? 'disabled' : ''}>${state.companionSending ? '正在提交…' : '问 AI 伙伴'}</button></form><button type="button" class="btn tiny" data-expense-action="companion-refresh" ${!state.token || !state.matter || ['waiting','generating'].includes(advice.status) ? 'disabled' : ''}>更新自动分析</button><p>辅助判断 · 由财务人员决定，不自动审批或执行。</p></footer></aside>`;
@@ -91,6 +92,52 @@
       state.companion = { ...state.companion, status: 'error', error: error.message }; drawCompanion();
     }
   }
+  function reviewPartnerHtml() {
+    if (!review) return '';
+    const rows = review.questions.map(q => `<article class="audit-private-qa"><div class="audit-private-question"><small>我的提问</small><p>${esc(q.question)}</p></div><div class="audit-private-answer"><small>AI 伙伴${q.fetched_at ? ' · 工单读取于 ' + esc(new Date(q.fetched_at).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' })) : ''}</small>${q.status === 'completed' ? `<div class="tokenai-markdown">${renderText(q.answer)}</div>` : ['queued','running'].includes(q.status) ? '<p class="audit-empty" role="status">正在结合这张工单的证据分析…</p>' : `<p class="audit-empty">本次未能完成回答，请重试。</p><button type="button" class="btn tiny" data-expense-action="review-reask" data-id="${esc(q.id)}">重新提问</button>`}</div></article>`).join('');
+    return `<aside id="audit-companion" class="audit-review-companion" aria-label="当前工单的私人 AI 伙伴"><div class="audit-review-header"><span class="audit-eyebrow">私人问答 · 当前工单</span><h3>财务经理的 AI 伙伴</h3><p>已关联工单 ${esc(review.subjectId.slice(0, 8))} · 问答不发到事项群</p></div><div class="audit-review-thread">${rows || '<div class="audit-review-welcome"><b>一边看审核，一边问我。</b><p>可以解释风险、核对缺失材料，或帮你整理下一步。点击规则下方的按钮，也能针对那条规则提问。</p></div>'}${review.error ? `<p class="audit-review-error" role="alert">${esc(review.error)}</p>${review.pending ? '<button type="button" class="btn tiny" data-expense-action="review-retry">重试提交</button>' : '<button type="button" class="btn tiny" data-expense-action="review-refresh">重新加载</button>'}` : ''}</div><div class="audit-review-compose"><div class="audit-review-quick"><button type="button" data-expense-action="review-prompt" data-prompt="risk">解释风险</button><button type="button" data-expense-action="review-prompt" data-prompt="missing">缺少什么材料</button><button type="button" data-expense-action="review-prompt" data-prompt="next">下一步建议</button></div><form data-review-form="question"><textarea name="question" rows="3" maxlength="2000" aria-label="就当前工单向 AI 伙伴提问" placeholder="例如：这条规则为什么未通过？" ${review.sending ? 'disabled' : ''}>${esc(review.draft)}</textarea><button type="submit" class="btn primary" ${review.sending ? 'disabled' : ''}>${review.sending ? '正在提交…' : '问 AI 伙伴'}</button></form><small>提问时读取当前工单，结合近期主聊天与本工单私人问答提供建议，由财务人员决定。</small></div></aside>`;
+  }
+  function drawReviewCompanion(follow = false) {
+    const root = document.querySelector('#audit-companion'); if (!root || !review) return;
+    const input = root.querySelector('textarea'), focused = document.activeElement === input;
+    const selection = input ? [input.selectionStart, input.selectionEnd] : null;
+    const scroll = root.querySelector('.audit-review-thread'), top = scroll?.scrollTop || 0;
+    const nearBottom = !scroll || scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 60;
+    root.outerHTML = reviewPartnerHtml();
+    const next = document.querySelector('#audit-companion');
+    const nextInput = next?.querySelector('textarea');
+    if (focused && nextInput && !nextInput.disabled) { nextInput.focus({ preventScroll: true }); if (selection) nextInput.setSelectionRange(...selection); }
+    const thread = next?.querySelector('.audit-review-thread'); if (thread) thread.scrollTop = follow || nearBottom ? thread.scrollHeight : top;
+  }
+  async function loadReviewQuestions() {
+    clearTimeout(reviewTimer);
+    if (!review || !state.token || !state.matter) return;
+    const current = review, token = state.token, matterId = state.matter.id;
+    const version = current.loadVersion = (current.loadVersion || 0) + 1;
+    try {
+      const result = await api('/api/v1/matters/' + matterId + '/companion/questions?subjectId=' + encodeURIComponent(current.subjectId));
+      if (review !== current || current.loadVersion !== version || state.token !== token || state.matter?.id !== matterId) return;
+      current.questions = result.questions; current.error = ''; drawReviewCompanion();
+      if (current.questions.some(q => ['queued','running'].includes(q.status))) reviewTimer = setTimeout(loadReviewQuestions, 1500);
+    } catch (error) { if (review === current && current.loadVersion === version && state.token === token) { current.error = error.message; drawReviewCompanion(); } else if (!state.token) draw(false); }
+  }
+  async function askReviewQuestion(message) {
+    if (!review || review.sending || !state.token || !state.matter) return;
+    const current = review, token = state.token, matterId = state.matter.id;
+    current.sending = true; current.error = ''; drawReviewCompanion(true);
+    try {
+      await api('/api/v1/matters/' + matterId + '/companion/questions', { ...message, subjectId: current.subjectId });
+      if (review !== current || state.token !== token || state.matter?.id !== matterId) return;
+      current.draft = ''; current.pending = null; await loadReviewQuestions();
+    } catch (error) { if (review === current && state.token === token) { current.pending = message; current.error = error.message; } }
+    finally { if (review === current && state.token === token) { current.sending = false; drawReviewCompanion(true); } }
+  }
+  function setReviewDraft(text) {
+    if (!review) return;
+    review.draft = text; drawReviewCompanion();
+    const input = document.querySelector('#audit-companion textarea');
+    input?.focus({ preventScroll: true }); if (matchMedia('(max-width: 900px)').matches) input?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
   const auditStatusLabels = { reviewed: '审核完成', completed: '已完成', pending: '待审核', queued: '排队中', running: '审核中', processing: '审核中', failed: '未通过', fail: '未通过', rejected: '未通过', warning: '需关注', warn: '需关注', passed: '通过', pass: '通过', success: '通过', skipped: '已跳过', not_applicable: '不适用', unknown: '待明确', error: '处理异常', cancelled: '已取消', canceled: '已取消' };
   const auditTypes = { contract_payment: '合同付款审核', expense_reimbursement: '报销费控审核', enterprise_reimbursement: '企业报账审核', general_audit_finance: '财务通用审核', finance_general_audit: '财务通用审核' };
   const auditFieldLabels = { text: '内容', content: '内容', description: '说明', reason: '原因', explanation: '说明', analysis: '分析', conclusion: '结论', recommendation: '处理建议', suggestion: '处理建议', action: '建议动作', title: '标题', name: '名称', value: '内容', ref_id: '引用编号', file_name: '来源文件', filename: '来源文件', page: '页码', page_number: '页码', location: '位置', clause: '条款', rule_code: '规则编号', status: '状态' };
@@ -119,7 +166,7 @@
     const rule = raw && typeof raw === 'object' ? raw : { summary: raw };
     const suggestion = [rule.suggestion, rule.suggestions, rule.recommendation, rule.recommendations, rule.advice].find(auditPresent);
     const reason = [rule.reason, rule.explanation, rule.analysis].find(auditPresent);
-    return `<details class="audit-rule"${open ? ' open' : ''}><summary><span class="audit-rule-number">${index + 1}</span><span class="audit-rule-heading"><b>${esc(rule.name || rule.rule_name || rule.rule_code || '审核规则')}</b>${rule.rule_code ? `<small>${esc(rule.rule_code)}</small>` : ''}</span><span class="audit-badge ${auditTone(rule.status)}">${esc(auditLabel(rule.status, auditStatusLabels, '状态待明确'))}</span></summary><div class="audit-rule-body"><section class="audit-section"><h4>审核结论</h4>${auditPresent(rule.summary) ? auditValue(rule.summary) : '<p class="audit-empty">该规则未返回结论摘要。</p>'}</section>${reason ? `<section class="audit-section"><h4>原因说明</h4>${auditValue(reason)}</section>` : ''}<section class="audit-section"><h4>证据原文</h4>${auditEvidence(rule.evidence ?? rule.evidences)}</section><section class="audit-section audit-suggestion"><h4>处理建议</h4>${suggestion ? auditValue(suggestion) : '<p class="audit-empty">该规则未单独提供处理建议，请结合审核结论与证据核实。</p>'}</section><details class="audit-technical"><summary>技术详情（本条规则原始数据）</summary><pre>${esc(JSON.stringify(raw, null, 2))}</pre></details></div></details>`;
+    return `<details class="audit-rule"${open ? ' open' : ''}><summary><span class="audit-rule-number">${index + 1}</span><span class="audit-rule-heading"><b>${esc(rule.name || rule.rule_name || rule.rule_code || '审核规则')}</b>${rule.rule_code ? `<small>${esc(rule.rule_code)}</small>` : ''}</span><span class="audit-badge ${auditTone(rule.status)}">${esc(auditLabel(rule.status, auditStatusLabels, '状态待明确'))}</span></summary><div class="audit-rule-body"><section class="audit-section"><h4>审核结论</h4>${auditPresent(rule.summary) ? auditValue(rule.summary) : '<p class="audit-empty">该规则未返回结论摘要。</p>'}</section>${reason ? `<section class="audit-section"><h4>原因说明</h4>${auditValue(reason)}</section>` : ''}<section class="audit-section"><h4>证据原文</h4>${auditEvidence(rule.evidence ?? rule.evidences)}</section><section class="audit-section audit-suggestion"><h4>处理建议</h4>${suggestion ? auditValue(suggestion) : '<p class="audit-empty">该规则未单独提供处理建议，请结合审核结论与证据核实。</p>'}</section><button type="button" class="btn tiny audit-ask-rule" data-expense-action="review-rule" data-rule="${index}">请 AI 解释这条规则</button><details class="audit-technical"><summary>技术详情（本条规则原始数据）</summary><pre>${esc(JSON.stringify(raw, null, 2))}</pre></details></div></details>`;
   }
   function workOrderHtml() {
     const data = state.workOrder; if (!data) return '';
@@ -130,7 +177,7 @@
     const riskTone = ({ high: 'danger', critical: 'danger', medium: 'warning', low: 'success' })[String(data.risk_level || '').toLowerCase()] || 'neutral';
     const count = tone => rules.filter(r => auditTone(r?.status) === tone).length;
     const firstAttention = rules.findIndex(r => ['danger','warning'].includes(auditTone(r?.status)));
-    return `<div class="audit-backdrop"><section id="work-order-panel" role="dialog" aria-modal="true" aria-label="工单审核明细"><header class="audit-header"><div><span class="audit-eyebrow">审核结果 · ${esc(business)}</span><h2>${esc(title)}</h2></div><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></header><div class="audit-content"><div class="audit-overview"><span class="audit-badge neutral">${esc(auditLabel(data.status, { ...auditStatusLabels, failed: '审核失败', error: '审核异常' }))}</span><span class="audit-badge ${riskTone}">${esc(risk)}</span><span class="audit-order-id">工单编号 ${esc(data.subject_id || '未提供')}</span></div><section class="audit-summary"><h3>整体审核结论</h3><div class="tokenai-markdown">${renderText(data.audit_summary || data.review_result?.audit_summary || '接口未提供整体结论，请查看下方规则明细。')}</div></section><div class="audit-actions"><button class="btn primary" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载审核结果（Markdown）</button><span>由本次审核数据整理导出，包含规则结论与证据。</span></div>${downloadNoticeHtml()}<div class="audit-rule-title"><h3>规则明细 · ${rules.length} 项</h3><div class="audit-counts"><span>未通过 / 异常 ${count('danger')}</span><span>需关注 ${count('warning')}</span><span>通过 ${count('success')}</span><span>其他 ${count('neutral')}</span></div></div><p class="audit-help">展开规则查看证据与建议。审核完成表示流程已结束，是否通过请看具体结论。</p>${rules.length ? rules.map((r, i) => auditRuleHtml(r, i, i === (firstAttention < 0 ? 0 : firstAttention))).join('') : '<p class="audit-empty">该工单暂未返回逐条规则明细。</p>'}<details class="audit-technical audit-full-data"><summary>技术详情（完整审核数据）</summary><pre>${esc(JSON.stringify(data, null, 2))}</pre></details></div></section></div>`;
+    return `<div class="audit-backdrop"><section id="work-order-panel" data-order="${esc(data.subject_id)}" role="dialog" aria-modal="true" aria-label="工单审核明细"><header class="audit-header"><div><span class="audit-eyebrow">审核结果 · ${esc(business)}</span><h2>${esc(title)}</h2></div><button class="btn tiny" type="button" data-expense-action="close-order">关闭</button></header><div class="audit-layout"><div class="audit-content"><div class="audit-overview"><span class="audit-badge neutral">${esc(auditLabel(data.status, { ...auditStatusLabels, failed: '审核失败', error: '审核异常' }))}</span><span class="audit-badge ${riskTone}">${esc(risk)}</span><span class="audit-order-id">工单编号 ${esc(data.subject_id || '未提供')}</span></div><section class="audit-summary"><h3>整体审核结论</h3><div class="tokenai-markdown">${renderText(data.audit_summary || data.review_result?.audit_summary || '接口未提供整体结论，请查看下方规则明细。')}</div></section><div class="audit-actions"><button class="btn primary" type="button" data-expense-action="download-report" data-subject="${esc(data.subject_id)}" ${state.busy ? 'disabled' : ''}>下载审核结果（Markdown）</button><span>由本次审核数据整理导出，包含规则结论与证据。</span></div>${downloadNoticeHtml()}<div class="audit-rule-title"><h3>规则明细 · ${rules.length} 项</h3><div class="audit-counts"><span>未通过 / 异常 ${count('danger')}</span><span>需关注 ${count('warning')}</span><span>通过 ${count('success')}</span><span>其他 ${count('neutral')}</span></div></div><p class="audit-help">展开规则查看证据与建议。审核完成表示流程已结束，是否通过请看具体结论。</p>${rules.length ? rules.map((r, i) => auditRuleHtml(r, i, i === (firstAttention < 0 ? 0 : firstAttention))).join('') : '<p class="audit-empty">该工单暂未返回逐条规则明细。</p>'}<details class="audit-technical audit-full-data"><summary>技术详情（完整审核数据）</summary><pre>${esc(JSON.stringify(data, null, 2))}</pre></details></div>${reviewPartnerHtml()}</div></section></div>`;
   }
   async function api(path, body, method) {
     const requestToken = state.token;
@@ -168,12 +215,21 @@
     const old = root.querySelector('[name=text]');
     const inputFocused = old === document.activeElement, inputSelection = old ? [old.selectionStart, old.selectionEnd] : null;
     if (old && !old.disabled && state.token) state.draft = old.value;
-    const orderTop = root.querySelector('#work-order-panel')?.scrollTop || 0;
+    const order = root.querySelector('#work-order-panel');
+    const orderTop = order?.scrollTop || 0;
+    const orderUi = order ? { id: order.dataset.order, contentTop: order.querySelector('.audit-content')?.scrollTop || 0, layoutTop: order.querySelector('.audit-layout')?.scrollTop || 0, threadTop: order.querySelector('.audit-review-thread')?.scrollTop || 0, details: [...order.querySelectorAll('.audit-content details')].map(el => el.open) } : null;
+    const reviewInput = root.querySelector('#audit-companion textarea'), reviewFocused = document.activeElement === reviewInput;
+    const reviewSelection = reviewInput ? [reviewInput.selectionStart, reviewInput.selectionEnd] : null;
     const scroll = root.querySelector('#expense-scroll');
     const top = scroll?.scrollTop || 0;
     root.outerHTML = html();
     const nextInput = document.querySelector('#expense-root [name=text]'); if (inputFocused && nextInput && !nextInput.disabled) { nextInput.focus({ preventScroll: true }); if (inputSelection) nextInput.setSelectionRange(...inputSelection); }
     const orderPanel = document.querySelector('#work-order-panel'); if (orderPanel) orderPanel.scrollTop = orderTop;
+    if (orderPanel && orderUi?.id === orderPanel.dataset.order) {
+      [...orderPanel.querySelectorAll('.audit-content details')].forEach((el, i) => { el.open = orderUi.details[i] ?? el.open; });
+      for (const [selector, top] of [['.audit-content',orderUi.contentTop],['.audit-layout',orderUi.layoutTop],['.audit-review-thread',orderUi.threadTop]]) { const el = orderPanel.querySelector(selector); if (el) el.scrollTop = top; }
+      const input = orderPanel.querySelector('#audit-companion textarea'); if (reviewFocused && input && !input.disabled) { input.focus({ preventScroll: true }); if (reviewSelection) input.setSelectionRange(...reviewSelection); }
+    }
     const next = document.querySelector('#expense-scroll');
     if (next) { next.style.scrollBehavior = 'auto'; next.scrollTop = follow ? next.scrollHeight : top; }
   }
@@ -244,8 +300,12 @@
   });
   async function openWorkOrder(id) {
     if (!state.token) { pendingOrder = id; await login(); return; }
-    state.workOrder = await api('/api/v1/work-orders/' + encodeURIComponent(id));
-    state.error = ''; draw(false);
+    const token = state.token, matterId = state.matter?.id, request = ++orderRequest;
+    const data = await api('/api/v1/work-orders/' + encodeURIComponent(id));
+    if (orderRequest !== request || state.token !== token || state.matter?.id !== matterId) return;
+    state.workOrder = data; clearTimeout(reviewTimer);
+    review = { subjectId: data.subject_id, questions: [], draft: '', pending: null, sending: false, error: '' };
+    state.error = ''; draw(false); loadReviewQuestions();
   }
   async function downloadReport(id) {
     if (!state.token) { pendingOrder = id; await login(); return; }
@@ -332,6 +392,7 @@
   }
   function startStream() { streamController?.abort(); streamController = new AbortController(); stream(streamController).catch(e => { state.error = e.message; draw(); }); }
   document.addEventListener('submit', event => {
+    if (event.target.matches('[data-review-form=question]')) { event.preventDefault(); const question = event.target.elements.question.value.trim(); if (question) askReviewQuestion({ clientMessageId: crypto.randomUUID(), question }); return; }
     if (event.target.matches('[data-companion-form=question]')) { event.preventDefault(); const question = event.target.elements.question.value.trim(); if (question) askCompanion({ clientMessageId: crypto.randomUUID(), question }); return; }
     if (!event.target.matches('[data-expense-form=message]')) return;
     event.preventDefault(); if (!state.token || state.busy) return;
@@ -343,14 +404,19 @@
     const button = event.target.closest('[data-expense-action]'); if (!button || button.disabled) return;
     try {
       const action = button.dataset.expenseAction;
+      if (action === 'review-refresh') { await loadReviewQuestions(); return; }
+      if (action === 'review-retry') { if (review?.pending) await askReviewQuestion(review.pending); return; }
+      if (action === 'review-reask') { const q = review?.questions.find(q => q.id === button.dataset.id); if (q) setReviewDraft(q.question); return; }
+      if (action === 'review-prompt') { setReviewDraft(({ risk: '请结合当前工单的规则和证据，解释最需要关注的风险。', missing: '当前工单还缺哪些材料？请列出依据和待核实的问题。', next: '针对当前工单，建议我下一步怎么处理？请区分已知事实和待确认事项。' })[button.dataset.prompt] || ''); return; }
+      if (action === 'review-rule') { const d = state.workOrder; if (d && review) { const rules = Array.isArray(d.rule_results) ? d.rule_results : Array.isArray(d.review_result?.results) ? d.review_result.results : Object.entries(d.rule_results || {}).map(([rule_code,r]) => ({rule_code,...r})); const r = rules[Number(button.dataset.rule)]; if (r) setReviewDraft('请解释当前工单中“' + (r.name || r.rule_code || '审核规则') + '”' + (r.rule_code ? '（' + r.rule_code + '）' : '') + '的结论、证据和下一步建议。'); } return; }
       if (action === 'companion-tab') { state.companionTab = button.dataset.tab === 'qa' ? 'qa' : 'auto'; drawCompanion(true); return; }
       if (action === 'companion-question-retry') { if (state.pendingPrivateQuestion) await askCompanion(state.pendingPrivateQuestion); return; }
-      if (action === 'companion-reask') { const item = state.companionQuestions.find(q => q.id === button.dataset.id); if (item) { state.companionDraft = item.question; const input = document.querySelector('#expense-companion [name=question]'); if (input) input.value = item.question; drawCompanion(); } return; }
+      if (action === 'companion-reask') { const item = state.companionQuestions.find(q => q.id === button.dataset.id); if (item?.subject_id) { await openWorkOrder(item.subject_id); setReviewDraft(item.question); return; } if (item) { state.companionDraft = item.question; const input = document.querySelector('#expense-companion [name=question]'); if (input) input.value = item.question; drawCompanion(); } return; }
       if (action === 'companion-refresh') { await updateCompanion(true); return; }
       if (action === 'view-order') { state.progress = '正在读取工单审核明细…'; scheduleLivePaint(); await openWorkOrder(button.dataset.subject); }
       if (action === 'download-report') await downloadReport(button.dataset.subject);
       if (action === 'copy-report') { const file = preparedDownloads.get(button.dataset.subject); if (file) { const text = await file.blob.text(); if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text); else { const input = document.createElement('textarea'); input.value = text; input.style.position = 'fixed'; input.style.opacity = '0'; document.body.append(input); input.select(); const copied = document.execCommand('copy'); input.remove(); if (!copied) throw new Error('当前浏览器未允许复制'); } state.downloadNotice = { status: 'ready', subjectId: button.dataset.subject, text: '审核结果 Markdown 已复制。' }; } }
-      if (action === 'close-order') state.workOrder = null;
+      if (action === 'close-order') { state.workOrder = null; clearTimeout(reviewTimer); review = null; orderRequest++; updateCompanion(); }
       if (action === 'login') await login();
       if (action === 'refresh') { state.error = ''; await refresh(); }
       if (action === 'retry' && state.pendingMessage) await send(state.pendingMessage);
@@ -367,7 +433,7 @@
         try { await api('/api/v1/auth/logout', {}); } finally { clearSession(); }
       }
     } catch(e) { if (button.dataset.expenseAction === 'copy-report') state.downloadNotice = { status: 'error', subjectId: button.dataset.subject, text: '复制未完成，请使用保存文件：' + e.message }; else { state.error = e.message; state.progress = e.message; } }
-    finally { if (!button.dataset.expenseAction.startsWith('companion-')) { state.busy = false; draw(!['older','download-report','copy-report','view-order','close-order'].includes(button.dataset.expenseAction)); } }
+    finally { if (!button.dataset.expenseAction.startsWith('companion-') && !button.dataset.expenseAction.startsWith('review-')) { state.busy = false; draw(!['older','download-report','copy-report','view-order','close-order'].includes(button.dataset.expenseAction)); } }
   });
   document.addEventListener('change', async event => {
     if (!event.target.matches('[data-expense-file]') || !state.token || state.busy) return;
@@ -381,7 +447,7 @@
     } catch(e) { state.error = e.message; }
     finally { state.busy = false; draw(); }
   });
-  document.addEventListener('input', event => { if (event.target.matches('#expense-companion [name=question]')) state.companionDraft = event.target.value; });
+  document.addEventListener('input', event => { if (event.target.matches('#audit-companion textarea') && review) review.draft = event.target.value; if (event.target.matches('#expense-companion [name=question]')) state.companionDraft = event.target.value; });
   window.TokenAIExpense = { html, packHtml, partnerHtml, mount };
   window.addEventListener('storage', event => { if (event.key === sessionKey && !event.newValue) { clearSession(); draw(); } });
   if (savedSession()) restoreSession();

@@ -28,6 +28,7 @@ export class Store {
       CREATE TABLE IF NOT EXISTS files(id TEXT PRIMARY KEY,matter_id TEXT NOT NULL,user_id TEXT NOT NULL,name TEXT NOT NULL,mime TEXT NOT NULL,path TEXT NOT NULL,size INTEGER NOT NULL,created TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS companion_advice(matter_id TEXT NOT NULL REFERENCES matters(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,source_seq INTEGER NOT NULL DEFAULT 0,requested_seq INTEGER NOT NULL DEFAULT 0,text TEXT NOT NULL DEFAULT '',status TEXT NOT NULL,error TEXT,updated TEXT,PRIMARY KEY(matter_id,user_id));
       CREATE TABLE IF NOT EXISTS companion_questions(id TEXT PRIMARY KEY,matter_id TEXT NOT NULL REFERENCES matters(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,client_id TEXT NOT NULL,question TEXT NOT NULL,answer TEXT NOT NULL DEFAULT '',source_seq INTEGER NOT NULL DEFAULT 0,status TEXT NOT NULL,error TEXT,created TEXT NOT NULL,updated TEXT,UNIQUE(matter_id,user_id,client_id));
+      CREATE TABLE IF NOT EXISTS companion_question_contexts(question_id TEXT PRIMARY KEY REFERENCES companion_questions(id) ON DELETE CASCADE,subject_id TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',snapshot_json TEXT,fetched_at TEXT);
       CREATE INDEX IF NOT EXISTS messages_matter ON messages(matter_id,seq);
       CREATE INDEX IF NOT EXISTS events_matter ON events(matter_id,seq);
     `);
