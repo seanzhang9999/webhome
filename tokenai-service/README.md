@@ -74,6 +74,24 @@ MCP transport 显式使用该代理并保留 TLS 校验，拒绝重定向以避�
 `TOKENAI_STATE_DIR` 指定独立状态目录。`TOKENAI_ENV_FILE` 指定受限环境文件。
 未配置 TokenX 时普通模型聊天仍可用，页面明确显示 MCP 不可用，不能生成虚构业务结果。
 
+## 长会话与模型预算
+
+依据 [DeepSeek 上下文说明](https://deepseek.com/en/news/v4-preview/) 与
+[思考模式说明](https://api-docs.deepseek.com/guides/thinking_mode/)，TokenAI 的模型声明使用 1,000,000 token 上下文，单次输出上限 8192；保持原有
+thinkingLevel=off，并通过 DeepSeek 兼容字段显式发送 thinking.type=disabled。共享的
+私人伙伴运行时采用同一模型配置。事项会话在约 128,000 token 时提前压缩，保留近期
+12,000 token；以 reserveTokens 表达压缩阈值，不把它当作模型输出预算。
+
+MCP content 与 structuredContent 表达同一对象时，仅向模型提供一份结果；不同内容或
+非文本资源保留，不裁掉审核事实。已有会话继续使用原文件与历史，不清空用户消息。
+新增 model_response 事件仅记录结束原因和 token/文本长度计数，不保存推理正文或凭据；
+超时、用户停止、长度耗尽和压缩失败分别提示。SDK 原有业务权限与确认边界不变。
+
+`test/agent-policy.test.mjs` 用实际 Pi OpenAI 适配器复现旧 64K 配置把长历史请求压成
+max_tokens=1，验证新配置保留输出预算并关闭默认思考模式。`sudo node test/live-long-session.mjs`
+将最近失败事项的会话复制到受限临时目录，使用真实 DeepSeek/MCP 重放问题，结束后精确
+清理；该检查不改写用户原会话，也不重放业务写操作。
+
 ## MCP 与业务边界
 
 MCP 客户端使用官方 SDK 的 Streamable HTTP transport，自动协商协议、初始化及通知。

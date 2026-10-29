@@ -2,6 +2,7 @@ import { mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createAgentSession, ModelRuntime, SessionManager, SettingsManager, DefaultResourceLoader } from '@earendil-works/pi-coding-agent';
 import { READ_TOOLS, WORK_ORDER_TOOLS, remoteId } from './tokenx.mjs';
+import { financeModel, financeCompaction, toolContextText, responseFailure } from './agent-policy.mjs';
 import { redact } from './config.mjs';
 
 const SYSTEM = `你是 TokenAI 报销费控助手，是当前财务事项的 Agent 成员。使用简体中文。
@@ -39,8 +40,7 @@ export class PiAgent {
     const runtime = await ModelRuntime.create({ authPath: join(dir, 'auth.json'), modelsPath: null, modelsStorePath: join(dir, 'catalog.json'), allowModelNetwork: false, refreshOnCreate: false });
     runtime.registerProvider('tokenai-deepseek', {
       baseUrl: this.config.modelBaseUrl, api: 'openai-completions', apiKey: this.config.deepseekKey, authHeader: true,
-      models: [{ id: this.config.model, name: this.config.model, reasoning: false, input: ['text'], contextWindow: 65536, maxTokens: 4096,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 }, compat: { supportsDeveloperRole: false } }],
+      models: [financeModel(this.config)],
     });
     this.modelRuntime = runtime;
     return runtime;
@@ -84,7 +84,7 @@ export class PiAgent {
             return { content: [{ type: 'text', text: JSON.stringify(pending) }], details: pending };
           }
           const result = await this.tokenx.call(t.name, args, signal);
-          return { content: [{ type: 'text', text: JSON.stringify(result) }], details: { remoteId: remoteId(result) } };
+          return { content: [{ type: 'text', text: toolContextText(result) }], details: { remoteId: remoteId(result) } };
         },
       }));
       if (this.tokenx.tools.some(t => t.name === 'scenario_upload_file') && this.tokenx.allowed('scenario_upload_file')) customTools.push({
@@ -102,25 +102,28 @@ export class PiAgent {
       await resourceLoader.reload();
       ({ session } = await createAgentSession({ cwd: workDir, agentDir, modelRuntime, model: modelRuntime.getModel('tokenai-deepseek', this.config.model),
         thinkingLevel: 'off', noTools: 'builtin', tools: customTools.map(t => t.name), customTools, resourceLoader, sessionManager,
-        settingsManager: SettingsManager.inMemory({ retry: { enabled: false, maxRetries: 0 }, compaction: { enabled: true }, telemetry: false }) }));
+        settingsManager: SettingsManager.inMemory({ retry: { enabled: false, maxRetries: 0 }, compaction: financeCompaction, telemetry: false }) }));
       this.active.set(turn.id, session);
-      let answer = '', modelError = null;
+      let answer = '', modelError = null, lastStop = null, compactionError = null, timedOut = false;
       session.subscribe(event => {
+        if (event.type === 'compaction_start') emit('context_compacting', { reason: event.reason });
+        if (event.type === 'compaction_end') { compactionError = event.errorMessage || null; emit('context_compacted', { succeeded: !!event.result, aborted: !!event.aborted, willRetry: !!event.willRetry }); }
         if (event.type === 'message_update' && event.assistantMessageEvent.type === 'text_delta') emit('text_delta', { text: event.assistantMessageEvent.delta });
         if (event.type === 'tool_execution_start') emit('tool_started', { tool: event.toolName });
         if (event.type === 'tool_execution_end') emit('tool_completed', { tool: event.toolName, isError: event.isError });
         if (event.type === 'message_end' && event.message.role === 'assistant') {
           const text = event.message.content.filter(x => x.type === 'text').map(x => x.text).join('\n');
-          if (text) answer = text;
-          if (event.message.stopReason === 'error') modelError = event.message.errorMessage || '模型调用失败';
+          answer = text; lastStop = event.message.stopReason;
+          modelError = lastStop === 'error' ? event.message.errorMessage || '模型调用失败' : null;
+          const usage = event.message.usage || {};
+          emit('model_response', { stopReason: lastStop, textChars: text.length, inputTokens: (usage.input || 0) + (usage.cacheRead || 0), outputTokens: usage.output || 0, totalTokens: usage.totalTokens || 0 });
         }
       });
-      timeout = setTimeout(() => session.abort(), 180000);
+      timeout = setTimeout(() => { timedOut = true; session.abort(); }, 180000);
       const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
       await session.prompt('当前北京时间日期：' + today + '（Asia/Shanghai）。\n当前发言财务人员：' + user.name + '\n本次实际可调用工具：' + customTools.map(t => t.name).join(', ') + '\nTokenX连接状态：' + JSON.stringify(this.tokenx.status) + '\n本地近期运行记录（为空不妨碍授权的工单查询）：' + JSON.stringify(runs) + '\n本事项附件索引：' + JSON.stringify(attachments) + '\n用户问话：\n' + turn.text, { expandPromptTemplates: false });
-      if (this.store.get('SELECT status FROM turns WHERE id=?', turn.id)?.status === 'stopping') throw new Error('本次回复已停止；已经提交的业务任务不会自动取消。');
-      if (modelError) throw new Error(modelError);
-      if (!answer) throw new Error('Agent 未返回文本，可能已停止或超时，请核查任务状态。');
+      const failure = responseFailure({ stopped: this.store.get('SELECT status FROM turns WHERE id=?', turn.id)?.status === 'stopping', timedOut, modelError, lastStop, compactionError, answer });
+      if (failure) throw new Error(failure);
       answer = redact(answer, this.config);
       this.store.message(matter.id, turn.id, 'tokenai', 'TokenAI 报销费控助手', answer);
       this.store.run("UPDATE turns SET status='completed' WHERE id=?", turn.id);

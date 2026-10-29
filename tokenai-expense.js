@@ -177,7 +177,7 @@
     const current = review, token = state.token;
     const availableWidth = Math.max(320, window.screen.availWidth || window.innerWidth);
     const availableHeight = Math.max(320, window.screen.availHeight || window.innerHeight);
-    const width = Math.min(1240, Math.max(720, Math.round(availableWidth * 0.7)), availableWidth - 32);
+    const width = availableWidth - 32;
     const height = Math.min(900, Math.max(480, availableHeight - 80), availableHeight - 32);
     const left = (Number.isFinite(window.screen.availLeft) ? window.screen.availLeft : window.screenX || 0) + 16;
     const top = (Number.isFinite(window.screen.availTop) ? window.screen.availTop : window.screenY || 0) + 24;
@@ -339,7 +339,7 @@
     if (orderRequest !== request || state.token !== token || state.matter?.id !== matterId) return;
     state.workOrder = data; clearTimeout(reviewTimer);
     review = { subjectId: data.subject_id, questions: [], draft: '', pending: null, sending: false, error: '' };
-    state.error = ''; draw(false); loadReviewQuestions();
+    state.error = ''; state.progress = '审核明细已加载'; draw(false); loadReviewQuestions();
   }
   async function downloadReport(id) {
     if (!state.token) { pendingOrder = id; await login(); return; }
@@ -409,6 +409,8 @@
             const data = JSON.parse(raw); state.cursor = data.seq;
             if (type === 'turn_started') { state.partial = ''; state.progress = 'Agent 正在处理…'; }
             if (type === 'text_delta') state.partial += data.text;
+            if (type === 'context_compacting') state.progress = '正在整理较长的历史记录…';
+            if (type === 'context_compacted') state.progress = data.succeeded ? '历史已整理，正在继续处理…' : '历史整理未完成，正在核查响应…';
             if (type === 'tool_started') state.progress = '正在调用：' + data.tool;
             if (type === 'tool_completed') state.progress = data.isError ? '工具调用未完成' : '工具已返回结果';
             if (['turn_completed', 'turn_failed', 'operation_completed', 'approval_required', 'message_created'].includes(type)) {
@@ -451,7 +453,7 @@
       if (action === 'view-order') { state.progress = '正在读取工单审核明细…'; scheduleLivePaint(); await openWorkOrder(button.dataset.subject); }
       if (action === 'download-report') await downloadReport(button.dataset.subject);
       if (action === 'copy-report') { const file = preparedDownloads.get(button.dataset.subject); if (file) { const text = await file.blob.text(); if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text); else { const input = document.createElement('textarea'); input.value = text; input.style.position = 'fixed'; input.style.opacity = '0'; document.body.append(input); input.select(); const copied = document.execCommand('copy'); input.remove(); if (!copied) throw new Error('当前浏览器未允许复制'); } state.downloadNotice = { status: 'ready', subjectId: button.dataset.subject, text: '审核结果 Markdown 已复制。' }; } }
-      if (action === 'close-order') { state.workOrder = null; clearTimeout(reviewTimer); review = null; orderRequest++; updateCompanion(); }
+      if (action === 'close-order') { if (/^(正在读取工单审核明细|审核明细已加载)/.test(state.progress)) state.progress = ''; state.workOrder = null; clearTimeout(reviewTimer); review = null; orderRequest++; updateCompanion(); }
       if (action === 'login') await login();
       if (action === 'refresh') { state.error = ''; await refresh(); }
       if (action === 'retry' && state.pendingMessage) await send(state.pendingMessage);

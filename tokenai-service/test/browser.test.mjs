@@ -89,6 +89,28 @@ test('existing page opens a persistent finance matter, authenticates and display
     assert.equal(context.pages().length, 1, 'Reload restores login without another password popup');
     assert.equal(await page.locator('#expense-root a[href^="https://tokenai.awiki.ai"]').count(), 0, 'Legacy work-order links must become current-domain actions');
     assert.ok(await page.locator('[data-expense-action=view-order][data-subject="' + subjectId + '"]').count() >= 2);
+    // The standalone masthead must not force the chat header into one flex row.
+    const savedLogin = await page.evaluate(() => localStorage.getItem('tokenai.session.v1'));
+    const standalone = await context.newPage();
+    await standalone.goto('https://tokenai.awiki.info');
+    await standalone.evaluate(value => localStorage.setItem('tokenai.session.v1', value), savedLogin);
+    await standalone.reload();
+    await standalone.locator('#expense-root .pill').filter({ hasText: '已登录 · 测试财务' }).waitFor();
+    for (const [width, zoom] of [[1440, 1], [1440, 1.5], [390, 1]]) {
+      await standalone.setViewportSize({ width, height: 1000 });
+      await standalone.evaluate(zoom => { document.body.style.zoom = String(zoom); }, zoom);
+      const geometry = await standalone.locator('#expense-root .chat-head').evaluate(el => {
+        const first = el.querySelector('.headflex').getBoundingClientRect(), members = el.querySelector('.members').getBoundingClientRect();
+        const pill = el.querySelector('.pill');
+        return { display: getComputedStyle(el).display, below: members.top >= first.bottom, singleLine: pill.scrollHeight <= 40, overflow: document.documentElement.scrollWidth > innerWidth };
+      });
+      assert.equal(geometry.display, 'block'); assert.equal(geometry.below, true); assert.equal(geometry.singleLine, true); assert.equal(geometry.overflow, false);
+      assert.equal(await standalone.locator('.companion-tabs button').first().evaluate(el => getComputedStyle(el).borderTopStyle), 'solid');
+    }
+    await standalone.setViewportSize({ width: 1440, height: 1000 });
+    await standalone.evaluate(() => { document.body.style.zoom = '1'; });
+    if (process.env.TOKENAI_LAYOUT_PREVIEW) await standalone.locator('#workspace').screenshot({ path: process.env.TOKENAI_LAYOUT_PREVIEW });
+    await standalone.close();
     const firstMatterId = store.get('SELECT id FROM matters').id;
     await page.waitForFunction(() => { const el = document.querySelector('#expense-scroll'); return el.scrollHeight - el.scrollTop - el.clientHeight < 4; });
     await page.locator('[data-expense-action=view-order]').last().click();
@@ -143,6 +165,7 @@ test('existing page opens a persistent finance matter, authenticates and display
     const originalWindow = await originalPromise;
     const popupFeatures = await page.evaluate(() => window.__nativeWindowFeatures);
     assert.match(popupFeatures, /popup=yes/); assert.match(popupFeatures, /width=\d+/); assert.match(popupFeatures, /height=\d+/); assert.match(popupFeatures, /resizable=yes/);
+    assert.equal(Number(popupFeatures.match(/width=(\d+)/)[1]), await page.evaluate(() => Math.max(320, window.screen.availWidth || window.innerWidth) - 32));
     await originalWindow.getByRole('heading', { name: '原生工作台测试页' }).waitFor();
     assert.equal(await originalWindow.evaluate(() => window.opener === null), true);
     assert.equal(await dialog.isVisible(), true);
