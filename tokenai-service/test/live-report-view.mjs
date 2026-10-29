@@ -41,6 +41,16 @@ try {
   session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1')));
   const dialog = page.getByRole('dialog', { name: '工单审核明细' });
   await showOrder();
+  await dialog.locator('.audit-summary').waitFor();
+  assert.equal(await dialog.locator('.audit-technical pre:visible').count(), 0, 'Raw JSON stays collapsed by default');
+  const ruleCards = dialog.locator('.audit-rule');
+  if (await ruleCards.count()) {
+    const card = ruleCards.first();
+    if (await card.getAttribute('open') === null) await card.locator(':scope > summary').click();
+    await card.getByRole('heading', { name: '证据原文', exact: true }).waitFor();
+    await card.getByRole('heading', { name: '处理建议', exact: true }).waitFor();
+    assert.equal(await card.locator('.audit-technical pre').isVisible(), false);
+  }
   const legacyLinkConverted = await page.locator('[data-expense-action=view-order][data-subject="' + subjectId + '"]').count() > 0;
   session = await page.evaluate(() => JSON.parse(localStorage.getItem('tokenai.session.v1')));
   assert.ok(session?.expiresAt > Date.now() + 6 * 24 * 60 * 60000);
@@ -68,7 +78,7 @@ try {
   await page.locator('[data-expense-action=login]').waitFor();
   assert.equal(await page.evaluate(() => localStorage.getItem('tokenai.session.v1')), null);
   assert.deepEqual(errors, []);
-  console.log(JSON.stringify({ entryPoint: githubPage ? 'github-pages' : 'tokenai', publicWorkOrderView: 'passed', realMcpData: true, legacyLinkConverted, markdownDownload: 'passed', reportBytes: Buffer.byteLength(markdown), independentPrivateCompanion: 'passed', rememberedLoginAfterReload: 'passed', logoutClearsSession: 'passed', rawPasswordCached: false, browserErrors: 0, businessWrites: 0 }));
+  console.log(JSON.stringify({ entryPoint: githubPage ? 'github-pages' : 'tokenai', publicWorkOrderView: 'passed', readableRuleCards: 'passed', rawJsonCollapsed: true, realMcpData: true, legacyLinkConverted, markdownDownload: 'passed', reportBytes: Buffer.byteLength(markdown), independentPrivateCompanion: 'passed', rememberedLoginAfterReload: 'passed', logoutClearsSession: 'passed', rawPasswordCached: false, browserErrors: 0, businessWrites: 0 }));
 } catch (error) {
   const uiError = await page.locator('#expense-root .advance.error p').textContent().catch(() => null);
   console.log(JSON.stringify({ browserErrors: errors, uiError, networkErrors }));
